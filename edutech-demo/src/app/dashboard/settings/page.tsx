@@ -10,6 +10,24 @@ type ActivityItem = { name: string; impact: string }
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
+const toIsoDate = (date: Date) => {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+const monthGrid = (month: Date) => {
+  const first = new Date(month.getFullYear(), month.getMonth(), 1)
+  const startDay = first.getDay()
+  const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate()
+  const cells: Array<Date | null> = []
+  for (let i = 0; i < startDay; i++) cells.push(null)
+  for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(month.getFullYear(), month.getMonth(), d))
+  while (cells.length % 7 !== 0) cells.push(null)
+  return cells
+}
+
 export default function SettingsPage() {
   const { data: session } = useSession()
   const [form, setForm] = useState({
@@ -31,6 +49,8 @@ export default function SettingsPage() {
   const [availability, setAvailability] = useState<Record<string, 'busy' | 'open'>>(
     Object.fromEntries(DAYS.map((d) => [d, 'busy'])) as Record<string, 'busy' | 'open'>
   )
+  const [viewMonth, setViewMonth] = useState(() => new Date(new Date().getFullYear(), new Date().getMonth(), 1))
+  const [blockedDates, setBlockedDates] = useState<string[]>([])
   const [loadingProfile, setLoadingProfile] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -59,7 +79,11 @@ export default function SettingsPage() {
         if (Array.isArray(data.goals) && data.goals.length) setGoals(data.goals)
         if (Array.isArray(data.activitiesDone) && data.activitiesDone.length) setActivitiesDone(data.activitiesDone)
         if (data.weeklyAvailability && typeof data.weeklyAvailability === 'object') {
-          setAvailability({ ...Object.fromEntries(DAYS.map((d) => [d, 'busy'])), ...data.weeklyAvailability })
+          const raw = data.weeklyAvailability as any
+          const weekly = raw.weekly && typeof raw.weekly === 'object' ? raw.weekly : raw
+          const blocked = Array.isArray(raw.blockedDates) ? raw.blockedDates : []
+          setAvailability({ ...Object.fromEntries(DAYS.map((d) => [d, 'busy'])), ...weekly })
+          setBlockedDates(blocked)
         }
       } finally {
         setLoadingProfile(false)
@@ -82,7 +106,10 @@ export default function SettingsPage() {
           careerInterests: form.careerInterestsText.split(',').map((x) => x.trim()).filter(Boolean),
           goals: goals.filter((g) => g.title || g.target),
           activitiesDone: activitiesDone.filter((a) => a.name || a.impact),
-          weeklyAvailability: availability,
+          weeklyAvailability: {
+            weekly: availability,
+            blockedDates,
+          },
         }),
       })
       setSaved(true)
@@ -195,6 +222,39 @@ export default function SettingsPage() {
               </button>
             ))}
           </div>
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium">Monthly calendar (mark blocked dates)</label>
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1))} className="px-2 py-1 border rounded">←</button>
+              <span className="text-sm font-medium min-w-[140px] text-center">{viewMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })}</span>
+              <button type="button" onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1))} className="px-2 py-1 border rounded">→</button>
+            </div>
+          </div>
+          <div className="grid grid-cols-7 gap-2 text-xs text-gray-500 mb-2">
+            {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map((d) => <div key={d} className="text-center">{d}</div>)}
+          </div>
+          <div className="grid grid-cols-7 gap-2">
+            {monthGrid(viewMonth).map((date, idx) => {
+              if (!date) return <div key={idx} className="h-10" />
+              const iso = toIsoDate(date)
+              const blocked = blockedDates.includes(iso)
+              return (
+                <button
+                  type="button"
+                  key={iso}
+                  onClick={() => setBlockedDates(blocked ? blockedDates.filter((d) => d !== iso) : [...blockedDates, iso])}
+                  className={`h-10 rounded-lg border text-sm ${blocked ? 'bg-red-100 border-red-300 text-red-700' : 'bg-white border-gray-200 text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200'}`}
+                  title={blocked ? 'Blocked day' : 'Available day'}
+                >
+                  {date.getDate()}
+                </button>
+              )
+            })}
+          </div>
+          <p className="text-xs text-gray-500 mt-2">Tap dates to mark blocked days. Later we will auto-overlay activity durations on open dates.</p>
         </div>
 
         <button type="submit" disabled={saving} className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-6 py-2.5 rounded-xl font-medium hover:opacity-90 disabled:opacity-50">

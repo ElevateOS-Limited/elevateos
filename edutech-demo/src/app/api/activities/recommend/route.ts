@@ -28,7 +28,11 @@ export async function GET() {
 
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
-  const availability = (user.weeklyAvailability as AvailabilityMap | null) ?? {}
+  const rawAvailability = (user.weeklyAvailability as any) ?? {}
+  const availability = (rawAvailability?.weekly && typeof rawAvailability.weekly === 'object'
+    ? rawAvailability.weekly
+    : rawAvailability) as AvailabilityMap
+  const blockedDates = Array.isArray(rawAvailability?.blockedDates) ? rawAvailability.blockedDates : []
   const derivedOpenDays = Object.entries(availability)
     .filter(([, status]) => status === 'open')
     .map(([day]) => day)
@@ -55,6 +59,7 @@ export async function GET() {
 
   return NextResponse.json({
     openDays,
+    blockedDates,
     recommendations: scored.slice(0, 6),
     availableSupport: ACTIVITY_CATALOG.map(({ title, supportBy, supportOffer, subscription }) => ({ title, supportBy, supportOffer, subscription })),
   })

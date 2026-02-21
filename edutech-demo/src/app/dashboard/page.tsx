@@ -42,7 +42,11 @@ export default function DashboardPage() {
   ]
 
   const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-  const availability = ((profile as any)?.weeklyAvailability || {}) as Record<string, 'busy' | 'open'>
+  const rawAvailability = ((profile as any)?.weeklyAvailability || {}) as any
+  const availability = (rawAvailability?.weekly && typeof rawAvailability.weekly === 'object'
+    ? rawAvailability.weekly
+    : rawAvailability) as Record<string, 'busy' | 'open'>
+  const blockedDates = Array.isArray(rawAvailability?.blockedDates) ? rawAvailability.blockedDates : []
 
   const firstName = session?.user?.name?.split(' ')?.[0] || 'Student'
 
@@ -113,6 +117,10 @@ export default function DashboardPage() {
           <div className="mt-4 flex items-center justify-between">
             <p className="text-sm text-gray-500">Update your schedule in Settings to personalize AI planning.</p>
             <Link href="/dashboard/settings" className="text-sm text-indigo-600 hover:underline">Edit Calendar →</Link>
+          </div>
+          <div className="mt-3 text-sm text-gray-600 dark:text-gray-300">
+            <span className="font-medium">Blocked dates this month:</span>{' '}
+            {blockedDates.length ? blockedDates.slice(0, 10).join(', ') : 'None set yet'}
           </div>
         </div>
 
