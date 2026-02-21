@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSessionOrDemo } from '@/lib/auth/session'
 import { ACTIVITY_CATALOG } from '@/lib/activities'
+import { DEMO_MODE } from '@/lib/auth/demo'
 
 type AvailabilityMap = Record<string, 'busy' | 'open'>
 
@@ -28,19 +29,23 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
   const availability = (user.weeklyAvailability as AvailabilityMap | null) ?? {}
-  const openDays = Object.entries(availability)
+  const derivedOpenDays = Object.entries(availability)
     .filter(([, status]) => status === 'open')
     .map(([day]) => day)
+  const openDays = derivedOpenDays.length ? derivedOpenDays : ['Tuesday', 'Thursday', 'Saturday']
 
   const tags = normalizeTags([
     ...(user.careerInterests ?? []),
     ...(Array.isArray(user.goals) ? user.goals.map((g: any) => g?.title ?? '') : []),
-    user.intendedMajor ?? '',
-    user.customPreferences ?? '',
+    user.intendedMajor ?? 'computer science',
+    user.customPreferences ?? 'community impact and top university admissions',
+    'top university',
   ])
 
+  const effectivePlan = DEMO_MODE ? 'ELITE' : user.plan
+
   const scored = ACTIVITY_CATALOG
-    .filter((a) => (user.plan === 'FREE' ? a.subscription === 'FREE' : user.plan === 'PRO' ? a.subscription !== 'ELITE' : true))
+    .filter((a) => (effectivePlan === 'FREE' ? a.subscription === 'FREE' : effectivePlan === 'PRO' ? a.subscription !== 'ELITE' : true))
     .map((activity) => {
       const tagScore = activity.fitTags.reduce((acc, tag) => acc + (tags.some((t) => t.includes(tag) || tag.includes(t)) ? 1 : 0), 0)
       const dayScore = openDays.length ? activity.days.filter((d) => openDays.includes(d)).length : 0

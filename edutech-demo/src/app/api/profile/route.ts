@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSessionOrDemo } from '@/lib/auth/session'
+import { DEMO_MODE } from '@/lib/auth/demo'
 
 export async function GET(req: Request) {
   const session = await getSessionOrDemo()
@@ -18,6 +19,19 @@ export async function GET(req: Request) {
       subscriptionStatus: true, subscriptionEnds: true, trialEnds: true,
     },
   })
+
+  if (DEMO_MODE && user) {
+    return NextResponse.json({
+      ...user,
+      gradeLevel: user.gradeLevel ?? 'Grade 11',
+      curriculum: user.curriculum ?? 'IB',
+      intendedMajor: user.intendedMajor ?? 'Computer Science',
+      gpa: user.gpa ?? 3.92,
+      satScore: user.satScore ?? 1490,
+      targetUniversities: user.targetUniversities?.length ? user.targetUniversities : ['Stanford', 'MIT', 'UCL'],
+      careerInterests: user.careerInterests?.length ? user.careerInterests : ['AI', 'Entrepreneurship', 'Community impact'],
+    })
+  }
 
   return NextResponse.json(user)
 }

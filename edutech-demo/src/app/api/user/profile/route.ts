@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSessionOrDemo } from '@/lib/auth/session'
+import { DEMO_MODE } from '@/lib/auth/demo'
 
 export async function PATCH(request: NextRequest) {
   try {
@@ -80,6 +81,35 @@ export async function GET(request: NextRequest) {
         careerInterests: true,
       },
     })
+
+    if (!user) return NextResponse.json(user)
+
+    if (DEMO_MODE) {
+      return NextResponse.json({
+        ...user,
+        gradeLevel: user.gradeLevel ?? 'Grade 11',
+        curriculum: user.curriculum ?? 'IB',
+        intendedMajor: user.intendedMajor ?? 'Computer Science',
+        gpa: user.gpa ?? 3.92,
+        satScore: user.satScore ?? 1490,
+        bio: user.bio ?? 'I build practical AI tools, enjoy community volunteering, and want to study technology + policy to create meaningful impact.',
+        coursesTaking: user.coursesTaking?.length ? user.coursesTaking : ['IB Physics HL', 'AP Calculus BC', 'AP Computer Science A'],
+        activitiesDone: Array.isArray(user.activitiesDone) && user.activitiesDone.length ? user.activitiesDone : [
+          { name: 'Robotics Club Captain', impact: 'Led team to regional finals' },
+          { name: 'Community Tutoring', impact: '80+ volunteer hours in math tutoring' },
+        ],
+        goals: Array.isArray(user.goals) && user.goals.length ? user.goals : [
+          { title: 'Top 20 STEM', target: 'Fall 2027 admissions' },
+          { title: 'Research portfolio', target: 'Submit paper within 6 months' },
+        ],
+        customPreferences: user.customPreferences ?? 'Prefer a mix of STEM depth + community impact projects.',
+        weeklyAvailability: (user.weeklyAvailability as any) ?? {
+          Monday: 'busy', Tuesday: 'open', Wednesday: 'busy', Thursday: 'open', Friday: 'busy', Saturday: 'open', Sunday: 'busy',
+        },
+        targetUniversities: user.targetUniversities?.length ? user.targetUniversities : ['Stanford', 'MIT', 'UCL'],
+        careerInterests: user.careerInterests?.length ? user.careerInterests : ['AI', 'Entrepreneurship', 'Community impact'],
+      })
+    }
 
     return NextResponse.json(user)
   } catch (error) {
