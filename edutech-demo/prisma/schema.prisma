@@ -88,6 +88,12 @@ model User {
   chatMessages   ChatMessage[]
   studySessions       StudySession[]
   sidebarPreference   SidebarPreference?
+  notes               Note[]
+  flashcardDecks      FlashcardDeck[]
+  flashcards          Flashcard[]
+  flashcardReviews    FlashcardReview[]
+  userStats           UserStats?
+  eventLogs           EventLog[]
 }
 
 model SidebarPreference {
@@ -97,6 +103,96 @@ model SidebarPreference {
   openGroups    String[] @default([])
   updatedAt     DateTime @updatedAt
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  content   String   @db.Text
+  tags      String[] @default([])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, updatedAt])
+}
+
+model FlashcardDeck {
+  id          String      @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cards       Flashcard[]
+
+  @@index([userId, updatedAt])
+}
+
+model Flashcard {
+  id        String           @id @default(cuid())
+  deckId    String
+  userId    String
+  front     String           @db.Text
+  back      String           @db.Text
+  tags      String[]         @default([])
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  deck      FlashcardDeck    @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviews   FlashcardReview[]
+
+  @@index([deckId])
+  @@index([userId])
+}
+
+model FlashcardReview {
+  id          String    @id @default(cuid())
+  cardId      String
+  userId      String
+  easiness    Float     @default(2.5)
+  interval    Int       @default(1)
+  repetitions Int       @default(0)
+  dueDate     DateTime  @default(now())
+  lastScore   Int?
+  reviewedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  card        Flashcard @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([cardId, userId])
+  @@index([userId, dueDate])
+}
+
+model UserStats {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  studySessionsCount    Int      @default(0)
+  notesCount            Int      @default(0)
+  flashcardsReviewed    Int      @default(0)
+  practiceSessionsCount Int      @default(0)
+  correctAnswersCount   Int      @default(0)
+  totalAnswersCount     Int      @default(0)
+  currentStreakDays     Int      @default(0)
+  longestStreakDays     Int      @default(0)
+  lastActiveDate        DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EventLog {
+  id        String   @id @default(cuid())
+  userId    String
+  eventType String
+  meta      Json?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }
 
 enum Role {
