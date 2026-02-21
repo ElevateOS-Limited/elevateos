@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { ScanLine, Loader2 } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import { ScanLine, Loader2, Crown } from 'lucide-react'
 
 export default function PaperScanPage() {
+  const { data: session } = useSession()
   const [imageDataUrl, setImageDataUrl] = useState('')
   const [answerKey, setAnswerKey] = useState('{"1":"B","2":"D","3":"C"}')
   const [markingNotes, setMarkingNotes] = useState('')
@@ -30,6 +32,19 @@ export default function PaperScanPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (session?.user?.plan === 'FREE') {
+    return (
+      <div className="max-w-3xl mx-auto p-6">
+        <div className="bg-white border rounded-2xl p-6 text-center">
+          <Crown className="w-8 h-8 text-amber-500 mx-auto mb-3" />
+          <h1 className="text-2xl font-bold mb-2">Paper Scanner is Pro</h1>
+          <p className="text-gray-600 mb-4">Upgrade to Pro to unlock AI paper scanning and right/wrong grading.</p>
+          <a href="/pricing" className="inline-block px-5 py-2.5 rounded-xl bg-indigo-600 text-white">Upgrade Plan</a>
+        </div>
+      </div>
+    )
   }
 
   return (

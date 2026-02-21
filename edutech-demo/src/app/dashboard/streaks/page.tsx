@@ -1,8 +1,20 @@
-export default function Page() {
+'use client'
+
+import { useEffect, useState } from 'react'
+
+export default function StreaksPage() {
+  const [data, setData] = useState<any>(null)
+  useEffect(() => { fetch('/api/progress').then((r)=>r.json()).then(setData) }, [])
+
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-2">Streaks</h1>
-      <p className="text-gray-500">Starter module page. Use the sidebar and command palette to navigate workflows.</p>
+    <div className="max-w-4xl mx-auto p-6 space-y-4">
+      <h1 className="text-3xl font-bold">Streaks</h1>
+      {!data ? <p className="text-gray-500">Loading...</p> : (
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="bg-white border rounded-xl p-4"><p className="text-sm text-gray-500">Current streak</p><p className="text-3xl font-bold">{data.stats.currentStreakDays || 0} days</p></div>
+          <div className="bg-white border rounded-xl p-4"><p className="text-sm text-gray-500">Longest streak</p><p className="text-3xl font-bold">{data.stats.longestStreakDays || 0} days</p></div>
+        </div>
+      )}
     </div>
   )
 }
