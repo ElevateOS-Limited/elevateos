@@ -3,7 +3,6 @@
 import { useSession } from 'next-auth/react'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
-import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { BookOpen, FileText, Clock, GraduationCap, Briefcase, ArrowRight, CalendarClock, ScanLine, Trophy } from 'lucide-react'
 
 export default function DashboardPage() {
@@ -52,16 +51,13 @@ export default function DashboardPage() {
 
   if (status === 'loading') {
     return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center min-h-screen">
-          <p className="text-gray-500">Loading dashboard…</p>
-        </div>
-      </DashboardLayout>
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-500">Loading dashboard…</p>
+      </div>
     )
   }
 
   return (
-    <DashboardLayout>
       <div className="p-6 max-w-7xl mx-auto">
         {/* Welcome */}
         <div className="mb-8">
@@ -160,6 +156,5 @@ export default function DashboardPage() {
           </>
         )}
       </div>
-    </DashboardLayout>
   )
 }
