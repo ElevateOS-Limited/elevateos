@@ -86,7 +86,17 @@ model User {
   pastPapers     PastPaper[]
   essays         Essay[]
   chatMessages   ChatMessage[]
-  studySessions  StudySession[]
+  studySessions       StudySession[]
+  sidebarPreference   SidebarPreference?
+}
+
+model SidebarPreference {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  collapsed     Boolean  @default(false)
+  openGroups    String[] @default([])
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
