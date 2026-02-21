@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edutech — Build Your Future</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ============================================================
+     PAGE: LANDING / HOME
+     ============================================================ -->
+<div id="page-landing" class="page active">
+
+  <!-- NAV -->
+  <nav class="nav" id="main-nav">
+    <div class="nav-inner">
+      <span class="logo" onclick="showPage('landing')">edu<span class="logo-accent">tech</span></span>
+      <div class="nav-links">
+        <a href="#features" class="nav-link" onclick="smoothScroll('features')">Features</a>
+        <a href="#pricing" class="nav-link" onclick="smoothScroll('pricing')">Pricing</a>
+        <a href="#testimonials" class="nav-link" onclick="smoothScroll('testimonials')">Stories</a>
+      </div>
+      <div class="nav-cta">
+        <button class="btn-ghost nav-signin" onclick="showPage('signup')">Sign In</button>
+        <button class="btn-primary btn-sm" onclick="showPage('signup')">Start Free Trial</button>
+      </div>
+      <button class="nav-hamburger" onclick="toggleMenu()" id="hamburger">☰</button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#features" onclick="toggleMenu();smoothScroll('features')">Features</a>
+      <a href="#pricing" onclick="toggleMenu();smoothScroll('pricing')">Pricing</a>
+      <a href="#testimonials" onclick="toggleMenu()">Stories</a>
+      <button class="btn-primary" onclick="showPage('signup')">Start Free Trial</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-grid-bg"></div>
+    <div class="hero-inner">
+      <div class="hero-pill">🎓 AI-Powered University Portfolio Builder</div>
+      <h1 class="hero-h1">Get into the university<br/><em>you actually deserve.</em></h1>
+      <p class="hero-sub">Edutech is the AI mentor that builds a deep understanding of who you are — and creates a personalized roadmap of real opportunities, competitions, and actions to make you an irresistible applicant.</p>
+      <div class="hero-buttons">
+        <button class="btn-primary btn-hero" onclick="showPage('signup')">Start Your Free 7-Day Trial</button>
+        <button class="btn-outline btn-hero" onclick="smoothScroll('features')">See How It Works</button>
+      </div>
+      <p class="hero-note">No credit card required · Cancel anytime · Built for Grades 9–12</p>
+      <div class="hero-stats-row">
+        <div class="hstat"><span class="hstat-n">2,400+</span><span class="hstat-l">Opportunities</span></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><span class="hstat-n">94%</span><span class="hstat-l">Felt more prepared</span></div>
+        <div class="hstat-sep"></div>
+        <div class="hstat"><span class="hstat-n">50+</span><span class="hstat-l">Countries served</span></div>
+      </div>
+    </div>
+    <!-- floating cards -->
+    <div class="hero-cards">
+      <div class="hcard hcard-1">
+        <span class="hcard-icon">🏆</span>
+        <div class="hcard-body">
+          <strong>Competition Match</strong>
+          <p>Google Science Fair — 94% fit</p>
+        </div>
+      </div>
+      <div class="hcard hcard-2">
+        <span class="hcard-icon">🎯</span>
+        <div class="hcard-body">
+          <strong>This Week's Action</strong>
+          <p>Email Prof. Chen at MIT</p>
+        </div>
+      </div>
+      <div class="hcard hcard-3">
+        <span class="hcard-icon">📈</span>
+        <div class="hcard-body">
+          <strong>Profile Strength</strong>
+          <p>Rising → Strong</p>
+        </div>
+      </div>
+      <div class="hero-profile-card">
+        <div class="hpc-top">
+          <div class="hpc-avatar">A</div>
+          <div>
+            <strong>Ayla, Grade 11</strong>
+            <p>Target: MIT, Stanford</p>
+          </div>
+          <span class="hpc-badge">Active</span>
+        </div>
+        <div class="hpc-tags">
+          <span class="htag">⚙️ STEM</span>
+          <span class="htag">🔬 Research</span>
+          <span class="htag">🌍 Impact</span>
+        </div>
+        <div class="hpc-prog-label"><span>Portfolio Strength</span><span>72%</span></div>
+        <div class="hpc-bar"><div class="hpc-fill" style="width:72%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-tag">Why Edutech</div>
+      <h2 class="section-h2">Not another generic platform.<br/>A mentor that <em>knows you.</em></h2>
+      <p class="section-sub">Most tools give every student the same advice. Edutech builds a real understanding of your goals, background, and schedule — then acts on it.</p>
+      <div class="features-grid">
+        <div class="feat-card">
+          <div class="feat-icon">🧠</div>
+          <h3>Deep Understanding</h3>
+          <p>AI that reads between the lines — analyzing your goals, values, interests, and schedule to build a picture of <em>you</em>, not a template.</p>
+        </div>
+        <div class="feat-card feat-card-accent">
+          <div class="feat-icon">📍</div>
+          <h3>Location-Aware</h3>
+          <p>Finds real opportunities near you — internships, labs, competitions — plus the best online programs globally. No irrelevant suggestions.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🔄</div>
+          <h3>Adapts As You Grow</h3>
+          <p>Change your goals or discover a new passion? Regenerate your entire plan instantly. Your mentor grows with you.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📅</div>
+          <h3>Schedule-Smart</h3>
+          <p>Every recommendation fits your actual availability. No clashes, no overload. Just the right opportunities at the right time.</p>
+        </div>
+        <div class="feat-card feat-card-accent">
+          <div class="feat-icon">🛣️</div>
+          <h3>Undecided? Perfect.</h3>
+          <p>Not sure what to pursue? Edutech guides you through structured exploration to discover what truly drives you — before it's too late.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🎓</div>
+          <h3>Admissions-Focused</h3>
+          <p>Every recommendation shows exactly how it impacts your application. We know what the top 50 universities look for.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section how-section">
+    <div class="container">
+      <div class="section-tag">How It Works</div>
+      <h2 class="section-h2">Three steps.<br/>One stronger application.</h2>
+      <div class="steps-row">
+        <div class="step-block">
+          <div class="step-num">01</div>
+          <h3>Tell Us About You</h3>
+          <p>Share your academics, goals, passions, location, and schedule. The more specific, the better your plan.</p>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-block">
+          <div class="step-num">02</div>
+          <h3>AI Builds Your Profile</h3>
+          <p>Our system analyzes everything and generates a personalized strategy — opportunities, focus areas, and actions tailored to you.</p>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-block">
+          <div class="step-num">03</div>
+          <h3>Take Action</h3>
+          <p>Follow your step-by-step plan with specific opportunities, impact ratings, and weekly priorities.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section" id="testimonials">
+    <div class="container">
+      <div class="section-tag">Student Stories</div>
+      <h2 class="section-h2">Real students. Real results.</h2>
+      <div class="testimonials-grid">
+        <div class="tcard">
+          <div class="tcard-stars">★★★★★</div>
+          <p class="tcard-quote">"Edutech found me a research internship at a local university that I never would have discovered on my own. My applications went from generic to genuinely compelling."</p>
+          <div class="tcard-author">
+            <div class="tcard-avatar" style="background:#4f46e5">S</div>
+            <div>
+              <strong>Sofia R.</strong>
+              <span>Grade 12 · Accepted to UC Berkeley</span>
+            </div>
+          </div>
+        </div>
+        <div class="tcard tcard-accent">
+          <div class="tcard-stars">★★★★★</div>
+          <p class="tcard-quote">"I had no idea what I wanted to study. The exploration path helped me discover environmental science and now I have two real projects to show for it."</p>
+          <div class="tcard-author">
+            <div class="tcard-avatar" style="background:#059669">M</div>
+            <div>
+              <strong>Marcus L.</strong>
+              <span>Grade 11 · London, UK</span>
+            </div>
+          </div>
+        </div>
+        <div class="tcard">
+          <div class="tcard-stars">★★★★★</div>
+          <p class="tcard-quote">"The action plan was incredibly specific. It told me exactly who to email, what to say, and what to work toward. My profile went from empty to impressive in 3 months."</p>
+          <div class="tcard-author">
+            <div class="tcard-avatar" style="background:#dc2626">P</div>
+            <div>
+              <strong>Priya M.</strong>
+              <span>Grade 10 · Mumbai, India</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="section pricing-section" id="pricing">
+    <div class="container">
+      <div class="pricing-head-row">
+        <div class="section-tag">Pricing</div>
+        <button type="button" class="pricing-close" onclick="window.scrollTo({top:0,behavior:'smooth'})">×</button>
+      </div>
+      <h2 class="section-h2">Invest in your future.<br/>Start free, cancel anytime.</h2>
+      <p class="section-sub">Every plan starts with a 7-day free trial. No credit card required to begin.</p>
+
+      <div class="pricing-toggle">
+        <span id="toggle-monthly" class="ptoggle active" onclick="setPricingPeriod('monthly')">Monthly</span>
+        <span id="toggle-annual" class="ptoggle" onclick="setPricingPeriod('annual')">Annual <span class="save-badge">Save 30%</span></span>
+      </div>
+
+      <div class="pricing-grid">
+
+        <!-- STARTER -->
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-name">Starter</div>
+            <div class="plan-desc">For students just getting started</div>
+            <div class="plan-price">
+              <span class="plan-currency">$</span>
+              <span class="plan-amount" id="price-starter">9</span>
+              <span class="plan-period">/mo</span>
+            </div>
+            <div class="plan-trial">7 days free, then billed monthly</div>
+          </div>
+          <ul class="plan-features">
+            <li>✓ AI Profile Generation</li>
+            <li>✓ Up to 5 Activity Recommendations</li>
+            <li>✓ Basic Action Plan (3 phases)</li>
+            <li>✓ Location-Aware Suggestions</li>
+            <li>✓ 1 Profile Regeneration/month</li>
+            <li class="plan-feat-off">✗ Schedule Optimization</li>
+            <li class="plan-feat-off">✗ Priority Support</li>
+            <li class="plan-feat-off">✗ Essay Coaching Prompts</li>
+          </ul>
+          <button class="btn-outline plan-btn" onclick="startTrial('starter')">Start Free Trial</button>
+        </div>
+
+        <!-- PRO (FEATURED) -->
+        <div class="plan-card plan-card-featured">
+          <div class="plan-badge">Most Popular</div>
+          <div class="plan-header">
+            <div class="plan-name">Pro</div>
+            <div class="plan-desc">For serious university-bound students</div>
+            <div class="plan-price">
+              <span class="plan-currency">$</span>
+              <span class="plan-amount" id="price-pro">19</span>
+              <span class="plan-period">/mo</span>
+            </div>
+            <div class="plan-trial">7 days free, then billed monthly</div>
+          </div>
+          <ul class="plan-features">
+            <li>✓ Everything in Starter</li>
+            <li>✓ Up to 12 Activity Recommendations</li>
+            <li>✓ Full 5-Phase Action Plan</li>
+            <li>✓ Schedule-Aware Suggestions</li>
+            <li>✓ Unlimited Profile Regenerations</li>
+            <li>✓ Essay Coaching Prompts</li>
+            <li>✓ Weekly Check-In Reminders</li>
+            <li class="plan-feat-off">✗ 1-on-1 Mentor Sessions</li>
+          </ul>
+          <button class="btn-primary plan-btn" onclick="startTrial('pro')">Start Free Trial</button>
+        </div>
+
+        <!-- ELITE -->
+        <div class="plan-card">
+          <div class="plan-header">
+            <div class="plan-name">Elite</div>
+            <div class="plan-desc">For students targeting T10 universities</div>
+            <div class="plan-price">
+              <span class="plan-currency">$</span>
+              <span class="plan-amount" id="price-elite">49</span>
+              <span class="plan-period">/mo</span>
+            </div>
+            <div class="plan-trial">7 days free, then billed monthly</div>
+          </div>
+          <ul class="plan-features">
+            <li>✓ Everything in Pro</li>
+            <li>✓ Unlimited Activity Recommendations</li>
+            <li>✓ Priority Support (24hr response)</li>
+            <li>✓ 2 Live Mentor Sessions/month</li>
+            <li>✓ Application Essay Review</li>
+            <li>✓ University-Specific Strategies</li>
+            <li>✓ Interview Prep Resources</li>
+            <li>✓ Parent Progress Dashboard</li>
+          </ul>
+          <button class="btn-outline plan-btn" onclick="startTrial('elite')">Start Free Trial</button>
+        </div>
+
+      </div>
+
+      <div class="pricing-footer">
+        <p>🔒 Secure checkout · 🔄 Cancel anytime · 💳 No credit card to start trial</p>
+        <p style="margin-top:8px;color:#888;font-size:0.82rem">Need a group or school plan? <a href="mailto:schools@edutech.app" style="color:var(--accent)">Contact us →</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section faq-section">
+    <div class="container faq-container">
+      <div class="section-tag">FAQ</div>
+      <h2 class="section-h2">Questions? We have answers.</h2>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">How does the 7-day free trial work? <span class="faq-arrow">▾</span></div>
+          <div class="faq-a">You get full access to your chosen plan for 7 days — completely free. No credit card is required to start. At the end of the trial you can choose to subscribe or simply walk away with the plan you've built.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Is Edutech useful if I don't know what I want to study? <span class="faq-arrow">▾</span></div>
+          <div class="faq-a">Absolutely — in fact we built an entire "exploration" pathway specifically for undecided students. Check the "I'm not sure yet" option on your intake form and the AI will prioritize activities that help you discover your passion through real experience.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">What grade should I start in? <span class="faq-arrow">▾</span></div>
+          <div class="faq-a">Grade 9 is ideal — the earlier you start building your profile, the more time you have to accumulate meaningful experiences. That said, even Grade 12 students have found Edutech valuable for strengthening their final applications.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Are the opportunities real or made up? <span class="faq-arrow">▾</span></div>
+          <div class="faq-a">All recommended programs, competitions, and organizations (MIT PRIMES, Google Science Fair, DECA, HOSA, etc.) are real and actively running. We include direct links and instructions on how to get involved.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">Can I change my plan later? <span class="faq-arrow">▾</span></div>
+          <div class="faq-a">Yes, you can upgrade or downgrade at any time from your account settings. Changes take effect on your next billing cycle.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta-section">
+    <div class="final-cta-inner">
+      <h2>Your future is being built right now.<br/>Make sure it's by you.</h2>
+      <p>Join thousands of students across 50+ countries building portfolios that open doors.</p>
+      <button class="btn-primary btn-hero" onclick="showPage('signup')">Start Your Free 7-Day Trial</button>
+      <p class="hero-note" style="margin-top:16px">No credit card required. Takes 5 minutes to set up.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo">edu<span class="logo-accent">tech</span></span>
+        <p>Empowering the next generation of leaders, innovators, and changemakers.</p>
+      </div>
+      <div class="footer-links">
+        <div class="fl-col">
+          <strong>Product</strong>
+          <a href="#features" onclick="smoothScroll('features')">Features</a>
+          <a href="#pricing" onclick="smoothScroll('pricing')">Pricing</a>
+          <a href="#" onclick="showPage('signup')">Free Trial</a>
+        </div>
+        <div class="fl-col">
+          <strong>Company</strong>
+          <a href="#">About</a>
+          <a href="#">Blog</a>
+          <a href="mailto:hello@edutech.app">Contact</a>
+        </div>
+        <div class="fl-col">
+          <strong>Legal</strong>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Edutech Inc. All rights reserved.</p>
+    </div>
+  </footer>
+
+</div><!-- end landing -->
+
+<!-- ============================================================
+     PAGE: SIGN UP / FREE TRIAL
+     ============================================================ -->
+<div id="page-signup" class="page">
+  <div class="auth-layout">
+    <div class="auth-left">
+      <button class="back-btn" onclick="showPage('landing')">← Back to Home</button>
+      <div class="auth-brand">edu<span class="logo-accent">tech</span></div>
+      <h2 class="auth-h2">Start your<br/>7-day free trial.</h2>
+      <p class="auth-sub">No credit card required. Full access. Cancel anytime.</p>
+      <div class="auth-perks">
+        <div class="perk">✓ AI-generated portfolio plan in minutes</div>
+        <div class="perk">✓ Real opportunities matched to you</div>
+        <div class="perk">✓ Step-by-step action roadmap</div>
+        <div class="perk">✓ Location-aware recommendations</div>
+      </div>
+      <div class="auth-plan-display" id="auth-plan-display">
+        <span class="apd-label">Selected Plan:</span>
+        <span class="apd-plan" id="apd-plan-name">Pro — $19/mo</span>
+        <a href="#" onclick="showPage('landing');smoothScroll('pricing')" class="apd-change">Change plan</a>
+      </div>
+    </div>
+    <div class="auth-right">
+      <div class="auth-card">
+        <h3>Create your account</h3>
+        <p class="auth-card-sub">7 days free, then your chosen plan.</p>
+        <form id="signup-form" onsubmit="handleSignup(event)">
+          <div class="af-group">
+            <label>Full Name</label>
+            <input type="text" name="fullName" placeholder="Jordan Smith" required />
+          </div>
+          <div class="af-group">
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="jordan@email.com" required />
+          </div>
+          <div class="af-group">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Min 8 characters" minlength="8" required />
+          </div>
+          <div class="af-group">
+            <label>I am a...</label>
+            <select name="role">
+              <option value="student">Student (Grade 9–12)</option>
+              <option value="parent">Parent / Guardian</option>
+              <option value="counselor">School Counselor</option>
+            </select>
+          </div>
+          <label class="af-check">
+            <input type="checkbox" required />
+            <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+          </label>
+          <button type="submit" class="btn-primary btn-full" id="signup-submit">
+            <span id="signup-text">Start My Free Trial →</span>
+            <span id="signup-loading" style="display:none">Creating your account...</span>
+          </button>
+        </form>
+        <p class="auth-switch">Already have an account? <a href="#" onclick="showPage('intake')">Sign in →</a></p>
+        <div class="auth-divider"><span>or start without an account</span></div>
+        <button class="btn-outline btn-full" onclick="showPage('intake')">Skip & Try the Demo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE: INTAKE FORM (4 STEPS)
+     ============================================================ -->
+<div id="page-intake" class="page">
+  <div class="intake-layout">
+    <aside class="intake-sidebar">
+      <button class="back-btn" onclick="goHomeFromIntake()">← Home</button>
+      <div class="intake-logo">edu<span class="logo-accent">tech</span></div>
+      <nav class="intake-steps-nav">
+        <div class="isn-item active" id="isnav-1">
+          <div class="isn-dot"></div><span>Academic Info</span>
+        </div>
+        <div class="isn-item" id="isnav-2">
+          <div class="isn-dot"></div><span>Personal Insight</span>
+        </div>
+        <div class="isn-item" id="isnav-3">
+          <div class="isn-dot"></div><span>Location</span>
+        </div>
+        <div class="isn-item" id="isnav-4">
+          <div class="isn-dot"></div><span>Schedule</span>
+        </div>
+      </nav>
+      <blockquote class="intake-quote">"The best time to plant a tree was 20 years ago. The second best time is now."</blockquote>
+    </aside>
+
+    <main class="intake-main">
+      <form id="intake-form">
+
+        <!-- STEP 1 -->
+        <div class="istep active" id="istep-1">
+          <div class="istep-header">
+            <span class="istep-tag">Step 1 of 4</span>
+            <h2>Academic Information</h2>
+            <p>Help us understand where you are and where you want to go.</p>
+          </div>
+          <div class="ig">
+            <label>Your First Name</label>
+            <input type="text" name="firstName" placeholder="e.g. Jordan" />
+          </div>
+          <div class="ig">
+            <label>Current Grade</label>
+            <select name="grade">
+              <option value="">Select your grade</option>
+              <option value="9">Grade 9</option>
+              <option value="10">Grade 10</option>
+              <option value="11">Grade 11</option>
+              <option value="12">Grade 12</option>
+            </select>
+          </div>
+          <div class="ig">
+            <label>Target Universities <span class="ig-hint">Press Enter after each</span></label>
+            <div class="tag-input" id="uni-tag-box">
+              <input type="text" id="uni-input" placeholder="e.g. MIT, Harvard, Oxford" />
+            </div>
+            <input type="hidden" id="uni-data" name="targetUniversities" />
+          </div>
+          <div class="ig-row">
+            <div class="ig">
+              <label>GPA</label>
+              <input type="number" name="gpa" step="0.01" min="0" max="10" placeholder="e.g. 3.8" />
+            </div>
+            <div class="ig">
+              <label>Scale</label>
+              <select name="gpaScale">
+                <option value="4.0">4.0</option>
+                <option value="7.0">7.0</option>
+              </select>
+            </div>
+          </div>
+          <div class="ig-row">
+            <div class="ig">
+              <label>SAT Score <span class="ig-hint">Optional</span></label>
+              <input type="number" name="satScore" placeholder="400–1600" min="400" max="1600" />
+            </div>
+            <div class="ig">
+              <label>ACT Score <span class="ig-hint">Optional</span></label>
+              <input type="number" name="actScore" placeholder="1–36" min="1" max="36" />
+            </div>
+          </div>
+          <div class="ig">
+            <label>Curriculum</label>
+            <select name="curriculum">
+              <option value="">Select curriculum</option>
+              <option value="IB">IB (International Baccalaureate)</option>
+              <option value="AP">AP (Advanced Placement)</option>
+              <option value="A-Levels">A-Levels</option>
+              <option value="National">National Curriculum</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="ig">
+            <label>Intended Major <span class="ig-hint">Or area of interest</span></label>
+            <input type="text" name="intendedMajor" placeholder="e.g. Computer Science, Medicine, Architecture" />
+          </div>
+          <label class="ig-check">
+            <input type="checkbox" name="unsure" id="unsure-cb" />
+            <span class="ig-check-box"></span>
+            <span>I'm not sure what I want to pursue yet — help me explore</span>
+          </label>
+          <div class="istep-nav">
+            <div></div>
+            <button type="button" class="btn-primary" onclick="nextStep(1)">Continue →</button>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="istep" id="istep-2">
+          <div class="istep-header">
+            <span class="istep-tag">Step 2 of 4</span>
+            <h2>Personal Insight</h2>
+            <p>This is the most important part. The more specific and honest you are, the better your plan.</p>
+          </div>
+          <div class="ig">
+            <label>Tell us about yourself</label>
+            <div class="ig-prompt">Describe your interests, passions, goals, and any impact you want to make in your community or the world. What problems excite you? What experiences have shaped you?</div>
+            <textarea name="personalInsight" id="insight-ta" rows="11" placeholder="E.g. 'I've always been fascinated by how diseases spread through communities. After watching my grandmother struggle with diabetes, I started reading research papers on metabolic health at 14. I want to go into medicine to work on preventive health in underserved communities...'"></textarea>
+            <div class="ig-wcount" id="wcount-display">0 words — aim for 100+</div>
+          </div>
+          <div class="istep-nav">
+            <button type="button" class="btn-ghost" onclick="prevStep(2)">← Back</button>
+            <button type="button" class="btn-primary" onclick="nextStep(2)">Continue →</button>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="istep" id="istep-3">
+          <div class="istep-header">
+            <span class="istep-tag">Step 3 of 4</span>
+            <h2>Your Location</h2>
+            <p>We'll surface opportunities near you alongside the best online programs.</p>
+          </div>
+          <div class="ig-row">
+            <div class="ig">
+              <label>Country</label>
+              <input type="text" name="country" placeholder="e.g. United States" />
+            </div>
+            <div class="ig">
+              <label>City</label>
+              <input type="text" name="city" placeholder="e.g. Boston" />
+            </div>
+          </div>
+          <div class="ig">
+            <label>Participation Preferences <span style="font-weight:400;color:#6b7280;">(multi-select)</span></label>
+            <div class="radio-opts">
+              <label class="ropt">
+                <input type="checkbox" name="travelWillingness" value="local" />
+                <span class="ropt-box">
+                  <strong>Local Only</strong>
+                  <p>Within my city/region</p>
+                </span>
+              </label>
+              <label class="ropt">
+                <input type="checkbox" name="travelWillingness" value="regional" />
+                <span class="ropt-box">
+                  <strong>Regional / National</strong>
+                  <p>Travel within my country</p>
+                </span>
+              </label>
+              <label class="ropt">
+                <input type="checkbox" name="travelWillingness" value="international" />
+                <span class="ropt-box">
+                  <strong>International</strong>
+                  <p>Open to global programs</p>
+                </span>
+              </label>
+              <label class="ropt">
+                <input type="checkbox" name="travelWillingness" value="online" checked />
+                <span class="ropt-box">
+                  <strong>Online Preferred</strong>
+                  <p>Remote & virtual only</p>
+                </span>
+              </label>
+            </div>
+          </div>
+          <div class="istep-nav">
+            <button type="button" class="btn-ghost" onclick="prevStep(3)">← Back</button>
+            <button type="button" class="btn-primary" onclick="nextStep(3)">Continue →</button>
+          </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="istep" id="istep-4">
+          <div class="istep-header">
+            <span class="istep-tag">Step 4 of 4</span>
+            <h2>Your Schedule</h2>
+            <p>We'll only suggest activities that realistically fit your life.</p>
+          </div>
+          <div class="ig">
+            <label>Days you're generally available</label>
+            <div class="day-pills">
+              <label class="dpill"><input type="checkbox" name="availableDays" value="Mon" /><span>Mon</span></label>
+              <label class="dpill"><input type="checkbox" name="availableDays" value="Tue" /><span>Tue</span></label>
+              <label class="dpill"><input type="checkbox" name="availableDays" value="Wed" /><span>Wed</span></label>
+              <label class="dpill"><input type="checkbox" name="availableDays" value="Thu" /><span>Thu</span></label>
+              <label class="dpill"><input type="checkbox" name="availableDays" value="Fri" /><span>Fri</span></label>
+              <label class="dpill"><input type="checkbox" name="availableDays" value="Sat" /><span>Sat</span></label>
+              <label class="dpill"><input type="checkbox" name="availableDays" value="Sun" /><span>Sun</span></label>
+            </div>
+          </div>
+          <div class="ig">
+            <label>When are you typically free?</label>
+            <div class="time-cards">
+              <label class="tcard-opt"><input type="checkbox" name="availableTimes" value="after-school" /><span><strong>After School</strong><em>Late afternoon on your selected days</em></span></label>
+              <label class="tcard-opt"><input type="checkbox" name="availableTimes" value="evening" /><span><strong>Evenings</strong><em>Evening blocks on your selected days</em></span></label>
+              <label class="tcard-opt"><input type="checkbox" name="availableTimes" value="weekend-morning" /><span><strong>Weekend AM</strong><em>9 AM–12 PM</em></span></label>
+              <label class="tcard-opt"><input type="checkbox" name="availableTimes" value="weekend-afternoon" /><span><strong>Weekend PM</strong><em>12–5 PM Sat/Sun</em></span></label>
+              <label class="tcard-opt"><input type="checkbox" name="availableTimes" value="summer" /><span><strong>Summer</strong><em>Multi-week programs</em></span></label>
+              <label class="tcard-opt"><input type="checkbox" name="availableTimes" value="flexible" /><span><strong>Very Flexible</strong><em>Schedule varies</em></span></label>
+            </div>
+          </div>
+          <div class="ig">
+            <label>Hours per week available for extracurriculars</label>
+            <div class="slider-wrap">
+              <input type="range" name="hoursPerWeek" id="hrs-slider" min="1" max="25" value="6" oninput="updateSlider(this.value)" />
+              <span class="slider-badge" id="hrs-badge">6 hrs/week</span>
+            </div>
+          </div>
+          <div class="istep-nav">
+            <button type="button" class="btn-ghost" onclick="prevStep(4)">← Back</button>
+            <button type="submit" class="btn-primary btn-submit" id="submit-btn">
+              <span id="submit-text">Generate My Profile ✨</span>
+              <span id="submit-loading" style="display:none">Analyzing your profile...</span>
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </main>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE: DASHBOARD
+     ============================================================ -->
+<div id="page-dashboard" class="page">
+
+  <header class="dash-nav">
+    <div class="dash-nav-inner">
+      <span class="logo" onclick="showPage('landing')" style="cursor:pointer">edu<span class="logo-accent">tech</span></span>
+      <nav class="dash-tabs">
+        <button class="dtab active" onclick="showDashTab('overview',this)">Overview</button>
+        <button class="dtab" onclick="showDashTab('activities',this)">Activities</button>
+        <button class="dtab" onclick="showDashTab('plan',this)">Action Plan</button>
+      </nav>
+      <div class="dash-nav-right">
+        <button class="btn-regen" onclick="regenProfile()">🔄 New Path</button>
+        <button class="btn-ghost btn-sm" onclick="startEditProfile()">Edit Profile</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="dash-body">
+
+    <!-- OVERVIEW TAB -->
+    <div class="dashtab active" id="dashtab-overview">
+      <div class="dash-welcome-bar">
+        <div>
+          <h1 id="dash-greeting">Welcome back.</h1>
+          <p id="dash-subtitle">Here's your personalized university portfolio roadmap.</p>
+        </div>
+        <button class="btn-primary btn-sm" onclick="showPage('signup')">Upgrade Plan</button>
+      </div>
+      <div class="overview-grid">
+        <div class="ocard ocard-wide">
+          <div class="ocard-header"><span class="ocard-icon">📋</span><h3>Profile Summary</h3></div>
+          <p id="profile-summary-text" class="ocard-body-text">Your personalized summary will appear here after your profile is generated.</p>
+        </div>
+        <div class="ocard">
+          <div class="ocard-header"><span class="ocard-icon">🎯</span><h3>Focus Areas</h3></div>
+          <div id="focus-areas-container"></div>
+        </div>
+        <div class="ocard">
+          <div class="ocard-header"><span class="ocard-icon">📊</span><h3>Portfolio Snapshot</h3></div>
+          <div id="snapshot-grid" class="snapshot-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVITIES TAB -->
+    <div class="dashtab" id="dashtab-activities">
+      <div class="dash-section-header">
+        <h2>Recommended Activities</h2>
+        <p>Personalized to your goals, location, and availability.</p>
+      </div>
+      <div class="activities-grid" id="activities-container"></div>
+    </div>
+
+    <!-- ACTION PLAN TAB -->
+    <div class="dashtab" id="dashtab-plan">
+      <div class="dash-section-header">
+        <h2>Your Action Plan</h2>
+        <p>Step-by-step guidance — from this week to application season.</p>
+      </div>
+      <div class="plan-timeline" id="plan-container"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     LOADING OVERLAY
+     ============================================================ -->
+<div id="loading-overlay" style="display:none">
+  <div class="loading-card">
+    <div class="loading-ring"></div>
+    <h3>Building your profile</h3>
+    <p id="loading-msg">Analyzing your goals and interests...</p>
+    <div class="loading-steps">
+      <div class="lstep done" id="lst-1">✓ Academic profile processed</div>
+      <div class="lstep" id="lst-2">⏳ Matching opportunities to your goals</div>
+      <div class="lstep" id="lst-3">⏳ Building personalized action plan</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS TOAST -->
+<div id="toast" class="toast" style="display:none"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
