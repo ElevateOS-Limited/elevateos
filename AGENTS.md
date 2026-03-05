@@ -1,79 +1,340 @@
-# AGENTS.md — Codex Review & Execution Rules (ElevateOS Demo)
+# AGENTS.md
+Codex review rules and execution invariants for **ElevateOS Demo**
 
-This repo is a multi-tenant SaaS demo with strict RBAC, org isolation, and an integrated AI Integrity module.
-When reviewing PRs, prioritize correctness and invariants over polish.
+This repository uses a strict control loop defined in `MASTER_TASK_BOARD.md`.  
+All pull requests must be evaluated against the system invariants below.
 
-## Non-negotiable blockers (must request changes)
-1) Tenant isolation
-- Any Prisma query touching tenant data MUST scope by `orgId`.
-- Any API route that reads/writes tenant data MUST derive `orgId` from session and enforce it server-side.
-- No client-provided `orgId` is trusted unless it is cross-checked against session/org membership.
+Reviewers must prioritize **data correctness, tenant isolation, and end-to-end flow integrity** over stylistic concerns.
 
-2) RBAC
-- Every API route MUST enforce roles (owner/admin/tutor/parent/student) with explicit guards.
-- UI gating does not replace server enforcement.
-- Parents must only access their own child’s data. Tutors must only access assigned classes/students.
+---
 
-3) Funnel A “end-to-end” integrity
-- No PR may introduce new surface area (new pages/routes/modules) if earlier Funnel A steps remain partially wired.
-- Any “Done” claim must be validated by click-path acceptance steps (see below).
+# 1. Core principle
 
-4) AI Integrity module correctness
-- Pipeline must persist: upload metadata, extraction output, segments, scores/labels, exports, linkage to student profile.
-- Jobs must be idempotent: re-running the same upload does not duplicate segments/reports/artifacts.
-- Segment highlights must reflect stored detection results (no “computed only in UI” without persistence).
+This repo is developed through **stitched vertical slices**.
 
-5) No placeholders shipped
-- Block PRs that include `TODO`, `FIXME`, `placeholder`, `lorem`, stub UIs, or hardcoded demo-only bypasses in production paths.
-- Demo mode is allowed only behind explicit flags and must not weaken RBAC or tenant scoping.
+A PR should:
+- complete a defined slice from `MASTER_TASK_BOARD`
+- preserve tenant isolation
+- preserve RBAC enforcement
+- preserve working build state
 
-## Required PR structure
-Each PR description must include:
-- Scope: which task-board item(s) are being completed
-- Acceptance steps: exact click path to validate
-- Data impact: schema changes, migrations, seed changes
-- Risk & rollback: how to revert safely
+A PR should **never**:
+- introduce new surface area before previous slice wiring is complete
+- weaken tenant isolation or role enforcement
+- introduce placeholder logic
 
-## Acceptance tests (reviewer should validate conceptually; author should run locally)
-### Funnel A (tutor flow) — minimum click-path
-- Login (demo or credentialed)
-- Navigate to Funnel A entry point
-- Create/assign at least one artifact (worksheet/test/mock or equivalent per task board)
-- Verify artifact appears in Library and is linked to class/student
-- Verify org isolation: same action in another org does not see data (if multi-org demo exists)
-- Verify RBAC: student/parent cannot access tutor-only actions/endpoints
+---
 
-### AI Integrity — minimum click-path
-- Open “AI Integrity Check” from sidebar
-- Upload PDF/DOCX/TXT
-- Confirm extraction succeeded (visible text)
-- Confirm segmentation (~150–250 words or paragraph-based)
-- Confirm scoring outputs overall % + per-segment % + label + confidence + rationale
-- Confirm highlight UI matches flagged segments
-- Export PDF report and DOCX report (non-empty, correct headings, includes disclaimer)
-- Confirm persistence: report listed under Student Profile → Integrity Reports, and files exist on storage path
+# 2. Hard blockers (automatic review failure)
 
-## Security & data handling
-- Do not log raw student submissions in server logs.
-- Do not expose sensitive tokens/keys to client.
-- Ensure `.env` and secrets remain ignored and not committed.
+Reject PR if ANY of the following appear.
 
-## Performance & reliability expectations (demo-appropriate)
-- Any worker/queue logic should handle restarts safely.
-- File uploads must have size/type checks.
-- Background jobs should have status transitions (pending/running/complete/failed) and retry limits.
+## Tenant isolation violation
+All tenant data must be scoped by `orgId`.
 
-## Code quality expectations (review focus)
-- Prefer small, composable functions and shared utilities over duplicated logic.
-- Avoid magic constants: extract to config/constants.
-- Ensure consistent error responses and validation (e.g., zod schemas for inputs where applicable).
-- Add minimal tests when introducing exports, workers, or tenant/RBAC enforcement paths.
+Required rules:
+- Prisma queries must include `orgId` filter
+- API routes must derive orgId from session
+- orgId must never be accepted directly from client
 
-## What “approve” means
+Violations:
+- `findMany()` or `update()` without org filter
+- trusting client orgId
+
+---
+
+## RBAC enforcement missing
+All write routes must enforce roles.
+
+Roles defined in:
+src/lib/auth/roles.ts
+
+
+Server must enforce:
+- owner
+- admin
+- tutor
+- parent
+- student
+
+UI gating alone is **not sufficient**.
+
+Example violation:
+
+
+if (session.user.role === "tutor") { ... }
+
+
+without server validation.
+
+---
+
+## Placeholder logic shipped
+Reject if any of these appear:
+
+
+TODO
+FIXME
+placeholder
+lorem
+mock data in production path
+
+
+Demo mode flags are allowed only if they **do not bypass RBAC or tenant scoping**.
+
+---
+
+## Broken control loop
+Reject PR if:
+
+- `MASTER_TASK_BOARD.md` updated incorrectly
+- logging files removed
+- commit bypasses defined slice sequencing
+
+Required files:
+
+
+MASTER_TASK_BOARD.md
+PROGRESS_LOG.md
+HEARTBEAT.md
+POSTMORTEM.md
+
+
+---
+
+# 3. Funnel A invariants
+
+Reference: Section 1 of `MASTER_TASK_BOARD.md`.
+
+Minimum working flow must remain intact:
+
+Tutor flow:
+
+
+login
+→ /dashboard/quickstart
+→ select class + student
+→ generate worksheet
+→ assign
+→ record score
+→ generate monthly report
+→ review history
+
+
+Reviewers must verify that the PR does not break this path.
+
+---
+
+## Funnel A entity model
+
+Required entities for completion:
+
+
+Organization
+Class
+Student
+Assessment
+Attempt
+LessonPlan
+LessonSession
+CalendarEvent
+Report
+Document
+
+
+Reject PR if schema changes break compatibility.
+
+---
+
+## Funnel A critical routes
+
+Routes must enforce:
+
+- RBAC
+- orgId scoping
+- validation
+
+Critical endpoints:
+
+
+/api/worksheets/generate
+/api/worksheets
+/api/feedback
+/api/notes
+/api/classes/*
+/api/students/*
+/api/assessments/*
+/api/reports/monthly/*
+
+
+---
+
+# 4. AI Integrity module invariants
+
+Reference: Section 2 of `MASTER_TASK_BOARD.md`.
+
+Pipeline must follow:
+
+
+Upload
+→ Extract text
+→ Segment
+→ Score
+→ Highlight
+→ Export
+→ Persist job
+→ Link to student profile
+
+
+Reject PR if any step is skipped.
+
+---
+
+## Required database entities
+
+
+AiDetectionJob
+AiDetectionSegment
+AiDetectionReport
+
+
+Each job must include:
+
+
+jobId
+studentId
+documentId
+status
+createdAt
+
+
+Segments must include:
+
+
+segmentText
+score
+label
+confidence
+rationale
+
+
+---
+
+## Idempotency requirement
+
+Running analysis twice must **not duplicate segments or reports**.
+
+Job reruns should update existing records.
+
+Reject PR if duplicate rows are possible.
+
+---
+
+# 5. Export requirements
+
+Exports must include:
+
+
+PDF
+DOCX
+
+
+Exports must contain:
+
+- title
+- student
+- date
+- overall score
+- segment breakdown
+- disclaimer
+
+Reject PR if export produces empty file or placeholder content.
+
+---
+
+# 6. Logging protocol
+
+Each commit cycle must update:
+
+
+PROGRESS_LOG.md
+HEARTBEAT.md
+POSTMORTEM.md
+
+
+Heartbeat cadence:
+
+
+30 minute status
+60 minute commit or postmortem
+
+
+Reject PR if logs are removed or bypassed.
+
+---
+
+# 7. Code quality expectations
+
+Prefer:
+
+- shared utilities
+- small composable functions
+- typed inputs
+- consistent error responses
+
+Avoid:
+
+- magic constants
+- duplicated logic
+- hidden side effects
+
+---
+
+# 8. Tooling expectations
+
+The following must remain functional:
+
+
+npm run build
+
+
+Lint/test scripts may fail temporarily (known baseline issue) but **must not regress further**.
+
+Known baseline issues:
+
+
+Next lint config mismatch
+missing typecheck script
+missing test script
+
+
+---
+
+# 9. What approval means
+
 Approve only if:
-- RBAC + org scoping are correct
-- The PR completes a stitched end-to-end increment (not a partial UI slice)
-- No placeholders were introduced
-- Export and persistence paths are credible and testable
 
-If in doubt, request changes with a specific invariant violation.
+1. RBAC is enforced server-side
+2. orgId isolation is correct
+3. vertical slice remains functional
+4. no placeholders exist
+5. database writes are deterministic
+6. build succeeds
+
+If any invariant is uncertain, request changes.
+
+---
+
+# 10. Review philosophy
+
+Codex should review with the mindset:
+
+**This is a multi-tenant SaaS.**
+
+Primary risks are:
+
+- tenant data leakage
+- role privilege escalation
+- broken end-to-end product flow
+
+Focus on those first.
