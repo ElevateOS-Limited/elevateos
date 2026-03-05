@@ -1,0 +1,208 @@
+'use client'
+
+import { useSession } from 'next-auth/react'
+import { useQuery } from '@tanstack/react-query'
+import Link from 'next/link'
+import { BookOpen, FileText, Clock, GraduationCap, Briefcase, ArrowRight, CalendarClock, ScanLine, Trophy } from 'lucide-react'
+
+const toIsoDate = (date: Date) => {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+const monthGrid = (month: Date) => {
+  const first = new Date(month.getFullYear(), month.getMonth(), 1)
+  const startDay = first.getDay()
+  const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate()
+  const cells: Array<Date | null> = []
+  for (let i = 0; i < startDay; i++) cells.push(null)
+  for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(month.getFullYear(), month.getMonth(), d))
+  while (cells.length % 7 !== 0) cells.push(null)
+  return cells
+}
+
+export default function DashboardPage() {
+  const { data: session, status } = useSession()
+
+  const { data: profile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: () => fetch('/api/profile').then(r => r.json()),
+  })
+
+  const { data: materials } = useQuery({
+    queryKey: ['study-materials'],
+    queryFn: () => fetch('/api/study').then(r => r.json()),
+  })
+
+  const { data: worksheets } = useQuery({
+    queryKey: ['worksheets'],
+    queryFn: () => fetch('/api/worksheets').then(r => r.json()),
+  })
+
+  const quickActions = [
+    { href: '/dashboard/study', label: 'New Study Session', icon: BookOpen, desc: 'Upload material & get AI notes', color: 'from-blue-500 to-indigo-600' },
+    { href: '/dashboard/worksheets', label: 'Generate Worksheet', icon: FileText, desc: 'Create practice questions', color: 'from-purple-500 to-pink-600' },
+    { href: '/dashboard/pastpapers', label: 'Simulate Exam', icon: Clock, desc: 'Timed past paper practice', color: 'from-orange-500 to-red-600' },
+    { href: '/dashboard/admissions', label: 'Check Admissions', icon: GraduationCap, desc: 'AI university analysis', color: 'from-green-500 to-teal-600' },
+    { href: '/dashboard/internships', label: 'Find Internships', icon: Briefcase, desc: 'Curated opportunities', color: 'from-pink-500 to-rose-600' },
+    { href: '/dashboard/planner', label: 'Activity Planner', icon: CalendarClock, desc: 'Match open days to top-university activities', color: 'from-indigo-500 to-violet-600' },
+    { href: '/dashboard/paper-scan', label: 'Paper Scanner', icon: ScanLine, desc: 'Upload exam photos and mark right/wrong', color: 'from-cyan-500 to-blue-600' },
+    { href: '/dashboard/extracurriculars', label: 'EC Scoring', icon: Trophy, desc: 'Analyze extracurricular strength with points', color: 'from-amber-500 to-orange-600' },
+  ]
+
+  const stats = [
+    { label: 'Study Sessions', value: (materials as any[])?.length || 0, icon: BookOpen },
+    { label: 'Worksheets', value: (worksheets as any[])?.length || 0, icon: FileText },
+    { label: 'Exams Practiced', value: 0, icon: Clock },
+  ]
+
+  const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+  const rawAvailability = ((profile as any)?.weeklyAvailability || {}) as any
+  const availability = (rawAvailability?.weekly && typeof rawAvailability.weekly === 'object'
+    ? rawAvailability.weekly
+    : rawAvailability) as Record<string, 'busy' | 'open'>
+  const blockedDates = Array.isArray(rawAvailability?.blockedDates) ? rawAvailability.blockedDates : []
+  const viewMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  const todayIso = toIsoDate(new Date())
+  const futureBlockedDates = blockedDates.filter((d: string) => d >= todayIso)
+
+  const firstName = session?.user?.name?.split(' ')?.[0] || 'Student'
+
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-500">Loading dashboard…</p>
+      </div>
+    )
+  }
+
+  return (
+      <div className="p-6 max-w-7xl mx-auto">
+        {/* Welcome */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-1">
+            Welcome back, {firstName}! 👋
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            {profile?.curriculum ? `${profile.curriculum} Student` : 'Ready to ace your studies?'}
+          </p>
+        </div>
+
+        {/* Profile completion prompt */}
+        {!profile?.curriculum && (
+          <div className="mb-8 p-4 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 rounded-xl flex items-center justify-between">
+            <div>
+              <p className="font-medium text-indigo-800 dark:text-indigo-300">Complete your profile for personalized AI recommendations</p>
+              <p className="text-sm text-indigo-600 dark:text-indigo-400">Add your curriculum, subjects, and target universities</p>
+            </div>
+            <Link href="/dashboard/settings" className="px-4 py-2 bg-indigo-500 text-white text-sm font-medium rounded-lg hover:bg-indigo-600 transition-colors whitespace-nowrap">
+              Complete Profile
+            </Link>
+          </div>
+        )}
+
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          {stats.map((stat, i) => (
+            <div key={i} className="bg-white dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-800 text-center">
+              <stat.icon className="w-5 h-5 text-indigo-500 mx-auto mb-2" />
+              <p className="text-2xl font-bold">{stat.value}</p>
+              <p className="text-sm text-gray-500">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* My Calendar */}
+        <h2 className="text-xl font-semibold mb-4">My Calendar</h2>
+        <div className="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+            {weekDays.map((day) => {
+              const status = availability[day] || 'busy'
+              const isOpen = status === 'open'
+              return (
+                <div key={day} className={`rounded-lg border p-3 ${isOpen ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800' : 'bg-gray-50 border-gray-200 dark:bg-gray-800 dark:border-gray-700'}`}>
+                  <p className="text-xs text-gray-500">{day}</p>
+                  <p className={`text-sm font-semibold mt-1 ${isOpen ? 'text-green-700 dark:text-green-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                    {isOpen ? 'Open' : 'Busy'}
+                  </p>
+                </div>
+              )
+            })}
+          </div>
+          <div className="mt-4 flex items-center justify-between">
+            <p className="text-sm text-gray-500">Update your schedule in Settings to personalize AI planning.</p>
+            <Link href="/dashboard/settings" className="text-sm text-indigo-600 hover:underline">Edit Calendar →</Link>
+          </div>
+          <div className="mt-4 border border-gray-200 dark:border-gray-700 rounded-xl p-3">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-medium">{viewMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })}</p>
+              <p className="text-xs text-gray-500">Blocked dates are marked in red</p>
+            </div>
+            <div className="grid grid-cols-7 gap-1 text-[10px] text-gray-500 mb-1">
+              {['S','M','T','W','T','F','S'].map((d, i) => <div key={`${d}-${i}`} className="text-center">{d}</div>)}
+            </div>
+            <div className="grid grid-cols-7 gap-1">
+              {monthGrid(viewMonth).map((date, idx) => {
+                if (!date) return <div key={idx} className="h-8" />
+                const iso = toIsoDate(date)
+                const isPast = iso < todayIso
+                const isBlocked = futureBlockedDates.includes(iso)
+                return (
+                  <div
+                    key={iso}
+                    className={`h-8 rounded-md border text-xs flex items-center justify-center ${
+                      isPast
+                        ? 'bg-gray-100 text-gray-400 border-gray-200 dark:bg-gray-800 dark:text-gray-500 dark:border-gray-700'
+                        : isBlocked
+                          ? 'bg-red-100 text-red-700 border-red-300 dark:bg-red-900/20 dark:text-red-300 dark:border-red-700'
+                          : 'bg-white text-gray-700 border-gray-200 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700'
+                    }`}
+                  >
+                    {date.getDate()}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          {quickActions.map((action, i) => (
+            <Link key={i} href={action.href} className="group bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 hover:border-indigo-300 dark:hover:border-indigo-700 transition-all hover:shadow-md">
+              <div className={`w-10 h-10 bg-gradient-to-br ${action.color} rounded-lg flex items-center justify-center mb-3`}>
+                <action.icon className="w-5 h-5 text-white" />
+              </div>
+              <p className="font-semibold mb-1">{action.label}</p>
+              <p className="text-sm text-gray-500">{action.desc}</p>
+              <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-indigo-500 mt-2 transition-colors" />
+            </Link>
+          ))}
+        </div>
+
+        {/* Recent Materials */}
+        {(materials as any[])?.length > 0 && (
+          <>
+            <h2 className="text-xl font-semibold mb-4">Recent Study Materials</h2>
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+              {(materials as any[]).slice(0, 5).map((m: any, i: number) => (
+                <div key={m.id} className={`p-4 flex items-center gap-4 ${i !== 0 ? 'border-t border-gray-200 dark:border-gray-800' : ''}`}>
+                  <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center">
+                    <BookOpen className="w-4 h-4 text-indigo-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{m.title}</p>
+                    <p className="text-sm text-gray-500">{m.subject} {m.level ? `· ${m.level}` : ''}</p>
+                  </div>
+                  <p className="text-xs text-gray-400">{new Date(m.createdAt).toLocaleDateString()}</p>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+  )
+}
