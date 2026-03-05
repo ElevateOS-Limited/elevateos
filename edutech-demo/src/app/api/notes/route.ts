@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSessionOrDemo } from '@/lib/auth/session'
 import { recordEvent } from '@/lib/stats'
+import { forbiddenResponse, hasRequiredRole } from '@/lib/auth/roles'
 
 export async function GET(req: NextRequest) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
 
   const q = (req.nextUrl.searchParams.get('q') || '').toLowerCase()
   const notes = await prisma.note.findMany({ where: { userId: session.user.id }, orderBy: { updatedAt: 'desc' } })
@@ -20,6 +22,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
 
   const { title, content, tags } = await req.json()
   const note = await prisma.note.create({
@@ -37,6 +40,7 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
 
   const { id, title, content, tags } = await req.json()
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
@@ -55,6 +59,7 @@ export async function PATCH(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
   const id = req.nextUrl.searchParams.get('id')
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
   await prisma.note.delete({ where: { id } })
