@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 type Student = { id: string; name: string }
 type ClassItem = { id: string; name: string; students: Student[] }
@@ -17,7 +17,25 @@ type GeneratedWorksheet = {
   questions?: WorksheetQuestion[]
 }
 
-const seedClasses: ClassItem[] = [
+type ProfileResponse = {
+  name?: string | null
+  coursesTaking?: string[]
+}
+
+type FeedbackEntry = {
+  id: string
+  category: string
+  message: string
+  createdAt: string
+}
+
+type NoteEntry = {
+  id: string
+  title: string
+  updatedAt: string
+}
+
+const fallbackClasses: ClassItem[] = [
   {
     id: 'c1',
     name: 'IB English HL - Tues/Thu',
@@ -37,9 +55,11 @@ const seedClasses: ClassItem[] = [
 ]
 
 export default function QuickstartPage() {
-  const [classId, setClassId] = useState(seedClasses[0].id)
-  const currentClass = useMemo(() => seedClasses.find(c => c.id === classId) || seedClasses[0], [classId])
-  const [studentId, setStudentId] = useState(currentClass.students[0].id)
+  const [classes, setClasses] = useState<ClassItem[]>(fallbackClasses)
+  const [classId, setClassId] = useState(fallbackClasses[0].id)
+
+  const currentClass = useMemo(() => classes.find(c => c.id === classId) || classes[0], [classId, classes])
+  const [studentId, setStudentId] = useState(currentClass?.students?.[0]?.id || '')
 
   const [topic, setTopic] = useState('Textual Analysis')
   const [difficulty, setDifficulty] = useState('Medium')
@@ -60,9 +80,82 @@ export default function QuickstartPage() {
   const [savingReport, setSavingReport] = useState(false)
   const [reportError, setReportError] = useState<string | null>(null)
 
-  const selectedStudent = useMemo(() => currentClass.students.find(s => s.id === studentId) || currentClass.students[0], [currentClass, studentId])
+  const [recentFeedback, setRecentFeedback] = useState<FeedbackEntry[]>([])
+  const [recentReports, setRecentReports] = useState<NoteEntry[]>([])
+  const [historyLoading, setHistoryLoading] = useState(false)
+
+  const selectedStudent = useMemo(
+    () => currentClass?.students?.find(s => s.id === studentId) || currentClass?.students?.[0],
+    [currentClass, studentId]
+  )
+
+  useEffect(() => {
+    const loadProfileBackedClassList = async () => {
+      try {
+        const res = await fetch('/api/user/profile')
+        if (!res.ok) return
+
+        const profile: ProfileResponse = await res.json()
+        const courseNames = Array.isArray(profile?.coursesTaking) ? profile.coursesTaking.filter(Boolean) : []
+        if (!courseNames.length) return
+
+        const tutorLabel = profile?.name?.trim() || 'Tutor'
+        const dynamicClasses: ClassItem[] = courseNames.map((course, idx) => ({
+          id: `profile-class-${idx + 1}`,
+          name: course,
+          students: [
+            { id: `profile-student-${idx + 1}-a`, name: `${tutorLabel} - Student A` },
+            { id: `profile-student-${idx + 1}-b`, name: `${tutorLabel} - Student B` },
+          ],
+        }))
+
+        setClasses(dynamicClasses)
+        setClassId(dynamicClasses[0].id)
+        setStudentId(dynamicClasses[0].students[0].id)
+      } catch {
+        // fallback classes remain
+      }
+    }
+
+    loadProfileBackedClassList()
+  }, [])
+
+  const loadHistory = async () => {
+    setHistoryLoading(true)
+    try {
+      const [feedbackRes, notesRes] = await Promise.all([
+        fetch('/api/feedback'),
+        fetch('/api/notes?q=monthly%20report'),
+      ])
+
+      if (feedbackRes.ok) {
+        const feedbackData = (await feedbackRes.json()) as FeedbackEntry[]
+        setRecentFeedback(
+          feedbackData
+            .filter((entry) => entry.category?.includes('quickstart'))
+            .slice(0, 5)
+        )
+      }
+
+      if (notesRes.ok) {
+        const notesData = (await notesRes.json()) as NoteEntry[]
+        setRecentReports(notesData.slice(0, 5))
+      }
+    } finally {
+      setHistoryLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadHistory()
+  }, [])
 
   const generateWorksheet = async () => {
+    if (!topic.trim()) {
+      setGenerationError('Please enter a topic before generating.')
+      return
+    }
+
     setGenerationBusy(true)
     setGenerationError(null)
     setWorksheetReady(false)
@@ -95,7 +188,7 @@ export default function QuickstartPage() {
   }
 
   const assignWorksheet = async () => {
-    if (!worksheetReady) return
+    if (!worksheetReady || !selectedStudent) return
 
     setAssigning(true)
     try {
@@ -105,18 +198,10 @@ export default function QuickstartPage() {
         body: JSON.stringify({
           category: 'quickstart_assignment',
           message: `Assigned worksheet \"${worksheet?.title || topic}\" to ${selectedStudent.name} (${currentClass.name})`,
-          page: '/dashboard/quickstart',
-          sentiment: 'positive',
-          severity: 'low',
-          metadata: {
-            classId,
-            studentId,
-            topic,
-            difficulty,
-          },
         }),
       })
       setAssigned(true)
+      await loadHistory()
     } finally {
       setAssigning(false)
     }
@@ -124,7 +209,7 @@ export default function QuickstartPage() {
 
   const recordScore = async () => {
     const n = Number(score)
-    if (Number.isNaN(n) || n < 0 || n > 100) return
+    if (Number.isNaN(n) || n < 0 || n > 100 || !selectedStudent) return
 
     setRecordingScore(true)
     try {
@@ -136,19 +221,16 @@ export default function QuickstartPage() {
         body: JSON.stringify({
           category: 'quickstart_score',
           message: `Recorded score ${n} for ${selectedStudent.name} (${topic})`,
-          page: '/dashboard/quickstart',
-          sentiment: n >= 70 ? 'positive' : 'neutral',
-          severity: 'low',
-          metadata: { classId, studentId, score: n, topic },
         }),
       })
+      await loadHistory()
     } finally {
       setRecordingScore(false)
     }
   }
 
   const saveReport = async () => {
-    if (!comment.trim()) return
+    if (!comment.trim() || !selectedStudent) return
 
     setSavingReport(true)
     setReportError(null)
@@ -179,6 +261,7 @@ export default function QuickstartPage() {
       if (!res.ok) throw new Error(data?.error || 'Failed to save report')
 
       setReportSaved(true)
+      await loadHistory()
     } catch (error) {
       setReportError(error instanceof Error ? error.message : 'Failed to save report')
       setReportSaved(false)
@@ -191,18 +274,18 @@ export default function QuickstartPage() {
     <main className="max-w-6xl mx-auto p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Tutor Quickstart (Funnel A MVP)</h1>
-        <p className="text-gray-500 mt-2">Now wired to live APIs for worksheet generation + report persistence.</p>
+        <p className="text-gray-500 mt-2">Live API flow with profile-backed class list + assignment/report history.</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
         <section className="rounded-2xl border p-4 bg-white dark:bg-gray-900">
           <h2 className="font-semibold">1) Pick Class & Student</h2>
           <div className="space-y-2 mt-3">
-            <select value={classId} onChange={e => { setClassId(e.target.value); const cls = seedClasses.find(c => c.id === e.target.value) || seedClasses[0]; setStudentId(cls.students[0].id) }} className="w-full border rounded-lg px-3 py-2 bg-transparent">
-              {seedClasses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            <select value={classId} onChange={e => { setClassId(e.target.value); const cls = classes.find(c => c.id === e.target.value) || classes[0]; setStudentId(cls.students[0].id) }} className="w-full border rounded-lg px-3 py-2 bg-transparent">
+              {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
             <select value={studentId} onChange={e => setStudentId(e.target.value)} className="w-full border rounded-lg px-3 py-2 bg-transparent">
-              {currentClass.students.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+              {currentClass?.students?.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
             </select>
           </div>
         </section>
@@ -219,7 +302,7 @@ export default function QuickstartPage() {
             {generationBusy ? 'Generating…' : 'Generate'}
           </button>
           {generationError && <p className="text-sm text-red-600 mt-2">{generationError}</p>}
-          {worksheetReady && <p className="text-sm text-green-600 mt-2">Worksheet ready for {selectedStudent.name}: {topic} ({difficulty})</p>}
+          {worksheetReady && selectedStudent && <p className="text-sm text-green-600 mt-2">Worksheet ready for {selectedStudent.name}: {topic} ({difficulty})</p>}
           {worksheet?.questions?.length ? (
             <ul className="mt-3 space-y-1 text-sm text-gray-600 dark:text-gray-300 list-disc pl-5">
               {worksheet.questions.slice(0, 3).map((q, idx) => (
@@ -250,7 +333,7 @@ export default function QuickstartPage() {
               <div key={i} className="w-8 bg-indigo-500/80 rounded-t" style={{ height: `${Math.max(8, s)}%` }} title={`Attempt ${i + 1}: ${s}`} />
             ))}
           </div>
-          <p className="text-xs text-gray-500 mt-1">Score trend for {selectedStudent.name}</p>
+          {selectedStudent && <p className="text-xs text-gray-500 mt-1">Score trend for {selectedStudent.name}</p>}
         </section>
       </div>
 
@@ -261,11 +344,45 @@ export default function QuickstartPage() {
           {savingReport ? 'Saving…' : 'Save Monthly Report'}
         </button>
         {reportError && <p className="text-sm text-red-600 mt-2">{reportError}</p>}
-        {reportSaved && (
+        {reportSaved && selectedStudent && (
           <div className="mt-3 rounded-lg border border-green-300 bg-green-50 p-3 text-sm text-green-700">
             Report saved for {selectedStudent.name}. Tutor comment stored in Notes.
           </div>
         )}
+      </section>
+
+      <section className="rounded-2xl border p-4 bg-white dark:bg-gray-900">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold">Quickstart Activity History</h2>
+          <button onClick={loadHistory} className="text-sm underline underline-offset-2">Refresh</button>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4 mt-3">
+          <div>
+            <p className="text-sm font-medium mb-2">Recent assignments / score logs</p>
+            {historyLoading ? <p className="text-xs text-gray-500">Loading…</p> : null}
+            <ul className="space-y-2 text-sm">
+              {recentFeedback.length ? recentFeedback.map(item => (
+                <li key={item.id} className="border rounded-lg p-2">
+                  <p>{item.message}</p>
+                  <p className="text-xs text-gray-500 mt-1">{new Date(item.createdAt).toLocaleString()}</p>
+                </li>
+              )) : <li className="text-xs text-gray-500">No activity yet.</li>}
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-sm font-medium mb-2">Recent monthly reports</p>
+            <ul className="space-y-2 text-sm">
+              {recentReports.length ? recentReports.map(item => (
+                <li key={item.id} className="border rounded-lg p-2">
+                  <p>{item.title}</p>
+                  <p className="text-xs text-gray-500 mt-1">{new Date(item.updatedAt).toLocaleString()}</p>
+                </li>
+              )) : <li className="text-xs text-gray-500">No report saved yet.</li>}
+            </ul>
+          </div>
+        </div>
       </section>
     </main>
   )
