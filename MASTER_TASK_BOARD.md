@@ -2,8 +2,8 @@
 
 ## Section 0: Repo baseline (facts only)
 
-- Current branch: `master`
-- Last commit hash: `3f85525`
+- Current branch: `feat/ai-integrity-vertical-slice`
+- Last commit hash: `5a517e0`
 - Repo path: `/root/.openclaw/workspace/edutech-demo`
 
 ### Local run (currently working commands)

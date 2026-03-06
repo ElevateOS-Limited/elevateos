@@ -4,6 +4,7 @@ import { generateStructuredOutput } from '@/lib/ai/openai'
 import { z } from 'zod'
 import { getSessionOrDemo } from '@/lib/auth/session'
 import { enforceAIDemoGuard, useStaticDemoResponses, demoWorksheet } from '@/lib/demo-ai'
+import { forbiddenResponse, hasRequiredRole } from '@/lib/auth/roles'
 
 const schema = z.object({
   subject: z.string(),
@@ -17,6 +18,7 @@ const schema = z.object({
 export async function POST(req: Request) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
 
   try {
     const guard = await enforceAIDemoGuard(session, 'worksheets.create')
@@ -116,6 +118,7 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
 
   const worksheets = await prisma.worksheet.findMany({
     where: { userId: session.user.id },
