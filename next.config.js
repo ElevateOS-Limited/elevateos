@@ -5,9 +5,7 @@ const nextConfig = {
   images: {
     domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
   },
-  experimental: {
-    serverComponentsExternalPackages: ['pdf-parse'],
-  },
+  serverExternalPackages: ['pdf-parse'],
   eslint: {
     ignoreDuringBuilds: true,
   },
