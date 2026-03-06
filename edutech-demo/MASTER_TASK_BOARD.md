@@ -2,8 +2,8 @@
 
 ## Section 0: Repo baseline (facts only)
 
-- Current branch: `feat/rbac-funnel-a-routes`
-- Last commit hash: `1bd5713`
+- Current branch: `feat/ai-integrity-vertical-slice`
+- Last commit hash: `5a517e0`
 - Repo path: `/root/.openclaw/workspace/edutech-demo`
 
 ### Local run (currently working commands)
