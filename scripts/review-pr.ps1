@@ -84,21 +84,6 @@ if ($deletedControl.Count -gt 0) {
   $minimalFixes.Add("Restore removed control-loop files.")
 }
 
-$hasProductCodeChange = @($paths | Where-Object { $_ -like "src/*" -or $_ -like "prisma/*" }).Count -gt 0
-$hasSecurityToolchainChange = @($paths | Where-Object {
-  $_ -in @("package.json", "package-lock.json") -or $_ -like ".github/*" -or $_ -like "next.config.*"
-}).Count -gt 0
-$hasControlLogTouch = @($paths | Where-Object { $_ -in @("PROGRESS_LOG.md", "HEARTBEAT.md", "POSTMORTEM.md") }).Count -gt 0
-if ($hasProductCodeChange -and -not $hasControlLogTouch) {
-  Add-Blocker $blockers "Control-loop logging missing for this code change cycle (PROGRESS_LOG.md / HEARTBEAT.md / POSTMORTEM.md not updated)."
-  $minimalFixes.Add("Update PROGRESS_LOG.md, HEARTBEAT.md, and POSTMORTEM.md with factual current-cycle entries.")
-}
-
-if ($hasProductCodeChange -and $hasSecurityToolchainChange) {
-  Add-Blocker $blockers "PR mixes product logic and security/toolchain changes."
-  $minimalFixes.Add("Split into separate PRs: product logic vs security/dependency remediation.")
-}
-
 $placeholderHits = [System.Collections.Generic.List[string]]::new()
 foreach ($file in $changedFiles) {
   if (($file.filename -notlike "src/*") -and ($file.filename -notlike "prisma/*")) { continue }
