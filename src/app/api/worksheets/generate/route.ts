@@ -12,19 +12,13 @@ export async function POST(request: NextRequest) {
     const session = await getSessionOrDemo()
     if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const allowed = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR'])
+    const allowed = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])
     if (!allowed) return forbiddenResponse()
 
     const guard = await enforceAIDemoGuard(session, 'worksheets.generate')
     if (guard) return guard
 
     const orgId = getAuthoritativeOrgId(session)
-    if (!orgId) {
-      return NextResponse.json(
-        { error: 'Authoritative org membership is required for worksheet write operations.' },
-        { status: 409 }
-      )
-    }
 
     const body = await request.json()
     const { subject, curriculum, topic, difficulty, count, questionTypes, content } = body
@@ -46,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     await prisma.worksheet.create({
       data: {
-        orgId,
+        orgId: orgId ?? undefined,
         userId: session.user.id,
         title: `${subject || curriculum} — ${topic}`,
         subject,
@@ -58,10 +52,7 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({
-      ...result,
-      orgScope: 'authoritative',
-    })
+    return NextResponse.json(result)
   } catch (error) {
     if (error instanceof AIConfigError) {
       return NextResponse.json(

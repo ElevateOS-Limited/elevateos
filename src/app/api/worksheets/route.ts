@@ -20,7 +20,7 @@ export async function POST(req: Request) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const allowed = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR'])
+  const allowed = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])
   if (!allowed) return forbiddenResponse()
 
   try {
@@ -28,13 +28,6 @@ export async function POST(req: Request) {
     if (guard) return guard
 
     const orgId = getAuthoritativeOrgId(session)
-    if (!orgId) {
-      return NextResponse.json(
-        { error: 'Authoritative org membership is required for worksheet write operations.' },
-        { status: 409 }
-      )
-    }
-
     const body = await req.json()
     const data = schema.parse(body)
 
@@ -108,7 +101,7 @@ export async function POST(req: Request) {
 
     const worksheet = await prisma.worksheet.create({
       data: {
-        orgId,
+        orgId: orgId ?? undefined,
         userId: session.user.id,
         title: result.title || `${data.subject} Worksheet`,
         subject: data.subject,
@@ -120,10 +113,7 @@ export async function POST(req: Request) {
       },
     })
 
-    return NextResponse.json({
-      ...worksheet,
-      orgScope: 'authoritative',
-    })
+    return NextResponse.json(worksheet)
   } catch (e) {
     console.error(e)
     return NextResponse.json({ error: 'Failed to generate worksheet' }, { status: 500 })
@@ -134,7 +124,7 @@ export async function GET(req: Request) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const allowed = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR'])
+  const allowed = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])
   if (!allowed) return forbiddenResponse()
 
   const orgId = getAuthoritativeOrgId(session)
@@ -144,9 +134,5 @@ export async function GET(req: Request) {
     orderBy: { createdAt: 'desc' },
   })
 
-  return NextResponse.json({
-    worksheets,
-    orgScope: orgId ? 'authoritative' : 'unscoped',
-    orgScopeNote: orgId ? undefined : 'Authoritative org membership unavailable; response is user-scoped fallback and not tenant-authoritative.',
-  })
+  return NextResponse.json(worksheets)
 }
