@@ -53,9 +53,17 @@ $prJson = & $gh pr view $PrNumber --json number,title,body,headRefName,baseRefNa
 if ($LASTEXITCODE -ne 0 -or -not $prJson) { throw "Unable to load PR #$PrNumber." }
 $pr = $prJson | ConvertFrom-Json
 
-$filesJson = & $gh api "repos/imjusthoward/elevateos-demo/pulls/$PrNumber/files?per_page=100"
-if ($LASTEXITCODE -ne 0 -or -not $filesJson) { throw "Unable to load changed files for PR #$PrNumber." }
-$changedFiles = $filesJson | ConvertFrom-Json
+$changedFiles = @()
+$page = 1
+while ($true) {
+  $filesJson = & $gh api "repos/imjusthoward/elevateos-demo/pulls/$PrNumber/files?per_page=100&page=$page"
+  if ($LASTEXITCODE -ne 0 -or -not $filesJson) { throw "Unable to load changed files for PR #$PrNumber (page $page)." }
+  $batch = @($filesJson | ConvertFrom-Json)
+  if ($batch.Count -eq 0) { break }
+  $changedFiles += $batch
+  if ($batch.Count -lt 100) { break }
+  $page += 1
+}
 
 $paths = @($changedFiles | ForEach-Object { $_.filename })
 $grouped = $paths | Group-Object { Get-RiskArea $_ } | Sort-Object Name
@@ -93,18 +101,32 @@ if ($hasProductCodeChange -and $hasSecurityToolchainChange) {
 
 $placeholderHits = [System.Collections.Generic.List[string]]::new()
 foreach ($file in $changedFiles) {
+  if (($file.filename -notlike "src/*") -and ($file.filename -notlike "prisma/*")) { continue }
   $patch = if ($file.PSObject.Properties.Name -contains "patch") { [string]$file.patch } else { "" }
   if (-not $patch) { continue }
-  if ($patch -match "(?im)^\+(?!\+\+).*?\b(TODO|FIXME|placeholder|lorem)\b") {
+  $addedLines = @($patch -split "`n" | Where-Object { $_ -match '^\+(?!\+\+)' })
+  $hasPlaceholderMarker = $false
+  foreach ($line in $addedLines) {
+    if (
+      ($line -match "(?i)\b(TODO|FIXME|placeholder|lorem)\b") -and
+      ($line -notmatch "TODO\|FIXME\|placeholder\|lorem") -and
+      ($line -notmatch "\\b\(TODO\|FIXME\|placeholder\|lorem\)\\b")
+    ) {
+      $hasPlaceholderMarker = $true
+      break
+    }
+  }
+  if ($hasPlaceholderMarker) {
     $placeholderHits.Add($file.filename)
   }
 }
 if ($placeholderHits.Count -gt 0) {
-  Add-Blocker $blockers "Placeholder/fake-completion markers found in diff: $($placeholderHits | Sort-Object -Unique -join ', ')."
+  $placeholderList = ($placeholderHits | Sort-Object -Unique)
+  Add-Blocker $blockers "Placeholder/fake-completion markers found in diff: $($placeholderList -join ', ')."
   $minimalFixes.Add("Remove placeholder markers and ship real logic only.")
 }
 
-$criticalApiPattern = '^src/app/api/(worksheets/generate|worksheets|feedback|notes|classes/.+|students/.+|assessments/.+|reports/monthly/.+)/route\.(ts|tsx)$'
+$criticalApiPattern = '^src/app/api/(worksheets/generate|worksheets|feedback|notes|classes(?:/.+)?|students(?:/.+)?|assessments(?:/.+)?|reports/monthly(?:/.+)?)/route\.(ts|tsx)$'
 $criticalApiFiles = @($paths | Where-Object { $_ -match $criticalApiPattern })
 foreach ($path in $criticalApiFiles) {
   $entry = $changedFiles | Where-Object { $_.filename -eq $path } | Select-Object -First 1
@@ -114,6 +136,11 @@ foreach ($path in $criticalApiFiles) {
 
   $addsWriteHandler = $patch -match "(?m)^\+(?!\+\+)\s*export\s+async\s+function\s+(POST|PUT|PATCH|DELETE)\s*\("
   $mentionsRoleGuard = $patch -match "(?m)^\+(?!\+\+).*(requireRole|hasRole|assertRole|ensureRole|allowedRoles|roles\.ts)"
+  $removesRoleGuard = $patch -match "(?m)^-(?!--).*(requireRole|hasRole|assertRole|ensureRole|allowedRoles)"
+  if ($removesRoleGuard) {
+    Add-Blocker $blockers "Critical route removed role-guarding logic in diff: $path."
+    $minimalFixes.Add("Restore explicit server-side role guard for $path.")
+  }
   if ($addsWriteHandler -and -not $mentionsRoleGuard) {
     Add-Blocker $blockers "Critical write route updated without explicit role-guard signal in diff: $path."
     $minimalFixes.Add("Add explicit server-side role guard to $path (UI gating alone is insufficient).")
@@ -121,6 +148,11 @@ foreach ($path in $criticalApiFiles) {
 
   $addsPrismaOp = $patch -match "(?m)^\+(?!\+\+).*(prisma\..*\.(findMany|findFirst|findUnique|create|update|upsert|delete))"
   $mentionsOrg = $patch -match "(?m)^\+(?!\+\+).*\b(orgId|withOrgScope)\b"
+  $removesOrgScope = $patch -match "(?m)^-(?!--).*\b(orgId|withOrgScope)\b"
+  if ($removesOrgScope) {
+    Add-Blocker $blockers "Critical route removed org scoping logic in diff: $path."
+    $minimalFixes.Add("Restore authoritative org scoping in $path.")
+  }
   if ($addsPrismaOp -and -not $mentionsOrg) {
     Add-Blocker $blockers "Critical API route updated with Prisma access but no org scoping signal in diff: $path."
     $minimalFixes.Add("Derive orgId server-side and enforce tenant scoping in $path.")
