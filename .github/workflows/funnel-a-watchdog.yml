@@ -70,6 +70,33 @@ jobs:
                 per_page: 100
               });
 
+              const reviews = await github.paginate(github.rest.pulls.listReviews, {
+                owner,
+                repo,
+                pull_number: pr.number,
+                per_page: 100
+              });
+
+              const verdictSignals = [];
+              for (const c of comments) {
+                if (c.body && c.body.includes("merge verdict:")) {
+                  verdictSignals.push({ body: c.body, ts: Date.parse(c.created_at) || 0 });
+                }
+              }
+              for (const r of reviews) {
+                if (r.body && r.body.includes("merge verdict:")) {
+                  verdictSignals.push({ body: r.body, ts: Date.parse(r.submitted_at || r.created_at) || 0 });
+                }
+              }
+              if (verdictSignals.length > 0) {
+                verdictSignals.sort((a, b) => b.ts - a.ts);
+                const latestVerdict = verdictSignals[0].body;
+                if (latestVerdict.includes("merge verdict: APPROVE")) {
+                  core.info(`PR #${pr.number} already approved. Skipping cadence enforcement.`);
+                  continue;
+                }
+              }
+
               const latestStructuredStatusMs = comments
                 .filter((c) =>
                   c.body &&

@@ -14,6 +14,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  issues: write
 
 jobs:
   gate:
@@ -73,3 +74,73 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./scripts/review-pr.ps1 -PrNumber ${{ steps.pr.outputs.number }} -RepoPath . -PostReviewDecision
+
+      - name: Auto handoff on approved task
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = Number("${{ steps.pr.outputs.number }}");
+            const marker = "[ARBY:NEXT_TASK]";
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number: prNumber,
+              per_page: 100
+            });
+
+            const reviews = await github.paginate(github.rest.pulls.listReviews, {
+              owner,
+              repo,
+              pull_number: prNumber,
+              per_page: 100
+            });
+
+            const verdicts = [];
+            for (const c of comments) {
+              if (c.body && c.body.includes("merge verdict:")) {
+                verdicts.push({ body: c.body, ts: Date.parse(c.created_at) || 0 });
+              }
+            }
+            for (const r of reviews) {
+              if (r.body && r.body.includes("merge verdict:")) {
+                verdicts.push({ body: r.body, ts: Date.parse(r.submitted_at || r.created_at) || 0 });
+              }
+            }
+
+            if (verdicts.length === 0) {
+              core.info(`PR #${prNumber}: no merge verdict found.`);
+              return;
+            }
+
+            verdicts.sort((a, b) => b.ts - a.ts);
+            const latest = verdicts[0];
+            if (!latest.body.includes("merge verdict: APPROVE")) {
+              core.info(`PR #${prNumber}: latest verdict is not APPROVE.`);
+              return;
+            }
+
+            const alreadyPosted = comments.some((c) => {
+              if (!c.body || !c.body.includes(marker)) return false;
+              return (Date.parse(c.created_at) || 0) >= latest.ts;
+            });
+            if (alreadyPosted) {
+              core.info(`PR #${prNumber}: next-task handoff already posted.`);
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: prNumber,
+              body: `${marker}
+
+              Current task is APPROVED.
+
+              Automatic next-step instruction:
+              1. Open the next production-code PR for the next slice.
+              2. Post Part N+1 plan (scope, file list, acceptance checks).
+              3. Start implementation only after posting that plan in the new PR.`
+            });
