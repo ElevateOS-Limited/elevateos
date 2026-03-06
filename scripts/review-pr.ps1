@@ -257,6 +257,11 @@ if ($PostReviewDecision) {
         if ($LASTEXITCODE -ne 0) { throw "Failed to fallback to comment review after own-PR restriction." }
         Write-Host "Posted COMMENT review to PR #$PrNumber (own-PR approve restriction)."
       }
+      elseif ($joined -match "not permitted to approve pull requests") {
+        & $gh pr review $PrNumber --comment --body $commentBody
+        if ($LASTEXITCODE -ne 0) { throw "Failed to fallback to comment review after permission restriction." }
+        Write-Host "Posted COMMENT review to PR #$PrNumber (approve permission restriction)."
+      }
       else {
         throw "Failed to submit approve review. $joined"
       }
@@ -273,6 +278,11 @@ if ($PostReviewDecision) {
         & $gh pr review $PrNumber --comment --body $commentBody
         if ($LASTEXITCODE -ne 0) { throw "Failed to fallback to comment review after own-PR restriction." }
         Write-Host "Posted COMMENT review to PR #$PrNumber (own-PR request-changes restriction)."
+      }
+      elseif ($joined -match "not permitted to request changes on pull requests") {
+        & $gh pr review $PrNumber --comment --body $commentBody
+        if ($LASTEXITCODE -ne 0) { throw "Failed to fallback to comment review after permission restriction." }
+        Write-Host "Posted COMMENT review to PR #$PrNumber (request-changes permission restriction)."
       }
       else {
         throw "Failed to submit request-changes review. $joined"
