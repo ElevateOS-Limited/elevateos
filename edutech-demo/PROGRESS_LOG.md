@@ -8,15 +8,15 @@ Build Status: PASS (build) / FAIL (lint,typecheck,test scripts)
 Notes: Build passes; lint config mismatch and missing scripts tracked.
 
 Timestamp: 2026-03-06T07:03:00+08:00
-Task Completed: Commit 2 RBAC guard enforcement on worksheet routes.
+Task Completed: Worksheet route RBAC hardening baseline.
 Files Modified: src/app/api/worksheets/generate/route.ts, src/app/api/worksheets/route.ts
-Next Task: Enforce orgId scoping in worksheet read/write paths and rescope branch truthfully.
+Next Task: Replace non-authoritative org derivation and constrain demo fallback.
 Build Status: PASS
-Notes: Remote/auth blocker moved from "no remote" to GitHub credential auth only.
+Notes: No AI Integrity delivery claimed in this slice.
 
-Timestamp: 2026-03-06T07:18:00+08:00
-Task Completed: Rescoped branch to RBAC+org worksheet slice and patched control files to remove AI Integrity overclaim.
-Files Modified: MASTER_TASK_BOARD.md, PROGRESS_LOG.md, HEARTBEAT.md, AGENTS.md
-Next Task: Finish orgId worksheet scoping + role policy tightening and run build.
-Build Status: IN PROGRESS
-Notes: Canonical repo/base/path now recorded; control-loop inventory marked done.
+Timestamp: 2026-03-06T09:00:00+08:00
+Task Completed: PR #6 blocker patch set completed (authoritative org resolver only, explicit demo identity fallback, control-file truth update, backfill artifact added).
+Files Modified: src/lib/auth/org-context.ts, src/lib/auth/roles.ts, src/app/api/worksheets/generate/route.ts, src/app/api/worksheets/route.ts, prisma/schema.prisma, scripts/backfill-worksheet-orgid-demo.ts, docs/worksheet-orgid-rollout.md, MASTER_TASK_BOARD.md, PROGRESS_LOG.md, HEARTBEAT.md
+Next Task: Push/update PR metadata once GitHub auth is completed.
+Build Status: PARTIAL PASS (`npm run db:generate` PASS; `npm run build` blocked by existing Stripe webhook typing issue unrelated to this slice)
+Notes: Tenant handling now avoids heuristic org derivation; unscoped mode is explicit when authoritative org membership is unavailable.

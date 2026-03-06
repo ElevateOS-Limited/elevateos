@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { getSessionOrDemo } from '@/lib/auth/session'
 import { enforceAIDemoGuard, useStaticDemoResponses, demoWorksheet } from '@/lib/demo-ai'
 import { forbiddenResponse, hasRequiredRole } from '@/lib/auth/roles'
-import { deriveOrgIdFromSession } from '@/lib/auth/org-context'
+import { getAuthoritativeOrgId } from '@/lib/auth/org-context'
 
 const schema = z.object({
   subject: z.string(),
@@ -19,16 +19,18 @@ const schema = z.object({
 export async function POST(req: Request) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR'], { allowDemoTutorFallback: true })) {
-    return forbiddenResponse()
-  }
 
-  const orgId = deriveOrgIdFromSession(session)
+  const allowed = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR'], {
+    email: session.user.email,
+    allowExplicitDemoTutorFallback: true,
+  })
+  if (!allowed) return forbiddenResponse()
 
   try {
     const guard = await enforceAIDemoGuard(session, 'worksheets.create')
     if (guard) return guard
 
+    const orgId = getAuthoritativeOrgId(session)
     const body = await req.json()
     const data = schema.parse(body)
 
@@ -62,7 +64,7 @@ export async function POST(req: Request) {
       const userPrompt = `Create ${data.count} ${data.questionType} questions for ${data.subject} at ${data.difficulty} difficulty.
     ${data.topics ? `Focus on: ${data.topics}` : ''}
     ${data.curriculum ? `Style: ${data.curriculum} exam format` : ''}
-    
+
     Return JSON: {
       "title": "worksheet title",
       "questions": [
@@ -114,7 +116,11 @@ export async function POST(req: Request) {
       },
     })
 
-    return NextResponse.json(worksheet)
+    return NextResponse.json({
+      ...worksheet,
+      orgScope: orgId ? 'authoritative' : 'unscoped',
+      orgScopeNote: orgId ? undefined : 'Authoritative org membership is not yet present in session for this user.',
+    })
   } catch (e) {
     console.error(e)
     return NextResponse.json({ error: 'Failed to generate worksheet' }, { status: 500 })
@@ -124,16 +130,23 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR'], { allowDemoTutorFallback: true })) {
-    return forbiddenResponse()
-  }
 
-  const orgId = deriveOrgIdFromSession(session)
+  const allowed = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR'], {
+    email: session.user.email,
+    allowExplicitDemoTutorFallback: true,
+  })
+  if (!allowed) return forbiddenResponse()
+
+  const orgId = getAuthoritativeOrgId(session)
 
   const worksheets = await prisma.worksheet.findMany({
-    where: { orgId, userId: session.user.id },
+    where: orgId ? { orgId } : { userId: session.user.id },
     orderBy: { createdAt: 'desc' },
   })
 
-  return NextResponse.json(worksheets)
+  return NextResponse.json({
+    worksheets,
+    orgScope: orgId ? 'authoritative' : 'unscoped',
+    orgScopeNote: orgId ? undefined : 'Authoritative org membership is not yet present in session for this user.',
+  })
 }

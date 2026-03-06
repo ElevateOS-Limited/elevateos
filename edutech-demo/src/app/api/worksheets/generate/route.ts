@@ -5,20 +5,23 @@ import { getSessionOrDemo } from '@/lib/auth/session'
 import { AIConfigError } from '@/lib/ai/errors'
 import { enforceAIDemoGuard, useStaticDemoResponses, demoWorksheet } from '@/lib/demo-ai'
 import { forbiddenResponse, hasRequiredRole } from '@/lib/auth/roles'
-import { deriveOrgIdFromSession } from '@/lib/auth/org-context'
+import { getAuthoritativeOrgId } from '@/lib/auth/org-context'
 
 export async function POST(request: NextRequest) {
   try {
     const session = await getSessionOrDemo()
-    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    if (!hasRequiredRole(session.user?.role, ['OWNER', 'ADMIN', 'TUTOR'], { allowDemoTutorFallback: true })) {
-      return forbiddenResponse()
-    }
+    if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const orgId = deriveOrgIdFromSession(session)
+    const allowed = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR'], {
+      email: session.user.email,
+      allowExplicitDemoTutorFallback: true,
+    })
+    if (!allowed) return forbiddenResponse()
 
     const guard = await enforceAIDemoGuard(session, 'worksheets.generate')
     if (guard) return guard
+
+    const orgId = getAuthoritativeOrgId(session)
 
     const body = await request.json()
     const { subject, curriculum, topic, difficulty, count, questionTypes, content } = body
@@ -53,7 +56,11 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json(result)
+    return NextResponse.json({
+      ...result,
+      orgScope: orgId ? 'authoritative' : 'unscoped',
+      orgScopeNote: orgId ? undefined : 'Authoritative org membership is not yet present in session for this user.',
+    })
   } catch (error) {
     if (error instanceof AIConfigError) {
       return NextResponse.json(

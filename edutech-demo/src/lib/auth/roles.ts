@@ -1,19 +1,27 @@
 import { NextResponse } from 'next/server'
-import { DEMO_MODE } from '@/lib/auth/demo'
+import { DEMO_EMAIL, DEMO_MODE } from '@/lib/auth/demo'
 
 type AllowedRole = 'OWNER' | 'ADMIN' | 'TUTOR' | 'PARENT' | 'STUDENT' | 'USER'
 
-type RoleCheckOptions = {
-  allowDemoTutorFallback?: boolean
+type RoleCheckContext = {
+  email?: string | null
+  allowExplicitDemoTutorFallback?: boolean
 }
 
-function normalizeRole(role: string | null | undefined, options?: RoleCheckOptions): AllowedRole | null {
+function normalizeRole(
+  role: string | null | undefined,
+  context?: RoleCheckContext
+): AllowedRole | null {
   if (!role) return null
   const upper = role.toUpperCase() as AllowedRole
 
-  if (upper === 'USER' && options?.allowDemoTutorFallback && DEMO_MODE) {
-    return 'TUTOR'
-  }
+  const shouldFallbackToTutor =
+    upper === 'USER' &&
+    DEMO_MODE &&
+    context?.allowExplicitDemoTutorFallback === true &&
+    context?.email?.toLowerCase() === DEMO_EMAIL.toLowerCase()
+
+  if (shouldFallbackToTutor) return 'TUTOR'
 
   return upper
 }
@@ -21,9 +29,9 @@ function normalizeRole(role: string | null | undefined, options?: RoleCheckOptio
 export function hasRequiredRole(
   role: string | null | undefined,
   allowed: AllowedRole[],
-  options?: RoleCheckOptions
+  context?: RoleCheckContext
 ) {
-  const normalized = normalizeRole(role, options)
+  const normalized = normalizeRole(role, context)
   if (!normalized) return false
   return allowed.includes(normalized)
 }
