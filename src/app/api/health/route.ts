@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { spawnSync } from 'node:child_process'
 
+export const dynamic = 'force-dynamic'
+
 function getGitCommit() {
   const probe = spawnSync('git', ['rev-parse', '--short', 'HEAD'], {
     cwd: process.cwd(),
