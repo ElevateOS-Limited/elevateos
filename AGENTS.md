@@ -25,6 +25,36 @@ A PR should **never**:
 
 ---
 
+## 1A. Autopilot execution contract (authoritative)
+
+Execution is autonomous and iterative:
+
+Implement -> Push -> Gate -> Patch -> Gate (loop) until `merge verdict: APPROVE`.
+
+Once approved:
+1. Open the next Funnel A production-code PR immediately.
+2. Post the next part plan in that new PR.
+3. Continue the same loop without waiting for manual GitHub actions from the user.
+
+Required in PR operations:
+- Use `/funnel-a gate` to trigger governance gate rerun when needed.
+- Expect `[ARBY:COMMAND_ACK]` after command-triggered gate runs.
+- Treat the latest `merge verdict:` as source of truth.
+- Treat `[ARBY:NEXT_TASK]` as automatic move-to-next-part signal after approval.
+
+Required WhatsApp status cadence (every 60 minutes, evidence only):
+- `part`
+- `commit`
+- `files changed`
+- `gate run url`
+- `merge verdict`
+- `blockers`
+- `next action (next 60 min)`
+
+Status updates must not include tool/runtime excuses; only verifiable artifacts.
+
+---
+
 # 2. Hard blockers (automatic review failure)
 
 Reject PR if ANY of the following appear.
@@ -254,22 +284,18 @@ Reject PR if export produces empty file or placeholder content.
 
 # 6. Logging protocol
 
-Each commit cycle must update:
+Control-loop files are required artifacts and must remain present:
 
+- `PROGRESS_LOG.md`
+- `HEARTBEAT.md`
+- `POSTMORTEM.md`
 
-PROGRESS_LOG.md
-HEARTBEAT.md
-POSTMORTEM.md
+Liveness for autonomous execution is evaluated primarily from:
+- commit activity on active Funnel A PR
+- governance gate verdict activity
+- 60-minute evidence status updates (WhatsApp + PR command loop)
 
-
-Heartbeat cadence:
-
-
-30 minute status
-60 minute commit or postmortem
-
-
-Reject PR if logs are removed or bypassed.
+Reject if control-loop files are removed or if telemetry is demonstrably false.
 
 ---
 

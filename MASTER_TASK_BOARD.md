@@ -2,13 +2,15 @@
 
 ## Section 0: Repo baseline (facts only)
 
-- Current branch: `master`
-- Last commit hash: `3f85525`
-- Repo path: `/root/.openclaw/workspace/edutech-demo`
+- Canonical repo: `imjusthoward/elevateos-demo`
+- Canonical base branch: `main`
+- Reviewer local clone path: `C:\Users\imjusthoward\Projects\elevateos-demo`
+- Builder VPS path: `/root/.openclaw/workspace/edutech-demo`
+- Last synced commit hash before this board refresh: `b40d35d`
 
 ### Local run (currently working commands)
-```bash
-cd /root/.openclaw/workspace/edutech-demo
+```powershell
+cd C:\Users\imjusthoward\Projects\elevateos-demo
 npm install
 npm run db:generate
 npm run build
@@ -31,6 +33,35 @@ npm run dev
 1. ESLint/Next config mismatch (Next 14 + newer eslint config/options conflict)
 2. Missing scripts: `typecheck`, `test`
 3. No migration history / no deterministic seed command
+
+---
+
+## Section 0A: Live autopilot protocol (authoritative)
+
+### Active PR policy
+1. Keep exactly one open PR labeled `funnel-a-active`.
+2. Do not begin Part N+1 implementation until Part N is approved.
+3. On `APPROVE`, open the next Funnel A production-code PR immediately.
+
+### Execution loop
+Implement -> Push -> Gate -> Patch -> Gate (loop) until `merge verdict: APPROVE`.
+
+### Gate triggers/signals
+- Manual/agent rerun command: `/funnel-a gate`
+- Command acknowledgment marker: `[ARBY:COMMAND_ACK]`
+- Approval handoff marker: `[ARBY:NEXT_TASK]`
+- Supervisor marker: `[AUTOPILOT:FUNNEL_A]`
+
+### Required 60-minute evidence status (WhatsApp)
+- `part`
+- `commit`
+- `files changed`
+- `gate run url`
+- `merge verdict`
+- `blockers`
+- `next action (next 60 min)`
+
+No tool/runtime excuse text in status updates; evidence only.
 
 ---
 
@@ -114,7 +145,7 @@ Upload → extract text → segment → score → highlight → export PDF/DOCX 
 | Multi-tenant scoping correctness | Missing | orgId-based scoping wrappers/guards absent across routes | multiple `src/app/api/**/route.ts` | Arby | `TBD-C1` |
 | RBAC API + UI gating | Partial | Some auth checks exist; role enforcement not consistent | `src/lib/auth/*`, `src/app/api/**/route.ts`, dashboard pages | Arby | `TBD-C2` |
 | AI Integrity pipeline | Missing | No production route/UI/DB pipeline integrated | N/A (new files required) | Arby | `TBD-C3` |
-| Tooling control loop files | Missing | No formal board/heartbeat/postmortem logs in repo | `MASTER_TASK_BOARD.md`, `PROGRESS_LOG.md`, `HEARTBEAT.md`, `POSTMORTEM.md` | Arby | `TBD-C1` |
+| Tooling control loop files | Live | Gate, watchdog, and autopilot supervisor workflows are active; enforce single active Funnel A PR loop | `.github/workflows/pr-governance-gate.yml`, `.github/workflows/funnel-a-watchdog.yml`, `.github/workflows/funnel-a-autopilot-supervisor.yml` | Arby | `AUTO` |
 
 ---
 
