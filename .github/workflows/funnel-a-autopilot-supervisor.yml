@@ -66,7 +66,52 @@ jobs:
             );
 
             if (active.length === 0) {
-              core.info("No open PR labeled funnel-a-active.");
+              const closedPrs = await github.paginate(github.rest.pulls.list, {
+                owner,
+                repo,
+                state: "closed",
+                per_page: 100
+              });
+              const latestFunnelPr = closedPrs
+                .filter((p) => (p.labels || []).some((l) => l.name === label))
+                .sort((a, b) => toMs(b.updated_at) - toMs(a.updated_at))[0];
+
+              if (!latestFunnelPr) {
+                core.info("No open funnel-a-active PR and no prior labeled closed PR found.");
+                return;
+              }
+
+              const recentComments = await github.paginate(github.rest.issues.listComments, {
+                owner,
+                repo,
+                issue_number: latestFunnelPr.number,
+                per_page: 100
+              });
+              const recentNoActivePing = recentComments.some((c) => {
+                if (!c.body || !c.body.includes(`${marker}[NO_ACTIVE_PR]`)) return false;
+                return minutesSince(toMs(c.created_at)) < cooldownMinutes;
+              });
+              if (recentNoActivePing) {
+                core.info(`No-active reminder already posted recently on PR #${latestFunnelPr.number}.`);
+                return;
+              }
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: latestFunnelPr.number,
+                body: `${marker}[NO_ACTIVE_PR]
+
+                No open PR labeled funnel-a-active is currently present.
+
+                Execute now:
+                1. Open next Funnel A PR and apply label: funnel-a-active.
+                2. Post Part plan with scope and checks.
+                3. Push first production-code commit (src/ or prisma/).
+
+                @codex address that feedback`
+              });
+              core.info(`Posted no-active-pr escalation on PR #${latestFunnelPr.number}.`);
               return;
             }
 
