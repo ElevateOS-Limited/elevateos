@@ -35,6 +35,8 @@ type NoteEntry = {
   updatedAt: string
 }
 
+const QUICKSTART_STATE_KEY = 'funnelA.quickstart.state.v1'
+
 const fallbackClasses: ClassItem[] = [
   {
     id: 'c1',
@@ -89,6 +91,32 @@ export default function QuickstartPage() {
     () => currentClass?.students?.find(s => s.id === studentId) || currentClass?.students?.[0],
     [currentClass, studentId]
   )
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(QUICKSTART_STATE_KEY)
+      if (!raw) return
+      const saved = JSON.parse(raw) as {
+        classId?: string
+        studentId?: string
+        topic?: string
+        difficulty?: string
+      }
+      if (saved.classId) setClassId(saved.classId)
+      if (saved.studentId) setStudentId(saved.studentId)
+      if (saved.topic) setTopic(saved.topic)
+      if (saved.difficulty) setDifficulty(saved.difficulty)
+    } catch {
+      // ignore invalid cached state
+    }
+  }, [])
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      QUICKSTART_STATE_KEY,
+      JSON.stringify({ classId, studentId, topic, difficulty })
+    )
+  }, [classId, studentId, topic, difficulty])
 
   useEffect(() => {
     const loadProfileBackedClassList = async () => {
