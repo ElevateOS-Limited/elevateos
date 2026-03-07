@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
   issues: write
 
@@ -66,6 +66,66 @@ jobs:
             );
 
             if (active.length === 0) {
+              const openCandidates = prs
+                .filter((p) => !p.draft && (p.base?.ref || "") === "main")
+                .sort((a, b) => toMs(b.updated_at) - toMs(a.updated_at));
+              let firstRetiredOpenPr = null;
+
+              for (const candidate of openCandidates) {
+                const candidateComments = await github.paginate(github.rest.issues.listComments, {
+                  owner,
+                  repo,
+                  issue_number: candidate.number,
+                  per_page: 100
+                });
+                const retired = candidateComments.some((c) =>
+                  (c.body || "").includes(`${marker}[RETIRED_PR]`)
+                );
+                if (retired) {
+                  if (!firstRetiredOpenPr) {
+                    firstRetiredOpenPr = candidate;
+                  }
+                  core.info(`Skipping retired PR #${candidate.number} for active assignment.`);
+                  continue;
+                }
+
+                const files = await github.paginate(github.rest.pulls.listFiles, {
+                  owner,
+                  repo,
+                  pull_number: candidate.number,
+                  per_page: 100
+                });
+                const names = files.map((f) => f.filename || "");
+                const likelyFunnel = names.some((f) =>
+                  /^src\/app\/api\/(worksheets|feedback|notes|classes|students|assessments|reports\/monthly)/.test(f) ||
+                  f.startsWith("src/app/dashboard/quickstart") ||
+                  f.startsWith("src/lib/auth/") ||
+                  f.startsWith("prisma/")
+                );
+                if (!likelyFunnel) {
+                  continue;
+                }
+
+                await github.rest.issues.addLabels({
+                  owner,
+                  repo,
+                  issue_number: candidate.number,
+                  labels: [label]
+                });
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: candidate.number,
+                  body: `${marker}[AUTO_ACTIVE_ASSIGN]
+
+                  Assigned this PR as the active Funnel A PR (label: ${label}).
+                  Continue autonomous loop now:
+                  implement -> push -> /funnel-a gate -> patch until APPROVE.`
+                });
+                core.info(`Auto-assigned PR #${candidate.number} as active Funnel A PR.`);
+                return;
+              }
+
               const closedPrs = await github.paginate(github.rest.pulls.list, {
                 owner,
                 repo,
@@ -74,7 +134,7 @@ jobs:
               });
               const latestFunnelPr = closedPrs
                 .filter((p) => (p.labels || []).some((l) => l.name === label))
-                .sort((a, b) => toMs(b.updated_at) - toMs(a.updated_at))[0];
+                .sort((a, b) => toMs(b.updated_at) - toMs(a.updated_at))[0] || firstRetiredOpenPr;
 
               if (!latestFunnelPr) {
                 core.info("No open funnel-a-active PR and no prior labeled closed PR found.");
@@ -251,6 +311,98 @@ jobs:
             }
 
             if (latestVerdictBody.includes("merge verdict: APPROVE")) {
+              const prDetails = await github.rest.pulls.get({
+                owner,
+                repo,
+                pull_number: pr.number
+              });
+              const mergeable = prDetails.data.mergeable;
+              const mergeState = (prDetails.data.mergeable_state || "").toLowerCase();
+              const isDraft = Boolean(prDetails.data.draft);
+              const isOpen = (prDetails.data.state || "").toLowerCase() === "open";
+
+              if (
+                isOpen &&
+                !isDraft &&
+                mergeable === true &&
+                !["dirty", "blocked", "behind", "unknown"].includes(mergeState)
+              ) {
+                try {
+                  await github.rest.pulls.merge({
+                    owner,
+                    repo,
+                    pull_number: pr.number,
+                    merge_method: "squash"
+                  });
+                  await github.rest.issues.createComment({
+                    owner,
+                    repo,
+                    issue_number: pr.number,
+                    body: `${marker}[AUTO_MERGED]
+
+                    Approved Funnel A PR was merged automatically.
+                    Next required action: open the next production-code PR and apply label ${label}.`
+                  });
+                  core.info(`Auto-merged approved PR #${pr.number}.`);
+                } catch (e) {
+                  if (!hasRecentSupervisorComment(comments, "[AUTO_MERGE_FAILED]", 90)) {
+                    await github.rest.issues.createComment({
+                      owner,
+                      repo,
+                      issue_number: pr.number,
+                      body: `${marker}[AUTO_MERGE_FAILED]
+
+                      PR is approved but auto-merge failed.
+                      Error: ${(e && e.message) ? e.message : "unknown"}.
+
+                      Execute now:
+                      1. Resolve merge blockers.
+                      2. Push update.
+                      3. /funnel-a gate`
+                    });
+                  }
+                  core.info(`Auto-merge failed for PR #${pr.number}.`);
+                }
+                return;
+              }
+
+              if (
+                isOpen &&
+                !hasAnotherActivePr &&
+                (mergeable === false || ["dirty", "behind", "blocked"].includes(mergeState)) &&
+                !hasRecentSupervisorComment(comments, "[RETIRED_PR]", 120)
+              ) {
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: pr.number,
+                  body: `${marker}[RETIRED_PR]
+
+                  PR is approved but not mergeable (mergeable=${mergeable}, state=${mergeState || "unknown"}).
+                  This PR is retired from active queue to unblock forward progress.
+
+                  Required now:
+                  1. Open replacement Funnel A PR from up-to-date main.
+                  2. Apply label ${label}.
+                  3. Cherry-pick or reapply required production commits.
+                  4. Run /funnel-a gate.
+
+                  @codex address that feedback`
+                });
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner,
+                    repo,
+                    issue_number: pr.number,
+                    name: label
+                  });
+                  core.info(`Removed ${label} from retired PR #${pr.number}.`);
+                } catch (e) {
+                  core.info(`Label removal skipped for PR #${pr.number}: ${(e && e.message) ? e.message : "unknown"}`);
+                }
+                return;
+              }
+
               const nextTaskSinceVerdict = comments.some((c) => {
                 if (!c.body || !c.body.includes("[ARBY:NEXT_TASK]")) return false;
                 return toMs(c.created_at) >= latestVerdictMs;
