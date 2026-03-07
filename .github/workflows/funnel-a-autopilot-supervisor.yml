@@ -170,6 +170,52 @@ jobs:
               latestCommitFiles.length > 0 &&
               latestCommitFiles.every((f) => controlFiles.has(f));
 
+            const commitShas = new Set(commits.map((c) => (c.sha || "").toLowerCase()));
+            const connectorComments = comments
+              .filter((c) => (c.user?.login || "").includes("chatgpt-codex-connector"))
+              .sort((a, b) => toMs(b.created_at) - toMs(a.created_at));
+            const latestConnectorClaim = connectorComments.find((c) =>
+              /Committed the patch on the current branch as\s+`([0-9a-f]{7,40})`/i.test(c.body || "")
+            );
+
+            if (latestConnectorClaim && !hasRecentSupervisorComment(comments, "[CLAIM_MISMATCH]", 90)) {
+              const claimMatch = (latestConnectorClaim.body || "").match(/Committed the patch on the current branch as\s+`([0-9a-f]{7,40})`/i);
+              const claimedShaRaw = claimMatch ? claimMatch[1] : "";
+              const claimedSha = claimedShaRaw.toLowerCase();
+              const presentInPrCommits = Array.from(commitShas).some((sha) => sha.startsWith(claimedSha));
+
+              let presentInRepo = false;
+              if (!presentInPrCommits && claimedSha) {
+                try {
+                  await github.rest.repos.getCommit({ owner, repo, ref: claimedShaRaw });
+                  presentInRepo = true;
+                } catch (e) {
+                  presentInRepo = false;
+                }
+              }
+
+              if (!presentInPrCommits && !presentInRepo) {
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: pr.number,
+                  body: `${marker}[CLAIM_MISMATCH]
+
+                  Connector status claimed commit \`${claimedShaRaw}\`, but that SHA is not present in this PR or repository.
+
+                  Required now:
+                  1. Stop status claims without verifiable SHA.
+                  2. Push a real production-code commit (src/ or prisma/).
+                  3. Trigger gate rerun and post evidence with existing SHA.
+
+                  @codex address that feedback
+                  /funnel-a gate`
+                });
+                core.info(`Posted claim-mismatch enforcement on PR #${pr.number}.`);
+                return;
+              }
+            }
+
             const mergedEvents = [
               ...comments.map((c) => ({ body: c.body || "", created_at: c.created_at })),
               ...reviews.map((r) => ({ body: r.body || "", submitted_at: r.submitted_at || r.created_at }))
