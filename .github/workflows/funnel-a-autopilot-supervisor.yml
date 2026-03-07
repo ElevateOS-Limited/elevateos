@@ -311,6 +311,7 @@ jobs:
             }
 
             if (latestVerdictBody.includes("merge verdict: APPROVE")) {
+              const approvalAge = minutesSince(latestVerdictMs);
               const prDetails = await github.rest.pulls.get({
                 owner,
                 repo,
@@ -369,7 +370,8 @@ jobs:
               if (
                 isOpen &&
                 !hasAnotherActivePr &&
-                (mergeable === false || ["dirty", "behind", "blocked"].includes(mergeState)) &&
+                approvalAge >= 5 &&
+                (mergeable !== true || ["dirty", "behind", "blocked", "unknown"].includes(mergeState)) &&
                 !hasRecentSupervisorComment(comments, "[RETIRED_PR]", 120)
               ) {
                 await github.rest.issues.createComment({
@@ -378,7 +380,7 @@ jobs:
                   issue_number: pr.number,
                   body: `${marker}[RETIRED_PR]
 
-                  PR is approved but not mergeable (mergeable=${mergeable}, state=${mergeState || "unknown"}).
+                  PR is approved but not mergeable yet (mergeable=${mergeable}, state=${mergeState || "unknown"}, approvalAge=${approvalAge}m).
                   This PR is retired from active queue to unblock forward progress.
 
                   Required now:
@@ -429,7 +431,6 @@ jobs:
                 core.info(`PR #${pr.number} already approved with next-task handoff.`);
               }
 
-              const approvalAge = minutesSince(latestVerdictMs);
               if (
                 approvalAge >= approvalAdvanceMinutes &&
                 !hasAnotherActivePr &&
