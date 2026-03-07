@@ -210,12 +210,15 @@ jobs:
                 return toMs(c.created_at) >= latestVerdictMs;
               });
 
-              if (!nextTaskSinceVerdict) {
+              if (
+                !nextTaskSinceVerdict &&
+                !hasRecentSupervisorComment(comments, "[NEXT_TASK_REMINDER]", 60)
+              ) {
                 await github.rest.issues.createComment({
                   owner,
                   repo,
                   issue_number: pr.number,
-                  body: `${marker}
+                  body: `${marker}[NEXT_TASK_REMINDER]
 
                   Latest verdict is APPROVE.
                   Move immediately to next Funnel A task and open the next PR now.
