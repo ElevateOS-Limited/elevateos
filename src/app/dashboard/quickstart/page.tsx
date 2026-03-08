@@ -414,6 +414,9 @@ export default function QuickstartPage() {
           <p className="text-xs text-gray-500 mt-1">Last synced: {new Date(lastHistorySyncAt).toLocaleString()}</p>
         ) : null}
         {historyError ? <p className="text-xs text-red-600 mt-1">{historyError}</p> : null}
+        {!historyLoading && !historyError && recentFeedback.length === 0 && recentReports.length === 0 ? (
+          <p className="text-xs text-gray-500 mt-1">No history yet — complete steps 3 to 5, then refresh.</p>
+        ) : null}
 
         <div className="grid md:grid-cols-2 gap-4 mt-3">
           <div>
