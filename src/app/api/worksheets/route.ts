@@ -4,7 +4,12 @@ import { generateStructuredOutput } from '@/lib/ai/openai'
 import { z } from 'zod'
 import { getSessionOrDemo } from '@/lib/auth/session'
 import { enforceAIDemoGuard, useStaticDemoResponses, demoWorksheet } from '@/lib/demo-ai'
-import { forbiddenResponse, hasRequiredRole } from '@/lib/auth/roles'
+import { canReadOrgWide, forbiddenResponse, hasRequiredRole } from '@/lib/auth/roles'
+
+function getSessionOrgId(session: Awaited<ReturnType<typeof getSessionOrDemo>>) {
+  const orgId = (session?.user as { orgId?: string | null } | undefined)?.orgId
+  return typeof orgId === 'string' && orgId.trim().length > 0 ? orgId : null
+}
 
 const schema = z.object({
   subject: z.string(),
@@ -26,6 +31,7 @@ export async function POST(req: Request) {
     const guard = await enforceAIDemoGuard(session, 'worksheets.create')
     if (guard) return guard
 
+    const orgId = getSessionOrgId(session)
     const body = await req.json()
     const data = schema.parse(body)
 
@@ -99,6 +105,7 @@ export async function POST(req: Request) {
 
     const worksheet = await prisma.worksheet.create({
       data: {
+        orgId: orgId ?? undefined,
         userId: session.user.id,
         title: result.title || `${data.subject} Worksheet`,
         subject: data.subject,
@@ -124,8 +131,15 @@ export async function GET(req: Request) {
   const allowed = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])
   if (!allowed) return forbiddenResponse()
 
+  const orgId = getSessionOrgId(session)
+  const canReadAllOrgWorksheets = canReadOrgWide(session.user.role)
+
   const worksheets = await prisma.worksheet.findMany({
-    where: { userId: session.user.id },
+    where: orgId
+      ? canReadAllOrgWorksheets
+        ? { orgId }
+        : { orgId, userId: session.user.id }
+      : { userId: session.user.id },
     orderBy: { createdAt: 'desc' },
   })
 
