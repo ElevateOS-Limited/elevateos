@@ -18,6 +18,8 @@ param(
 
   [int]$NoActiveCooldownMinutes = 30,
 
+  [int]$NoActiveTakeoverAfterCycles = 1,
+
   [string]$ActiveLabel = "funnel-a-active",
 
   [bool]$AssignLabelIfMissing = $true,
@@ -189,6 +191,49 @@ function Resolve-ActivePr([string]$Gh, [string]$RepoFullName, [string]$Label, [b
     ) -join "`n"
     & $Gh pr comment ([int]$candidate.number) --body $commentBody | Out-Null
     return $candidate
+  }
+
+  return $null
+}
+
+function Try-AssignActiveLabel([string]$Gh, [int]$PrNumber, [string]$Label, [string]$MarkerBody) {
+  Ensure-LabelExists -Gh $Gh -Label $Label
+  & $Gh pr edit $PrNumber --add-label $Label | Out-Null
+  if ($LASTEXITCODE -ne 0) { return $false }
+  if ($MarkerBody) {
+    & $Gh pr comment $PrNumber --body $MarkerBody | Out-Null
+  }
+  return $true
+}
+
+function Invoke-NoActiveTakeover([string]$Gh, [string]$RepoFullName, [string]$Label) {
+  $open = Get-OpenPrs -Gh $Gh
+  if ($open.Count -eq 0) { return $null }
+
+  $candidates = @($open | Where-Object { -not $_.isDraft -and $_.baseRefName -eq "main" } | Sort-Object updatedAt -Descending)
+  foreach ($candidate in $candidates) {
+    $prNumber = [int]$candidate.number
+    $files = Get-PullFiles -Gh $Gh -RepoFullName $RepoFullName -PrNumber $prNumber
+    $isBackend = $false
+    if ($files.Count -gt 0) {
+      $isBackend = Is-BackendCandidate -Files $files
+    } else {
+      # If file listing is temporarily unavailable, prefer takeover over idle looping.
+      $isBackend = $true
+    }
+    if (-not $isBackend) { continue }
+
+    $takeoverBody = @(
+      "[LOCAL:TAKEOVER_REANCHOR]",
+      "",
+      "Auto takeover executed after no-active heartbeat cycle(s).",
+      "This PR is now the active Funnel A execution lane ($Label).",
+      "Next: continue implement -> gate -> patch loop without idle."
+    ) -join "`n"
+
+    if (Try-AssignActiveLabel -Gh $Gh -PrNumber $prNumber -Label $Label -MarkerBody $takeoverBody) {
+      return $candidate
+    }
   }
 
   return $null
@@ -368,14 +413,26 @@ $gateScript = (Resolve-Path ".\\scripts\\funnel-a-gate.ps1").Path
 $statusScript = (Resolve-Path ".\\scripts\\funnel-a-status.ps1").Path
 
 $cycle = 0
+$noActiveCycles = 0
 while ($true) {
   $cycle += 1
   Write-Host "Autopilot cycle $cycle started at $(Get-Date -Format o)"
   try {
     $activePr = Resolve-ActivePr -Gh $gh -RepoFullName $repoFullName -Label $ActiveLabel -AllowAssign $AssignLabelIfMissing
     if (-not $activePr) {
+      $noActiveCycles += 1
       Write-Host "No active backend PR found."
-      if ($NudgeWhenNoActive) {
+
+      if ($noActiveCycles -ge $NoActiveTakeoverAfterCycles) {
+        $takenOver = Invoke-NoActiveTakeover -Gh $gh -RepoFullName $repoFullName -Label $ActiveLabel
+        if ($takenOver) {
+          $activePr = $takenOver
+          $noActiveCycles = 0
+          Write-Host "Auto takeover re-anchored active PR: #$([int]$takenOver.number)"
+        }
+      }
+
+      if (-not $activePr -and $NudgeWhenNoActive) {
         $latestMerged = Get-LatestMergedPr -Gh $gh -Label $ActiveLabel
         if ($latestMerged) {
           $mergedPrNumber = [int]$latestMerged.number
@@ -397,7 +454,9 @@ while ($true) {
           }
         }
       }
+      continue
     } else {
+      $noActiveCycles = 0
       $prNumber = [int]$activePr.number
       $prUrl = [string]$activePr.url
       Write-Host "Active PR: #$prNumber ($prUrl)"
