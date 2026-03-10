@@ -16,7 +16,8 @@ export async function POST(request: NextRequest) {
     const session = await getSessionOrDemo()
     if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const allowed = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])
+    const allowedRoles = ['OWNER', 'ADMIN', 'TUTOR', 'USER'] as const
+    const allowed = hasRequiredRole(session.user.role, [...allowedRoles])
     if (!allowed) return forbiddenResponse()
 
     const guard = await enforceAIDemoGuard(session, 'worksheets.generate')
