@@ -220,6 +220,7 @@ function Get-LatestVerdict([object[]]$Comments, [object[]]$Reviews) {
       verdict = "NOT_FOUND"
       ts      = 0
       line    = "merge verdict: NOT_FOUND"
+      body    = ""
     }
   }
 
@@ -234,7 +235,62 @@ function Get-LatestVerdict([object[]]$Comments, [object[]]$Reviews) {
     verdict = $verdict
     ts      = [long]$latest.ts
     line    = $verdictLine
+    body    = [string]$latest.body
   }
+}
+
+function Get-BodyBlockers([string]$Body) {
+  if (-not $Body) { return @() }
+
+  $lines = @($Body -split "`n")
+  $start = -1
+  for ($i = 0; $i -lt $lines.Count; $i++) {
+    if ($lines[$i].Trim().ToLower() -eq "blockers:") {
+      $start = $i + 1
+      break
+    }
+  }
+  if ($start -lt 0) { return @() }
+
+  $items = New-Object System.Collections.Generic.List[string]
+  for ($j = $start; $j -lt $lines.Count; $j++) {
+    $line = $lines[$j].Trim()
+    if (-not $line) { break }
+    if ($line -match '^[a-z ]+:\s*$') { break }
+    if ($line.StartsWith("-")) {
+      $items.Add($line.TrimStart("-").Trim())
+    }
+  }
+  return @($items | Where-Object { $_ -and $_ -ne "none" } | Select-Object -Unique)
+}
+
+function Test-IsSelfLimiter([string]$Text) {
+  if (-not $Text) { return $false }
+  $patterns = @(
+    "arby",
+    "openclaw",
+    "no active pr",
+    "funnel-a-active",
+    "daemon",
+    "loop not anchored",
+    "runtime down",
+    "pm2",
+    "token mismatch",
+    "service offline"
+  )
+  $lower = $Text.ToLower()
+  foreach ($pattern in $patterns) {
+    if ($lower.Contains($pattern)) { return $true }
+  }
+  return $false
+}
+
+function Has-ExternalLimiter([string[]]$BlockerLines) {
+  if ($null -eq $BlockerLines -or $BlockerLines.Count -eq 0) { return $false }
+  foreach ($line in $BlockerLines) {
+    if (-not (Test-IsSelfLimiter -Text $line)) { return $true }
+  }
+  return $false
 }
 
 function Try-GetLatestGateRun([string]$Gh, [string]$RepoFullName, [int]$PrNumber) {
@@ -353,11 +409,13 @@ while ($true) {
 
       $blockers = "none"
       $nextAction = "Monitor gate and continue backend patch loop."
+      $externalLimiterDetected = $false
 
       if ($verdictInfo.verdict -eq "APPROVE") {
         $nextAction = "Await merge handoff and continue with next backend PR immediately."
       } else {
         $blockers = Get-BlockersFromVerdict -Verdict $verdictInfo.verdict
+        $externalLimiterDetected = Has-ExternalLimiter -BlockerLines (Get-BodyBlockers -Body $verdictInfo.body)
 
         if ($RunBuildBeforeGate) {
           & npm run build
@@ -398,6 +456,7 @@ while ($true) {
             $reviews = Get-Reviews -Gh $gh -RepoFullName $repoFullName -PrNumber $prNumber
             $verdictInfo = Get-LatestVerdict -Comments $comments -Reviews $reviews
             $blockers = Get-BlockersFromVerdict -Verdict $verdictInfo.verdict
+            $externalLimiterDetected = Has-ExternalLimiter -BlockerLines (Get-BodyBlockers -Body $verdictInfo.body)
           }
         }
 
@@ -416,10 +475,30 @@ while ($true) {
           & $gateScript -PrNumber $prNumber -RepoPath $resolvedRepo -WaitForResult -PollSeconds 45 -OutputDir $OutputDir
           if ($LASTEXITCODE -ne 0) {
             $blockers = "$blockers; gate trigger failed"
+          } else {
+            $comments = Get-IssueComments -Gh $gh -RepoFullName $repoFullName -PrNumber $prNumber
+            $reviews = Get-Reviews -Gh $gh -RepoFullName $repoFullName -PrNumber $prNumber
+            $verdictInfo = Get-LatestVerdict -Comments $comments -Reviews $reviews
+            $blockers = Get-BlockersFromVerdict -Verdict $verdictInfo.verdict
+            $externalLimiterDetected = Has-ExternalLimiter -BlockerLines (Get-BodyBlockers -Body $verdictInfo.body)
           }
         }
-
-        $nextAction = "Continue backend implementation and rerun /funnel-a gate until APPROVE."
+        if ($externalLimiterDetected) {
+          $blockers = "$blockers; external limiter detected"
+          $nextAction = "Autonomous continue: do not wait on external limits; keep implement -> gate -> patch loop until APPROVE."
+          if (-not (Has-RecentMarker -Comments $comments -Marker "[LOCAL:AUTONOMY_ENFORCED]" -WithinMinutes $CodexCooldownMinutes)) {
+            $autonomyBody = @(
+              "[LOCAL:AUTONOMY_ENFORCED]",
+              "",
+              "Heartbeat policy: blocker is external to Arby/OpenClaw.",
+              "Action enforced: continue autonomous implementation + gate loop without idle waiting.",
+              "Allowed fallback: local review-pr + /funnel-a gate cadence until APPROVE."
+            ) -join "`n"
+            & $gh pr comment $prNumber --body $autonomyBody | Out-Null
+          }
+        } else {
+          $nextAction = "Continue backend implementation and rerun /funnel-a gate until APPROVE."
+        }
       }
 
       if (-not (Has-RecentMarker -Comments $comments -Marker "[LOCAL:STATUS_AUTO]" -WithinMinutes $StatusEveryMinutes)) {
