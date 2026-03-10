@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { generateStructuredOutput } from '@/lib/ai/openai'
-import { z } from 'zod'
+import { ZodError, z } from 'zod'
 import { getSessionOrDemo } from '@/lib/auth/session'
 import { enforceAIDemoGuard, useStaticDemoResponses, demoWorksheet } from '@/lib/demo-ai'
 import { canReadOrgWide, forbiddenResponse, hasRequiredRole } from '@/lib/auth/roles'
@@ -119,6 +119,12 @@ export async function POST(req: Request) {
 
     return NextResponse.json(worksheet)
   } catch (e) {
+    if (e instanceof ZodError) {
+      return NextResponse.json(
+        { error: 'Invalid worksheet payload', details: e.flatten() },
+        { status: 400 }
+      )
+    }
     console.error(e)
     return NextResponse.json({ error: 'Failed to generate worksheet' }, { status: 500 })
   }
