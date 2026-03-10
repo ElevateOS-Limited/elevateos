@@ -6,17 +6,24 @@ import { AIConfigError } from '@/lib/ai/errors'
 import { enforceAIDemoGuard, useStaticDemoResponses, demoWorksheet } from '@/lib/demo-ai'
 import { forbiddenResponse, hasRequiredRole } from '@/lib/auth/roles'
 
+function getSessionOrgId(session: Awaited<ReturnType<typeof getSessionOrDemo>>) {
+  const orgId = (session?.user as { orgId?: string | null } | undefined)?.orgId
+  return typeof orgId === 'string' && orgId.trim().length > 0 ? orgId : null
+}
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getSessionOrDemo()
     if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const allowed = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])
+    const allowedRoles = ['OWNER', 'ADMIN', 'TUTOR', 'USER'] as const
+    const allowed = hasRequiredRole(session.user.role, [...allowedRoles])
     if (!allowed) return forbiddenResponse()
 
     const guard = await enforceAIDemoGuard(session, 'worksheets.generate')
     if (guard) return guard
 
+    const orgId = getSessionOrgId(session)
     const body = await request.json()
     const { subject, curriculum, topic, difficulty, count, questionTypes, content } = body
     const normalizedTopic = typeof topic === 'string' ? topic.trim() : ''
@@ -40,6 +47,7 @@ export async function POST(request: NextRequest) {
 
     await prisma.worksheet.create({
       data: {
+        orgId: orgId ?? undefined,
         userId: session.user.id,
         title: `${subject || curriculum} — ${normalizedTopic}`,
         subject,
