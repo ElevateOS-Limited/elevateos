@@ -48,7 +48,7 @@ Required in PR operations:
   - `[AUTOPILOT:FUNNEL_A][NO_ACTIVE_PR]`
   - `[AUTOPILOT:FUNNEL_A][AUTO_ACTIVE_ASSIGN]`
 
-Required WhatsApp status cadence (every 60 minutes, evidence only):
+Required WhatsApp status cadence (every 30 minutes, evidence only):
 - `lane` or `part/task`
 - `part`
 - `commit`
@@ -56,7 +56,11 @@ Required WhatsApp status cadence (every 60 minutes, evidence only):
 - `gate run url`
 - `merge verdict`
 - `blockers`
-- `next action (next 60 min)`
+- `next action (next 30 min)`
+- `exact appdemo backend changes in this window` (file-level + behavior-level)
+
+Instruction persistence rule:
+- Every time Howard gives a new operating instruction, patch it into `.md` immediately in the same cycle (no defer/no pause).
 
 Status updates must not include tool/runtime excuses; only verifiable artifacts.
 
