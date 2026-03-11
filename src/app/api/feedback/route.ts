@@ -24,6 +24,9 @@ export async function POST(req: NextRequest) {
 
   const contentLengthHeader = req.headers.get('content-length')
   const contentLength = contentLengthHeader ? Number(contentLengthHeader) : 0
+  if (contentLengthHeader && (!Number.isFinite(contentLength) || contentLength < 0)) {
+    return NextResponse.json({ error: 'invalid content-length' }, { status: 400 })
+  }
   if (Number.isFinite(contentLength) && contentLength > 12_000) {
     return NextResponse.json({ error: 'payload too large' }, { status: 413 })
   }
