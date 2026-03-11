@@ -23,7 +23,11 @@ export async function POST(req: NextRequest) {
 
   let payload: { email?: unknown; category?: unknown; message?: unknown }
   try {
-    payload = await req.json()
+    const parsed = await req.json()
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      return NextResponse.json({ error: 'invalid json body' }, { status: 400 })
+    }
+    payload = parsed as { email?: unknown; category?: unknown; message?: unknown }
   } catch {
     return NextResponse.json({ error: 'invalid json body' }, { status: 400 })
   }
