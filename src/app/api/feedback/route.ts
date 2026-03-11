@@ -104,9 +104,10 @@ export async function POST(req: NextRequest) {
   }
 
   const allowedCategories = new Set(['general', 'bug', 'feature', 'billing', 'other'])
-  const normalizedCategory = allowedCategories.has(normalizedCategoryRaw)
-    ? normalizedCategoryRaw
-    : 'general'
+  if (normalizedCategoryRaw && !allowedCategories.has(normalizedCategoryRaw)) {
+    return NextResponse.json({ error: 'invalid category' }, { status: 400 })
+  }
+  const normalizedCategory = normalizedCategoryRaw || 'general'
 
   const row = await prisma.feedback.create({
     data: {
