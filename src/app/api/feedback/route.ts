@@ -29,6 +29,10 @@ export async function POST(req: NextRequest) {
   }
 
   const { email, category, message } = payload
+  if (typeof message === 'string' && message.length > 8000) {
+    return NextResponse.json({ error: 'message too long' }, { status: 400 })
+  }
+
   const trimmedMessage = typeof message === 'string' ? message.trim() : ''
   if (!trimmedMessage) return NextResponse.json({ error: 'message required' }, { status: 400 })
 
