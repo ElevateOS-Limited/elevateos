@@ -25,6 +25,13 @@ export async function POST(req: NextRequest) {
   }
 
   const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : ''
+  if (normalizedEmail.length > 254) {
+    return NextResponse.json({ error: 'email too long' }, { status: 400 })
+  }
+  if (normalizedEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    return NextResponse.json({ error: 'invalid email' }, { status: 400 })
+  }
+
   const normalizedCategoryRaw = typeof category === 'string' ? category.trim().toLowerCase() : ''
   const allowedCategories = new Set(['general', 'bug', 'feature', 'billing', 'other'])
   const normalizedCategory = allowedCategories.has(normalizedCategoryRaw)
