@@ -4,10 +4,19 @@ import { getSessionOrDemo } from '@/lib/auth/session'
 import { recordEvent } from '@/lib/stats'
 import { forbiddenResponse, hasRequiredRole } from '@/lib/auth/roles'
 
+function getSessionOrgId(session: Awaited<ReturnType<typeof getSessionOrDemo>>) {
+  const orgId = (session?.user as { orgId?: string | null } | undefined)?.orgId
+  return typeof orgId === 'string' && orgId.trim().length > 0 ? orgId : null
+}
+
 export async function GET(req: NextRequest) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
+  const orgId = getSessionOrgId(session)
+  if (orgId) {
+    // Notes are user-scoped; orgId is still derived server-side for tenant context.
+  }
 
   const q = (req.nextUrl.searchParams.get('q') || '').toLowerCase()
   const notes = await prisma.note.findMany({ where: { userId: session.user.id }, orderBy: { updatedAt: 'desc' } })
@@ -23,6 +32,7 @@ export async function POST(req: NextRequest) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
+  const orgId = getSessionOrgId(session)
 
   const { title, content, tags } = await req.json()
   const normalizedTitle = typeof title === 'string' ? title.trim() : ''
@@ -36,7 +46,7 @@ export async function POST(req: NextRequest) {
       tags: Array.isArray(tags) ? tags.filter(Boolean) : [],
     },
   })
-  await recordEvent(prisma as any, session.user.id, 'note_created', { noteId: note.id })
+  await recordEvent(prisma as any, session.user.id, 'note_created', { noteId: note.id, orgId })
   return NextResponse.json(note)
 }
 
@@ -44,6 +54,10 @@ export async function PATCH(req: NextRequest) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
+  const orgId = getSessionOrgId(session)
+  if (orgId) {
+    // Keep org context explicit while writes remain userId-scoped.
+  }
 
   const { id, title, content, tags } = await req.json()
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
@@ -70,6 +84,10 @@ export async function DELETE(req: NextRequest) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
+  const orgId = getSessionOrgId(session)
+  if (orgId) {
+    // Keep org context explicit while deletes remain userId-scoped.
+  }
   const id = req.nextUrl.searchParams.get('id')
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
