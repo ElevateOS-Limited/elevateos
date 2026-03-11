@@ -60,13 +60,14 @@ export async function PATCH(req: NextRequest) {
   }
 
   const { id, title, content, tags } = await req.json()
-  if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
+  const noteId = typeof id === 'string' ? id.trim() : ''
+  if (!noteId) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
   const normalizedTitle = typeof title === 'string' ? title.trim() : undefined
   const normalizedContent = typeof content === 'string' ? content.trim() : undefined
 
   const updateResult = await prisma.note.updateMany({
-    where: { id, userId: session.user.id },
+    where: { id: noteId, userId: session.user.id },
     data: {
       ...(normalizedTitle !== undefined ? { title: normalizedTitle || 'Untitled Note' } : {}),
       ...(normalizedContent !== undefined ? { content: normalizedContent } : {}),
@@ -76,7 +77,7 @@ export async function PATCH(req: NextRequest) {
 
   if (updateResult.count === 0) return NextResponse.json({ error: 'Note not found' }, { status: 404 })
 
-  const note = await prisma.note.findFirst({ where: { id, userId: session.user.id } })
+  const note = await prisma.note.findFirst({ where: { id: noteId, userId: session.user.id } })
   return NextResponse.json(note)
 }
 
@@ -88,10 +89,11 @@ export async function DELETE(req: NextRequest) {
   if (orgId) {
     // Keep org context explicit while deletes remain userId-scoped.
   }
-  const id = req.nextUrl.searchParams.get('id')
-  if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
+  const idParam = req.nextUrl.searchParams.get('id')
+  const noteId = typeof idParam === 'string' ? idParam.trim() : ''
+  if (!noteId) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
-  const deleteResult = await prisma.note.deleteMany({ where: { id, userId: session.user.id } })
+  const deleteResult = await prisma.note.deleteMany({ where: { id: noteId, userId: session.user.id } })
   if (deleteResult.count === 0) return NextResponse.json({ error: 'Note not found' }, { status: 404 })
 
   return NextResponse.json({ ok: true })
