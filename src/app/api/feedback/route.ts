@@ -102,6 +102,9 @@ export async function POST(req: NextRequest) {
   }
 
   const normalizedCategoryRaw = typeof category === 'string' ? category.trim().toLowerCase() : ''
+  if (category != null && !normalizedCategoryRaw) {
+    return NextResponse.json({ error: 'invalid category' }, { status: 400 })
+  }
   if (/[\u0000-\u001F\u007F]/.test(normalizedCategoryRaw) || normalizedCategoryRaw.includes('\uFFFD')) {
     return NextResponse.json({ error: 'invalid category' }, { status: 400 })
   }
