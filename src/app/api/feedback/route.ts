@@ -23,6 +23,9 @@ export async function POST(req: NextRequest) {
   }
 
   const contentLengthHeader = req.headers.get('content-length')
+  if (contentLengthHeader && !/^\d+$/.test(contentLengthHeader)) {
+    return NextResponse.json({ error: 'invalid content-length' }, { status: 400 })
+  }
   const contentLength = contentLengthHeader ? Number(contentLengthHeader) : 0
   if (
     contentLengthHeader &&
