@@ -8,7 +8,11 @@ export async function GET() {
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
 
-  const list = await prisma.feedback.findMany({ where: { userId: session.user.id }, orderBy: { createdAt: 'desc' }, take: 100 })
+  const list = await prisma.feedback.findMany({
+    where: { userId: session.user.id },
+    orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+    take: 100,
+  })
   return NextResponse.json(list)
 }
 
