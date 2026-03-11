@@ -60,6 +60,12 @@ Required WhatsApp status cadence (every 60 minutes, evidence only):
 
 Status updates must not include tool/runtime excuses; only verifiable artifacts.
 
+Portability / non-waste requirement (mandatory):
+- Backend slices must be deployment-agnostic and reusable beyond current hosting choices.
+- Do not ship changes that are coupled to a single platform unless explicitly required.
+- New backend logic must remain compatible with external DB setups (including non-default adapters) and alternative runtimes/platforms (e.g., Fly.io) by default.
+- Every backend change should be framed as durable production hardening (validation, RBAC, scoping, determinism), not throwaway environment-specific work.
+
 Communication endpoint routing (effective 2026-03-10):
 - OpenClaw comm-agent WhatsApp endpoint: `+85291055996`
 - Human operator WhatsApp endpoint: `+85293442294`
