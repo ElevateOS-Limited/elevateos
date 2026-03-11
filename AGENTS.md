@@ -41,6 +41,11 @@ Once approved:
 2. Post the next part plan in that new PR.
 3. Continue the same loop without waiting for manual GitHub actions from the user.
 
+Auto-transit enforcement (no pause):
+- On `[ARBY:NEXT_TASK]` or `[ARBY:AUTO_MERGED]`, transition to Part N+1 immediately in the same cycle.
+- Do not report "pending transition" as a blocker when approval/merge artifacts already exist.
+- Required immediate sequence: branch from latest `main` -> open PR -> label `funnel-a-active` -> post plan -> first production commit -> `/funnel-a gate`.
+
 Required in PR operations:
 - Use `/funnel-a gate` to trigger governance gate rerun when needed.
 - Expect `[ARBY:COMMAND_ACK]` after command-triggered gate runs.

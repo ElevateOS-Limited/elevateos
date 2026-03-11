@@ -42,6 +42,7 @@ npm run dev
 1. Keep exactly one open PR labeled `funnel-a-active`.
 2. Do not begin Part N+1 implementation until Part N is approved.
 3. On `APPROVE`, open the next Funnel A production-code PR immediately.
+4. Auto-transit is mandatory: no pause after approval/auto-merge; start Part N+1 in the same execution cycle.
 
 ### Execution loop
 Implement -> Push -> Gate -> Patch -> Gate (loop) until `merge verdict: APPROVE`.
