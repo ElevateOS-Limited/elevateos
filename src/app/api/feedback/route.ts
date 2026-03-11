@@ -32,6 +32,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'invalid json body' }, { status: 400 })
   }
 
+  const allowedKeys = new Set(['email', 'category', 'message'])
+  const payloadKeys = Object.keys(payload)
+  if (payloadKeys.some((key) => !allowedKeys.has(key))) {
+    return NextResponse.json({ error: 'unexpected field' }, { status: 400 })
+  }
+
   const { email, category, message } = payload
   if (message != null && typeof message !== 'string') {
     return NextResponse.json({ error: 'invalid message' }, { status: 400 })
