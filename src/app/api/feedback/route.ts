@@ -100,6 +100,9 @@ export async function POST(req: NextRequest) {
   if (normalizedEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
     return NextResponse.json({ error: 'invalid email' }, { status: 400 })
   }
+  if (normalizedEmail.includes('..')) {
+    return NextResponse.json({ error: 'invalid email' }, { status: 400 })
+  }
 
   if (category != null && typeof category !== 'string') {
     return NextResponse.json({ error: 'invalid category' }, { status: 400 })
