@@ -21,11 +21,15 @@ export async function POST(req: NextRequest) {
   const normalizedMessage = typeof message === 'string' ? message.trim() : ''
   if (!normalizedMessage) return NextResponse.json({ error: 'message required' }, { status: 400 })
 
+  const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : ''
+  const normalizedCategoryRaw = typeof category === 'string' ? category.trim().toLowerCase() : ''
+  const normalizedCategory = normalizedCategoryRaw || 'general'
+
   const row = await prisma.feedback.create({
     data: {
       userId: session?.user?.id || null,
-      email: email || null,
-      category: category || 'general',
+      email: normalizedEmail || null,
+      category: normalizedCategory,
       message: normalizedMessage,
     },
   })
