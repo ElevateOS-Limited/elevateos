@@ -41,6 +41,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'message too long' }, { status: 400 })
   }
 
+  if (email != null && typeof email !== 'string') {
+    return NextResponse.json({ error: 'invalid email' }, { status: 400 })
+  }
+
   const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : ''
   if (normalizedEmail.length > 254) {
     return NextResponse.json({ error: 'email too long' }, { status: 400 })
