@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
   const trimmedMessage = typeof message === 'string' ? message.trim() : ''
   if (!trimmedMessage) return NextResponse.json({ error: 'message required' }, { status: 400 })
 
-  if (/[\u0000-\u001F\u007F]/.test(trimmedMessage)) {
+  if (/[\u0000-\u001F\u007F]/.test(trimmedMessage) || trimmedMessage.includes('\uFFFD')) {
     return NextResponse.json({ error: 'invalid message' }, { status: 400 })
   }
 
