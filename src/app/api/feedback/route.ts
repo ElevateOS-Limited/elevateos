@@ -82,6 +82,9 @@ export async function POST(req: NextRequest) {
   if (normalizedMessage.length > 2000) {
     return NextResponse.json({ error: 'message too long' }, { status: 400 })
   }
+  if (/[\u200B-\u200D\u2060\uFEFF]/.test(normalizedMessage)) {
+    return NextResponse.json({ error: 'invalid message' }, { status: 400 })
+  }
 
   if (email != null && typeof email !== 'string') {
     return NextResponse.json({ error: 'invalid email' }, { status: 400 })
