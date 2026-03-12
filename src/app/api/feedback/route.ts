@@ -143,6 +143,9 @@ export async function POST(req: NextRequest) {
   if (/[\u0000-\u001F\u007F]/.test(normalizedCategoryRaw) || normalizedCategoryRaw.includes('\uFFFD')) {
     return NextResponse.json({ error: 'invalid category' }, { status: 400 })
   }
+  if (/[\u200B-\u200D\u2060\uFEFF]/.test(normalizedCategoryRaw)) {
+    return NextResponse.json({ error: 'invalid category' }, { status: 400 })
+  }
   if (normalizedCategoryRaw.length > 32) {
     return NextResponse.json({ error: 'invalid category' }, { status: 400 })
   }
