@@ -179,6 +179,7 @@ export async function POST(req: NextRequest) {
     'service-issue': 'general',
     support: 'general',
     'customer-care': 'general',
+    'client-support': 'general',
     'customer-service': 'general',
   }
   const normalizedCategoryResolved =
