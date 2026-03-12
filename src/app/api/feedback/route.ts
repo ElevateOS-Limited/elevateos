@@ -159,7 +159,9 @@ export async function POST(req: NextRequest) {
     help: 'general',
     account: 'billing',
     payment: 'billing',
+    'payment-issue': 'billing',
     invoice: 'billing',
+    'billing-issue': 'billing',
     refund: 'billing',
     question: 'general',
   }
