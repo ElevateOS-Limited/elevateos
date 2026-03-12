@@ -174,6 +174,7 @@ export async function POST(req: NextRequest) {
     'technical-support': 'general',
     'product-support': 'general',
     'student-support': 'general',
+    'learner-support': 'general',
     'customer-service': 'general',
     account: 'billing',
     payment: 'billing',
