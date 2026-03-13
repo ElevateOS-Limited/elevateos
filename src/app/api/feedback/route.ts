@@ -136,6 +136,8 @@ export async function POST(req: NextRequest) {
           .trim()
           .toLowerCase()
           .replace(/[_\s]+/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '')
       : ''
   if (category != null && !normalizedCategoryRaw) {
     return NextResponse.json({ error: 'invalid category' }, { status: 400 })
