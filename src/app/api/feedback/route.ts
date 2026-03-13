@@ -190,7 +190,9 @@ export async function POST(req: NextRequest) {
     'payment-issue': 'billing',
     invoice: 'billing',
     'billing-issue': 'billing',
+    'billing-help': 'billing',
     refund: 'billing',
+    'general-support': 'general',
   }
 
   const normalizedCategoryCandidate = categoryAliases[normalizedCategoryRaw] || normalizedCategoryRaw
