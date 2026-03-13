@@ -7,6 +7,7 @@ const DEFAULT_FEEDBACK_LIST_LIMIT = 20
 const MAX_FEEDBACK_LIST_LIMIT = 100
 const FEEDBACK_LIMIT_MAX_DIGITS = 3
 const INVALID_LIMIT_ERROR = { error: 'invalid limit' } as const
+const FEEDBACK_LIMIT_DIGITS_REGEX = /^\d+$/
 
 function getSessionOrgId(session: Awaited<ReturnType<typeof getSessionOrDemo>>) {
   const orgId = (session?.user as { orgId?: string | null } | undefined)?.orgId
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest) {
 
   const limitParam = req.nextUrl.searchParams.get('limit')
   const normalizedLimitParam = typeof limitParam === 'string' ? limitParam.trim() : ''
-  if (normalizedLimitParam && !/^\d+$/.test(normalizedLimitParam)) {
+  if (normalizedLimitParam && !FEEDBACK_LIMIT_DIGITS_REGEX.test(normalizedLimitParam)) {
     return NextResponse.json(INVALID_LIMIT_ERROR, { status: 400 })
   }
   if (normalizedLimitParam.length > FEEDBACK_LIMIT_MAX_DIGITS) {
