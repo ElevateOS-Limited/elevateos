@@ -182,6 +182,7 @@ export async function POST(req: NextRequest) {
     'class-support': 'general',
     'course-support': 'general',
     'education-support': 'general',
+    'teacher-support': 'general',
     'student-support': 'general',
     'learner-support': 'general',
     'family-support': 'general',
