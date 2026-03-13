@@ -30,7 +30,8 @@ export async function GET(req: NextRequest) {
   if (normalizedLimitParam.length > FEEDBACK_LIMIT_MAX_DIGITS) {
     return NextResponse.json(INVALID_LIMIT_ERROR, { status: 400 })
   }
-  const parsedLimit = normalizedLimitParam ? Number(normalizedLimitParam) : DEFAULT_FEEDBACK_LIST_LIMIT
+  const canonicalLimitParam = normalizedLimitParam.replace(/^0+(?=\d)/, '')
+  const parsedLimit = canonicalLimitParam ? Number(canonicalLimitParam) : DEFAULT_FEEDBACK_LIST_LIMIT
   if (!Number.isInteger(parsedLimit) || parsedLimit <= 0) {
     return NextResponse.json(INVALID_LIMIT_ERROR, { status: 400 })
   }
