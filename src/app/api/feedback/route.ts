@@ -73,6 +73,7 @@ export async function GET(req: NextRequest) {
         count: list.length,
         category: normalizedCategoryParam || 'all',
         limit: take,
+        requestedLimit: parsedLimit,
       },
     })
   }

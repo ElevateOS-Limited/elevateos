@@ -12,6 +12,7 @@ type FeedbackListMeta = {
   count: number
   category: string
   limit: number
+  requestedLimit: number
 }
 
 const CATEGORY_OPTIONS = [
@@ -30,6 +31,8 @@ const FEEDBACK_FILTER_OPTIONS = [
   { value: 'other', label: 'Other' },
 ]
 
+const FEEDBACK_LIMIT_OPTIONS = [10, 20, 50]
+
 const CATEGORY_LABELS: Record<string, string> = {
   general: 'General',
   bug: 'Bug report',
@@ -45,11 +48,12 @@ export default function HelpPage() {
   const [message, setMessage] = useState('')
   const [category, setCategory] = useState('general')
   const [filterCategory, setFilterCategory] = useState('all')
+  const [listLimit, setListLimit] = useState(20)
   const [items, setItems] = useState<FeedbackItem[]>([])
-  const [meta, setMeta] = useState<FeedbackListMeta>({ count: 0, category: 'all', limit: 20 })
+  const [meta, setMeta] = useState<FeedbackListMeta>({ count: 0, category: 'all', limit: 20, requestedLimit: 20 })
 
-  const load = async (selectedFilter = filterCategory) => {
-    const params = new URLSearchParams({ includeMeta: '1' })
+  const load = async (selectedFilter = filterCategory, selectedLimit = listLimit) => {
+    const params = new URLSearchParams({ includeMeta: '1', limit: String(selectedLimit) })
     if (selectedFilter !== 'all') params.set('category', selectedFilter)
     const res = await fetch(`/api/feedback?${params.toString()}`)
     const data = await res.json()
@@ -57,12 +61,12 @@ export default function HelpPage() {
     setMeta(
       data?.meta && typeof data.meta === 'object'
         ? data.meta
-        : { count: 0, category: selectedFilter, limit: 20 }
+        : { count: 0, category: selectedFilter, limit: selectedLimit, requestedLimit: selectedLimit }
     )
   }
   useEffect(() => {
-    load(filterCategory)
-  }, [filterCategory])
+    load(filterCategory, listLimit)
+  }, [filterCategory, listLimit])
 
   return (
     <div className="max-w-5xl mx-auto space-y-4">
@@ -103,30 +107,47 @@ export default function HelpPage() {
           <div>
             <h2 className="font-semibold">Recent feedback</h2>
             <p className="text-xs text-gray-500">
-              Showing {meta.count} item{meta.count === 1 ? '' : 's'} ({meta.category})
+              Showing {meta.count} item{meta.count === 1 ? '' : 's'} ({meta.category}) · limit {meta.limit}
             </p>
           </div>
-          <label className="text-sm flex items-center gap-2">
-            Filter
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="border rounded p-1"
-              aria-label="Filter feedback category"
-            >
-              {FEEDBACK_FILTER_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className="flex items-center gap-3">
+            <label className="text-sm flex items-center gap-2">
+              Filter
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="border rounded p-1"
+                aria-label="Filter feedback category"
+              >
+                {FEEDBACK_FILTER_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="text-sm flex items-center gap-2">
+              Show
+              <select
+                value={listLimit}
+                onChange={(e) => setListLimit(Number(e.target.value))}
+                className="border rounded p-1"
+                aria-label="Feedback list limit"
+              >
+                {FEEDBACK_LIMIT_OPTIONS.map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
         </div>
         <div className="space-y-2">
           {items.length === 0 ? (
             <div className="p-2 border rounded text-sm text-gray-500">No feedback found for this filter yet.</div>
           ) : null}
-          {items.slice(0, 10).map((f) => (
+          {items.slice(0, meta.limit).map((f) => (
             <div key={f.id} className="p-2 border rounded text-sm">
               <b>{toCategoryLabel(f.category)}</b>: {f.message}
             </div>
