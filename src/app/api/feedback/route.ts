@@ -3,10 +3,19 @@ import { prisma } from '@/lib/prisma'
 import { getSessionOrDemo } from '@/lib/auth/session'
 import { forbiddenResponse, hasRequiredRole } from '@/lib/auth/roles'
 
+function getSessionOrgId(session: Awaited<ReturnType<typeof getSessionOrDemo>>) {
+  const orgId = (session?.user as { orgId?: string | null } | undefined)?.orgId
+  return typeof orgId === 'string' && orgId.trim().length > 0 ? orgId : null
+}
+
 export async function GET() {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
+  const orgId = getSessionOrgId(session)
+  if (orgId) {
+    // Feedback rows are user-scoped in current schema; orgId is derived server-side for tenant context.
+  }
 
   const list = await prisma.feedback.findMany({
     where: { userId: session.user.id },
@@ -44,6 +53,10 @@ export async function POST(req: NextRequest) {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
+  const orgId = getSessionOrgId(session)
+  if (orgId) {
+    // Feedback rows are user-scoped in current schema; orgId is derived server-side for tenant context.
+  }
 
   let payload: { email?: unknown; category?: unknown; message?: unknown }
   try {
