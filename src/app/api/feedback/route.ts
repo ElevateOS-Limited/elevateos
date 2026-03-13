@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSessionOrDemo } from '@/lib/auth/session'
 import { forbiddenResponse, hasRequiredRole } from '@/lib/auth/roles'
-import { withOrgScope } from '@/lib/db/org-scope'
 
 function getSessionOrgId(session: Awaited<ReturnType<typeof getSessionOrDemo>>) {
   const orgId = (session?.user as { orgId?: string | null } | undefined)?.orgId
@@ -19,7 +18,7 @@ export async function GET() {
   }
 
   const list = await prisma.feedback.findMany({
-    where: withOrgScope(orgId, { userId: session.user.id }),
+    where: { userId: session.user.id, orgId: orgId ?? null },
     orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
     take: 100,
   })
