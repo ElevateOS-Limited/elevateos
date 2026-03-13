@@ -181,6 +181,9 @@ export default function HelpPage() {
           {items.length === 0 ? (
             <div className="p-2 border rounded text-sm text-gray-500">No feedback found for this filter yet.</div>
           ) : null}
+          {items.length > 0 && meta.order === 'asc' ? (
+            <div className="text-xs text-gray-500">Viewing oldest-to-newest history for timeline review.</div>
+          ) : null}
           {items.slice(0, meta.limit).map((f) => (
             <div key={f.id} className="p-2 border rounded text-sm">
               <b>{toCategoryLabel(f.category)}</b>: {f.message}

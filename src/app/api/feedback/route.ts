@@ -63,6 +63,7 @@ export async function GET(req: NextRequest) {
 
   const list = await prisma.feedback.findMany({
     where: {
+      orgId,
       userId: session.user.id,
       ...(normalizedCategoryParam ? { category: normalizedCategoryParam } : {}),
     },
@@ -295,6 +296,7 @@ export async function POST(req: NextRequest) {
 
   const row = await prisma.feedback.create({
     data: {
+      orgId,
       userId: session.user.id,
       email: normalizedEmail || null,
       category: normalizedCategory,
