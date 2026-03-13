@@ -299,6 +299,7 @@ model Feedback {
 
   @@index([orgId, createdAt])
   @@index([orgId, userId, createdAt])
+  @@index([orgId, category, createdAt])
 }
 
 model ChangelogEntry {
