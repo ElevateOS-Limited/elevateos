@@ -187,6 +187,7 @@ export async function POST(req: NextRequest) {
     'teacher-support': 'general',
     'parent-teacher-support': 'general',
     'pta-support': 'general',
+    'school-home-support': 'general',
     'homeroom-support': 'general',
     'student-support': 'general',
     'learner-support': 'general',
