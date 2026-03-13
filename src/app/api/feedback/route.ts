@@ -12,6 +12,8 @@ const FEEDBACK_LIMIT_LEADING_ZERO_REGEX = /^0+(?=\d)/
 const FEEDBACK_LIMIT_QUERY_PARAM = 'limit'
 const HTTP_BAD_REQUEST = 400
 const FEEDBACK_LIMIT_MIN_VALUE = 1
+const FEEDBACK_CATEGORY_QUERY_PARAM = 'category'
+const FEEDBACK_ALLOWED_CATEGORIES = new Set(['general', 'bug', 'feature', 'billing', 'other'])
 
 function getSessionOrgId(session: Awaited<ReturnType<typeof getSessionOrDemo>>) {
   const orgId = (session?.user as { orgId?: string | null } | undefined)?.orgId
@@ -29,6 +31,11 @@ export async function GET(req: NextRequest) {
 
   const limitParam = req.nextUrl.searchParams.get(FEEDBACK_LIMIT_QUERY_PARAM)
   const normalizedLimitParam = typeof limitParam === 'string' ? limitParam.trim() : ''
+  const categoryParam = req.nextUrl.searchParams.get(FEEDBACK_CATEGORY_QUERY_PARAM)
+  const normalizedCategoryParam = typeof categoryParam === 'string' ? categoryParam.trim().toLowerCase() : ''
+  if (normalizedCategoryParam && !FEEDBACK_ALLOWED_CATEGORIES.has(normalizedCategoryParam)) {
+    return NextResponse.json({ error: 'invalid category' }, { status: HTTP_BAD_REQUEST })
+  }
   if (normalizedLimitParam && !FEEDBACK_LIMIT_DIGITS_REGEX.test(normalizedLimitParam)) {
     return NextResponse.json(INVALID_LIMIT_ERROR, { status: HTTP_BAD_REQUEST })
   }
@@ -43,7 +50,10 @@ export async function GET(req: NextRequest) {
   const take = Math.min(parsedLimit, MAX_FEEDBACK_LIST_LIMIT)
 
   const list = await prisma.feedback.findMany({
-    where: { userId: session.user.id, orgId: orgId ?? null },
+    where: {
+      userId: session.user.id,
+      ...(normalizedCategoryParam ? { category: normalizedCategoryParam } : {}),
+    },
     select: {
       id: true,
       category: true,
@@ -198,7 +208,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'invalid category' }, { status: 400 })
   }
 
-  const allowedCategories = new Set(['general', 'bug', 'feature', 'billing', 'other'])
   const categoryAliases: Record<string, string> = {
     'feature-request': 'feature',
     'feature-idea': 'feature',
@@ -254,14 +263,13 @@ export async function POST(req: NextRequest) {
   }
 
   const normalizedCategoryCandidate = categoryAliases[normalizedCategoryRaw] || normalizedCategoryRaw
-  if (normalizedCategoryCandidate && !allowedCategories.has(normalizedCategoryCandidate)) {
+  if (normalizedCategoryCandidate && !FEEDBACK_ALLOWED_CATEGORIES.has(normalizedCategoryCandidate)) {
     return NextResponse.json({ error: 'invalid category' }, { status: 400 })
   }
   const normalizedCategory = normalizedCategoryCandidate || 'general'
 
   const row = await prisma.feedback.create({
     data: {
-      orgId: orgId ?? null,
       userId: session.user.id,
       email: normalizedEmail || null,
       category: normalizedCategory,
@@ -276,3 +284,4 @@ export async function POST(req: NextRequest) {
   })
   return NextResponse.json(row)
 }
+

@@ -15,6 +15,15 @@ const CATEGORY_OPTIONS = [
   { value: 'support', label: 'Support (auto-maps to General)' },
 ]
 
+const FEEDBACK_FILTER_OPTIONS = [
+  { value: 'all', label: 'All categories' },
+  { value: 'general', label: 'General' },
+  { value: 'bug', label: 'Bug report' },
+  { value: 'feature', label: 'Feature request' },
+  { value: 'billing', label: 'Billing' },
+  { value: 'other', label: 'Other' },
+]
+
 const CATEGORY_LABELS: Record<string, string> = {
   general: 'General',
   bug: 'Bug report',
@@ -29,12 +38,17 @@ function toCategoryLabel(category: string) {
 export default function HelpPage() {
   const [message, setMessage] = useState('')
   const [category, setCategory] = useState('general')
+  const [filterCategory, setFilterCategory] = useState('all')
   const [items, setItems] = useState<FeedbackItem[]>([])
 
-  const load = async () => setItems(await (await fetch('/api/feedback')).json())
+  const load = async (selectedFilter = filterCategory) => {
+    const query = selectedFilter === 'all' ? '' : `?category=${encodeURIComponent(selectedFilter)}`
+    const res = await fetch(`/api/feedback${query}`)
+    setItems(await res.json())
+  }
   useEffect(() => {
-    load()
-  }, [])
+    load(filterCategory)
+  }, [filterCategory])
 
   return (
     <div className="max-w-5xl mx-auto space-y-4">
@@ -71,7 +85,24 @@ export default function HelpPage() {
         </button>
       </div>
       <div className="bg-white border rounded-xl p-4">
-        <h2 className="font-semibold mb-2">Recent feedback</h2>
+        <div className="flex items-center justify-between gap-3 mb-2">
+          <h2 className="font-semibold">Recent feedback</h2>
+          <label className="text-sm flex items-center gap-2">
+            Filter
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="border rounded p-1"
+              aria-label="Filter feedback category"
+            >
+              {FEEDBACK_FILTER_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
         <div className="space-y-2">
           {items.slice(0, 10).map((f) => (
             <div key={f.id} className="p-2 border rounded text-sm">
