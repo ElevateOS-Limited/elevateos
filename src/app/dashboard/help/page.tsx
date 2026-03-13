@@ -53,7 +53,7 @@ export default function HelpPage() {
           onChange={(e) => setMessage(e.target.value)}
           rows={4}
           className="w-full border rounded p-2"
-          placeholder="Tell us what to improve"
+          aria-label="Feedback message"
         />
         <button
           onClick={async () => {
