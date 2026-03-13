@@ -13,6 +13,7 @@ const FEEDBACK_LIMIT_QUERY_PARAM = 'limit'
 const HTTP_BAD_REQUEST = 400
 const FEEDBACK_LIMIT_MIN_VALUE = 1
 const FEEDBACK_CATEGORY_QUERY_PARAM = 'category'
+const FEEDBACK_INCLUDE_META_QUERY_PARAM = 'includeMeta'
 const FEEDBACK_ALLOWED_CATEGORIES = new Set(['general', 'bug', 'feature', 'billing', 'other'])
 
 function getSessionOrgId(session: Awaited<ReturnType<typeof getSessionOrDemo>>) {
@@ -36,6 +37,8 @@ export async function GET(req: NextRequest) {
   if (normalizedCategoryParam && !FEEDBACK_ALLOWED_CATEGORIES.has(normalizedCategoryParam)) {
     return NextResponse.json({ error: 'invalid category' }, { status: HTTP_BAD_REQUEST })
   }
+  const includeMetaParam = req.nextUrl.searchParams.get(FEEDBACK_INCLUDE_META_QUERY_PARAM)
+  const includeMeta = includeMetaParam === '1' || includeMetaParam === 'true'
   if (normalizedLimitParam && !FEEDBACK_LIMIT_DIGITS_REGEX.test(normalizedLimitParam)) {
     return NextResponse.json(INVALID_LIMIT_ERROR, { status: HTTP_BAD_REQUEST })
   }
@@ -63,6 +66,17 @@ export async function GET(req: NextRequest) {
     orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
     take,
   })
+  if (includeMeta) {
+    return NextResponse.json({
+      items: list,
+      meta: {
+        count: list.length,
+        category: normalizedCategoryParam || 'all',
+        limit: take,
+      },
+    })
+  }
+
   return NextResponse.json(list)
 }
 

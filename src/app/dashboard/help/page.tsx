@@ -8,6 +8,12 @@ type FeedbackItem = {
   message: string
 }
 
+type FeedbackListMeta = {
+  count: number
+  category: string
+  limit: number
+}
+
 const CATEGORY_OPTIONS = [
   { value: 'general', label: 'General' },
   { value: 'bug', label: 'Bug report' },
@@ -40,11 +46,19 @@ export default function HelpPage() {
   const [category, setCategory] = useState('general')
   const [filterCategory, setFilterCategory] = useState('all')
   const [items, setItems] = useState<FeedbackItem[]>([])
+  const [meta, setMeta] = useState<FeedbackListMeta>({ count: 0, category: 'all', limit: 20 })
 
   const load = async (selectedFilter = filterCategory) => {
-    const query = selectedFilter === 'all' ? '' : `?category=${encodeURIComponent(selectedFilter)}`
-    const res = await fetch(`/api/feedback${query}`)
-    setItems(await res.json())
+    const params = new URLSearchParams({ includeMeta: '1' })
+    if (selectedFilter !== 'all') params.set('category', selectedFilter)
+    const res = await fetch(`/api/feedback?${params.toString()}`)
+    const data = await res.json()
+    setItems(Array.isArray(data?.items) ? data.items : [])
+    setMeta(
+      data?.meta && typeof data.meta === 'object'
+        ? data.meta
+        : { count: 0, category: selectedFilter, limit: 20 }
+    )
   }
   useEffect(() => {
     load(filterCategory)
@@ -86,7 +100,12 @@ export default function HelpPage() {
       </div>
       <div className="bg-white border rounded-xl p-4">
         <div className="flex items-center justify-between gap-3 mb-2">
-          <h2 className="font-semibold">Recent feedback</h2>
+          <div>
+            <h2 className="font-semibold">Recent feedback</h2>
+            <p className="text-xs text-gray-500">
+              Showing {meta.count} item{meta.count === 1 ? '' : 's'} ({meta.category})
+            </p>
+          </div>
           <label className="text-sm flex items-center gap-2">
             Filter
             <select
@@ -104,6 +123,9 @@ export default function HelpPage() {
           </label>
         </div>
         <div className="space-y-2">
+          {items.length === 0 ? (
+            <div className="p-2 border rounded text-sm text-gray-500">No feedback found for this filter yet.</div>
+          ) : null}
           {items.slice(0, 10).map((f) => (
             <div key={f.id} className="p-2 border rounded text-sm">
               <b>{toCategoryLabel(f.category)}</b>: {f.message}
