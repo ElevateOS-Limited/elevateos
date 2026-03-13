@@ -230,8 +230,8 @@ export async function POST(req: NextRequest) {
 
   const row = await prisma.feedback.create({
     data: {
-      orgId,
-      userId: session?.user?.id || null,
+      orgId: orgId ?? null,
+      userId: session.user.id,
       email: normalizedEmail || null,
       category: normalizedCategory,
       message: normalizedMessage,
