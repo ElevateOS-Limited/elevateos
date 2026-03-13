@@ -180,6 +180,7 @@ export async function POST(req: NextRequest) {
     'curriculum-support': 'general',
     'learning-support': 'general',
     'class-support': 'general',
+    'course-support': 'general',
     'student-support': 'general',
     'learner-support': 'general',
     'family-support': 'general',
