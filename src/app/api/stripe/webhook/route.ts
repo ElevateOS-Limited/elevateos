@@ -6,7 +6,11 @@ import Stripe from 'stripe'
 
 export async function POST(req: Request) {
   const body = await req.text()
-  const signature = headers().get('stripe-signature')!
+  const signature = (await headers()).get('stripe-signature')
+  if (!signature) {
+    return NextResponse.json({ error: 'Missing signature' }, { status: 400 })
+  }
+
   let event: Stripe.Event
   try {
     event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!)
