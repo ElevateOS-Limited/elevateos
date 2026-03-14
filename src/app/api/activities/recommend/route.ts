@@ -58,6 +58,7 @@ export async function GET(req: NextRequest) {
   const category = (params.get('category') ?? '').trim().toLowerCase()
   const limit = Number.isFinite(requestedLimit) ? Math.min(Math.max(Math.trunc(requestedLimit), 1), 12) : 6
   const minScore = Number.isFinite(requestedMinScore) ? Math.max(Math.trunc(requestedMinScore), 0) : 0
+  const appliedFilterCount = [minScore > 0, Boolean(supportBy), Boolean(category), limit !== 6].filter(Boolean).length
 
   const rawAvailability = (user.weeklyAvailability as any) ?? {}
   const availability = (rawAvailability?.weekly && typeof rawAvailability.weekly === 'object'
@@ -101,6 +102,8 @@ export async function GET(req: NextRequest) {
       totalCatalog: ACTIVITY_CATALOG.length,
       matchedCount: scored.length,
       returnedCount: recommendations.length,
+      appliedFilterCount,
+      hasActiveFilters: appliedFilterCount > 0,
     },
     recommendations,
     availableSupport: ACTIVITY_CATALOG.map(({ title, supportBy, supportOffer, subscription }) => ({ title, supportBy, supportOffer, subscription })),

@@ -62,7 +62,7 @@ export default function PlannerPage() {
   const [openDays, setOpenDays] = useState<string[]>([])
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
   const [availableSupport, setAvailableSupport] = useState<any[]>([])
-  const [recommendationMeta, setRecommendationMeta] = useState<{ matchedCount: number; returnedCount: number } | null>(null)
+  const [recommendationMeta, setRecommendationMeta] = useState<{ matchedCount: number; returnedCount: number; appliedFilterCount: number; hasActiveFilters: boolean } | null>(null)
   const [recommendationMinScore, setRecommendationMinScore] = useState(0)
   const [recommendationLimit, setRecommendationLimit] = useState(6)
   const [recommendationSupportFilter, setRecommendationSupportFilter] = useState('')
@@ -167,6 +167,13 @@ export default function PlannerPage() {
     } finally {
       setDetailLoading(false)
     }
+  }
+
+  const clearRecommendationFilters = () => {
+    setRecommendationMinScore(0)
+    setRecommendationLimit(6)
+    setRecommendationSupportFilter('')
+    setRecommendationCategoryFilter('')
   }
 
   const addTask = async (override?: Partial<typeof newTask>) => {
@@ -388,10 +395,17 @@ export default function PlannerPage() {
                 <option value="internship">Internship</option>
               </select>
             </div>
+            <button
+              onClick={clearRecommendationFilters}
+              className="text-xs px-2 py-1 rounded-md border border-gray-300 bg-white text-gray-700"
+            >
+              Clear filters
+            </button>
           </div>
           {recommendationMeta && (
             <p className="text-xs text-gray-500 mb-2">
               Showing {recommendationMeta.returnedCount} of {recommendationMeta.matchedCount} matched opportunities
+              {recommendationMeta.hasActiveFilters ? ` • ${recommendationMeta.appliedFilterCount} active filter(s)` : ' • no active filters'}
             </p>
           )}
           <div className="space-y-3 max-h-96 overflow-auto pr-1">
