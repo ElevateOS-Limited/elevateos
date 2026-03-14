@@ -55,6 +55,7 @@ export async function GET(req: NextRequest) {
   const requestedLimit = Number(params.get('limit') ?? '6')
   const requestedMinScore = Number(params.get('minScore') ?? '0')
   const supportBy = (params.get('supportBy') ?? '').trim().toLowerCase()
+  const category = (params.get('category') ?? '').trim().toLowerCase()
   const limit = Number.isFinite(requestedLimit) ? Math.min(Math.max(Math.trunc(requestedLimit), 1), 12) : 6
   const minScore = Number.isFinite(requestedMinScore) ? Math.max(Math.trunc(requestedMinScore), 0) : 0
 
@@ -81,6 +82,7 @@ export async function GET(req: NextRequest) {
   const scored = ACTIVITY_CATALOG
     .filter((a) => (effectivePlan === 'FREE' ? a.subscription === 'FREE' : effectivePlan === 'PRO' ? a.subscription !== 'ELITE' : true))
     .filter((a) => (supportBy ? a.supportBy.toLowerCase().includes(supportBy) : true))
+    .filter((a) => (category ? a.category.toLowerCase() === category : true))
     .map((activity) => {
       const tagScore = activity.fitTags.reduce((acc, tag) => acc + (tags.some((t) => t.includes(tag) || tag.includes(t)) ? 1 : 0), 0)
       const dayScore = openDays.length ? activity.days.filter((d) => openDays.includes(d)).length : 0
@@ -94,7 +96,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     openDays,
     blockedDates,
-    filters: { limit, minScore, supportBy: supportBy || null },
+    filters: { limit, minScore, supportBy: supportBy || null, category: category || null },
     meta: {
       totalCatalog: ACTIVITY_CATALOG.length,
       matchedCount: scored.length,

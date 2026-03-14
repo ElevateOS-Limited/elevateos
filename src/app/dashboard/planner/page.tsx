@@ -66,6 +66,7 @@ export default function PlannerPage() {
   const [recommendationMinScore, setRecommendationMinScore] = useState(0)
   const [recommendationLimit, setRecommendationLimit] = useState(6)
   const [recommendationSupportFilter, setRecommendationSupportFilter] = useState('')
+  const [recommendationCategoryFilter, setRecommendationCategoryFilter] = useState('')
   const [selectedRecommendationId, setSelectedRecommendationId] = useState<string | null>(null)
   const [selectedRecommendationDetail, setSelectedRecommendationDetail] = useState<ActivityDetail | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
@@ -81,7 +82,7 @@ export default function PlannerPage() {
     setError('')
     try {
       const [r1, r2, r3] = await Promise.all([
-        fetch(`/api/activities/recommend?limit=${recommendationLimit}&minScore=${recommendationMinScore}&supportBy=${encodeURIComponent(recommendationSupportFilter)}`).then((r) => r.json()),
+        fetch(`/api/activities/recommend?limit=${recommendationLimit}&minScore=${recommendationMinScore}&supportBy=${encodeURIComponent(recommendationSupportFilter)}&category=${encodeURIComponent(recommendationCategoryFilter)}`).then((r) => r.json()),
         fetch('/api/deadlines').then((r) => r.json()),
         fetch('/api/calendar-events').then((r) => r.json()),
       ])
@@ -100,7 +101,7 @@ export default function PlannerPage() {
 
   useEffect(() => {
     load()
-  }, [recommendationMinScore, recommendationLimit, recommendationSupportFilter])
+  }, [recommendationMinScore, recommendationLimit, recommendationSupportFilter, recommendationCategoryFilter])
 
   const today = new Date()
   const todayStr = today.toISOString().slice(0, 10)
@@ -369,6 +370,22 @@ export default function PlannerPage() {
                 <option value="mentor">Mentor</option>
                 <option value="parent">Parent</option>
                 <option value="coach">Coach</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-gray-600">Category</label>
+              <select
+                value={recommendationCategoryFilter}
+                onChange={(e) => setRecommendationCategoryFilter(e.target.value)}
+                className="rounded-md border px-2 py-1 text-xs bg-white"
+              >
+                <option value="">All</option>
+                <option value="research">Research</option>
+                <option value="community">Community</option>
+                <option value="competition">Competition</option>
+                <option value="leadership">Leadership</option>
+                <option value="creative">Creative</option>
+                <option value="internship">Internship</option>
               </select>
             </div>
           </div>
