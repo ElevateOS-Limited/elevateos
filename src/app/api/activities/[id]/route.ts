@@ -26,12 +26,17 @@ const patchSchema = z.object({
   verified: z.boolean().optional(),
 })
 
+type RouteContext = {
+  params: Promise<{ id: string }>
+}
+
 function getSessionOrgId(session: Awaited<ReturnType<typeof getSessionOrDemo>>): string | null {
   const orgId = (session?.user as { orgId?: string | null } | undefined)?.orgId
   return typeof orgId === 'string' && orgId.trim().length > 0 ? orgId : null
 }
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_: NextRequest, context: RouteContext) {
+  const { id } = await context.params
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'PARENT', 'STUDENT', 'USER'])) return forbiddenResponse()
@@ -40,7 +45,7 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
   const orgId = getSessionOrgId(session)
 
   const item = await prisma.activityOpportunity.findFirst({
-    where: withOrgScope(orgId, { id: params.id }),
+    where: withOrgScope(orgId, { id }),
     include: {
       tags: true,
       evidenceTemplates: true,
@@ -55,7 +60,8 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
   return NextResponse.json(item)
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, context: RouteContext) {
+  const { id } = await context.params
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
@@ -74,8 +80,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 
   const scopedWhere = canManage
-    ? withOrgScope(orgId, { id: params.id })
-    : withOrgScope(orgId, { id: params.id, createdByUserId: session.user.id })
+    ? withOrgScope(orgId, { id })
+    : withOrgScope(orgId, { id, createdByUserId: session.user.id })
 
   const existing = await prisma.activityOpportunity.findFirst({
     where: scopedWhere,
@@ -108,7 +114,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         create: {
           reviewerId: session.user.id,
           action: 'updated',
-          notes: `Updated fields: ${Object.keys(body).join(', ')}`,
+          notes: 'Updated fields: ' + Object.keys(body).join(', '),
         },
       },
     },
@@ -118,7 +124,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   return NextResponse.json(updated)
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_: NextRequest, context: RouteContext) {
+  const { id } = await context.params
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   if (!hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])) return forbiddenResponse()
@@ -126,8 +133,8 @@ export async function DELETE(_: NextRequest, { params }: { params: { id: string 
   const canManage = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR'])
   const orgId = getSessionOrgId(session)
   const scopedWhere = canManage
-    ? withOrgScope(orgId, { id: params.id })
-    : withOrgScope(orgId, { id: params.id, createdByUserId: session.user.id })
+    ? withOrgScope(orgId, { id })
+    : withOrgScope(orgId, { id, createdByUserId: session.user.id })
 
   const existing = await prisma.activityOpportunity.findFirst({
     where: scopedWhere,

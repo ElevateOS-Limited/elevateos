@@ -14,6 +14,16 @@ type Recommendation = {
   score: number
 }
 
+type ActivityDetail = {
+  id: string
+  providerName?: string | null
+  category?: string | null
+  region?: string | null
+  mode?: 'online' | 'hybrid' | 'in_person' | null
+  deadlineAt?: string | null
+  status?: string | null
+}
+
 type Deadline = {
   id: string
   title: string
@@ -52,6 +62,9 @@ export default function PlannerPage() {
   const [openDays, setOpenDays] = useState<string[]>([])
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
   const [availableSupport, setAvailableSupport] = useState<any[]>([])
+  const [selectedRecommendationId, setSelectedRecommendationId] = useState<string | null>(null)
+  const [selectedRecommendationDetail, setSelectedRecommendationDetail] = useState<ActivityDetail | null>(null)
+  const [detailLoading, setDetailLoading] = useState(false)
 
   const [deadlines, setDeadlines] = useState<Deadline[]>([])
   const [events, setEvents] = useState<CalendarEvent[]>([])
@@ -127,6 +140,27 @@ export default function PlannerPage() {
     const deadlineCount = deadlines.filter((d) => d.dueAt.slice(0, 10) === day && !d.completed).length
     const eventCount = events.filter((e) => e.startsAt.slice(0, 10) === day).length
     return deadlineCount + eventCount
+  }
+
+  const formatMode = (mode?: ActivityDetail['mode']) => {
+    if (!mode) return 'n/a'
+    return mode.replace('_', ' ')
+  }
+
+  const loadRecommendationDetail = async (id: string) => {
+    setSelectedRecommendationId(id)
+    setDetailLoading(true)
+    try {
+      const response = await fetch(`/api/activities/${id}`)
+      if (!response.ok) {
+        setSelectedRecommendationDetail(null)
+        return
+      }
+      const detail = await response.json()
+      setSelectedRecommendationDetail(detail)
+    } finally {
+      setDetailLoading(false)
+    }
   }
 
   const addTask = async (override?: Partial<typeof newTask>) => {
@@ -297,7 +331,7 @@ export default function PlannerPage() {
           <p className="text-sm text-gray-500 mb-3">Open days: {openDays.join(', ') || 'None set'}</p>
           <div className="space-y-3 max-h-96 overflow-auto pr-1">
             {recommendations.map((r) => (
-              <div key={r.id} className="border rounded-xl p-4 hover:border-indigo-300 transition-colors">
+              <div key={r.id} className={`border rounded-xl p-4 hover:border-indigo-300 transition-colors ${selectedRecommendationId === r.id ? 'border-indigo-400 bg-indigo-50/50' : ''}`}>
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-semibold text-sm">{r.title}</h3>
                   <span className="text-xs px-2 py-1 rounded-full bg-indigo-100 text-indigo-700">Fit {r.score}</span>
@@ -305,9 +339,29 @@ export default function PlannerPage() {
                 <p className="text-xs text-gray-500 mt-1">{r.outcome}</p>
                 <p className="text-xs mt-2">Support: {r.supportBy}</p>
                 <p className="text-xs">Plan: {r.subscription}</p>
-                <button onClick={() => addRecommendationToQueue(r)} className="mt-2 text-xs px-2 py-1 rounded-md bg-indigo-600 text-white">Add to action queue</button>
+                <div className="mt-2 flex items-center gap-2">
+                  <button onClick={() => addRecommendationToQueue(r)} className="text-xs px-2 py-1 rounded-md bg-indigo-600 text-white">Add to action queue</button>
+                  <button onClick={() => loadRecommendationDetail(r.id)} className="text-xs px-2 py-1 rounded-md border border-indigo-200 text-indigo-700">View details</button>
+                </div>
               </div>
             ))}
+          </div>
+          <div className="mt-4 rounded-xl border p-3 bg-gray-50">
+            <p className="text-xs font-semibold text-gray-700 mb-2">Opportunity detail preview</p>
+            {detailLoading && <p className="text-xs text-gray-500">Loading details...</p>}
+            {!detailLoading && !selectedRecommendationDetail && (
+              <p className="text-xs text-gray-500">Select a recommendation and click “View details” to load scoped API details.</p>
+            )}
+            {!detailLoading && selectedRecommendationDetail && (
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <p><span className="text-gray-500">Provider:</span> {selectedRecommendationDetail.providerName || 'n/a'}</p>
+                <p><span className="text-gray-500">Category:</span> {selectedRecommendationDetail.category || 'n/a'}</p>
+                <p><span className="text-gray-500">Region:</span> {selectedRecommendationDetail.region || 'n/a'}</p>
+                <p><span className="text-gray-500">Mode:</span> {formatMode(selectedRecommendationDetail.mode)}</p>
+                <p><span className="text-gray-500">Status:</span> {selectedRecommendationDetail.status || 'n/a'}</p>
+                <p><span className="text-gray-500">Deadline:</span> {selectedRecommendationDetail.deadlineAt ? new Date(selectedRecommendationDetail.deadlineAt).toLocaleDateString() : 'n/a'}</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
