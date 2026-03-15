@@ -6,19 +6,8 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { ensureDemoUser, DEMO_MODE, DEMO_EMAIL, DEMO_PASSWORD } from "@/lib/auth/demo";
 
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
-  session: { strategy: "jwt" },
-  pages: {
-    signIn: "/auth/login",
-    error: "/auth/error",
-  },
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    CredentialsProvider({
+const providers: NextAuthOptions["providers"] = [
+  CredentialsProvider({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -43,7 +32,25 @@ export const authOptions: NextAuthOptions = {
         return user;
       },
     }),
-  ],
+]
+
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  providers.push(
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    })
+  )
+}
+
+export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
+  session: { strategy: "jwt" },
+  pages: {
+    signIn: "/auth/login",
+    error: "/auth/error",
+  },
+  providers,
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
