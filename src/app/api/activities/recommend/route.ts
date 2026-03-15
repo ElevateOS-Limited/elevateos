@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server'
 import { getSessionOrDemo } from '@/lib/auth/session'
 import { ACTIVITY_CATALOG } from '@/lib/activities'
-import { DEMO_MODE } from '@/lib/auth/demo'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-const isDemoMode = DEMO_MODE || process.env.DEMO_MODE === 'true' || process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
+const isDemoMode = process.env.DEMO_MODE === 'true' || process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
 
 async function getPrisma() {
   const { prisma } = await import('@/lib/prisma')
@@ -92,7 +91,7 @@ export async function GET() {
     'top university',
   ])
 
-  const effectivePlan = DEMO_MODE ? 'ELITE' : user.plan
+  const effectivePlan = isDemoMode ? 'ELITE' : user.plan
 
   const scored = ACTIVITY_CATALOG
     .filter((a) => (effectivePlan === 'FREE' ? a.subscription === 'FREE' : effectivePlan === 'PRO' ? a.subscription !== 'ELITE' : true))
