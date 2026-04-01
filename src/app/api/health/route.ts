@@ -25,13 +25,23 @@ function healthAuthOk(req: Request): boolean {
 export async function GET(req: Request) {
   const startedAt = Date.now()
   const detailed = healthAuthOk(req)
+  const demoMode = process.env.DEMO_MODE === 'true' || process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
+  const databaseConfigured = Boolean(process.env.DATABASE_URL)
 
-  let dbOk = false
-  try {
-    await prisma.$queryRaw`SELECT 1`
-    dbOk = true
-  } catch {
-    dbOk = false
+  let dbOk = demoMode || !databaseConfigured
+  let dbChecked = false
+  let dbMessage = demoMode ? 'demo mode' : 'DATABASE_URL not set'
+
+  if (!demoMode && databaseConfigured) {
+    dbChecked = true
+    try {
+      await prisma.$queryRaw`SELECT 1`
+      dbOk = true
+      dbMessage = 'ok'
+    } catch (error) {
+      dbOk = false
+      dbMessage = error instanceof Error ? error.message : 'db error'
+    }
   }
 
   const status = dbOk ? 'ok' : 'degraded'
@@ -41,7 +51,11 @@ export async function GET(req: Request) {
       status,
       service: 'elevateos-demo',
       timestamp: new Date().toISOString(),
-      db: { ok: dbOk },
+      db: {
+        ok: dbOk,
+        checked: dbChecked,
+        message: dbMessage,
+      },
       responseMs: Date.now() - startedAt,
     }
     return NextResponse.json(payload, { status: dbOk ? 200 : 503 })
@@ -65,7 +79,7 @@ export async function GET(req: Request) {
       databaseUrlConfigured: Boolean(process.env.DATABASE_URL),
       nextAuthSecretConfigured: Boolean(process.env.NEXTAUTH_SECRET),
     },
-    db: { ok: dbOk, message: dbOk ? 'ok' : 'db error' },
+    db: { ok: dbOk, checked: dbChecked, message: dbMessage },
     uptimeSeconds: Math.floor(process.uptime()),
     responseMs: Date.now() - startedAt,
     timestamp: new Date().toISOString(),
