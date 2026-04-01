@@ -6,7 +6,7 @@ import { refreshUserStripeState } from '@/lib/stripe/reconcile'
 
 const demoProfile = {
   id: 'demo-user',
-  name: 'EduTech Demo Student',
+  name: 'ElevateOS Demo Student',
   email: 'demo@thinkcollegelevel.com',
   image: null,
   role: 'USER',
@@ -42,7 +42,7 @@ const demoProfile = {
   trialEnds: null,
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   const session = await getSessionOrDemo()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
@@ -148,7 +148,7 @@ export async function PUT(req: Request) {
     })
 
     return NextResponse.json({ message: 'Profile updated', user })
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'Update failed' }, { status: 500 })
   }
 }

@@ -32,7 +32,7 @@ export async function POST(req: Request) {
       case 'customer.subscription.created':
       case 'customer.subscription.updated': {
         const sub = event.data.object as Stripe.Subscription
-        await prisma.user.update({
+        const user = await prisma.user.update({
           where: { stripeCustomerId: sub.customer as string },
           data: {
             stripeSubscriptionId: sub.id,
@@ -43,6 +43,28 @@ export async function POST(req: Request) {
               : null,
           },
         })
+
+        if (event.type === 'customer.subscription.created') {
+          await prisma.eventLog.create({
+            data: {
+              userId: user.id,
+              eventType: 'checkout_completed',
+              meta: {
+                stripeSubscriptionId: sub.id,
+                stripeCustomerId: sub.customer as string,
+                priceId: sub.items.data[0]?.price?.id ?? null,
+                status: sub.status,
+                plan: sub.metadata?.plan ?? null,
+                interval: sub.metadata?.interval ?? null,
+              },
+            },
+          }).catch((error) => {
+            console.warn('checkout_completed_log_failed', {
+              subscriptionId: sub.id,
+              error: error instanceof Error ? error.message : String(error),
+            })
+          })
+        }
         break
       }
       case 'customer.subscription.deleted': {
@@ -56,8 +78,13 @@ export async function POST(req: Request) {
     }
     await markStripeWebhookStatus(event.id, event.type, 'processed')
     return NextResponse.json({ received: true })
-  } catch (e: any) {
-    await markStripeWebhookStatus(event.id, event.type, 'failed', e?.message || 'unknown_error')
+  } catch (error: unknown) {
+    await markStripeWebhookStatus(
+      event.id,
+      event.type,
+      'failed',
+      error instanceof Error ? error.message : 'unknown_error',
+    )
     return NextResponse.json({ error: 'Webhook failed' }, { status: 500 })
   }
 }
