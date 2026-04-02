@@ -11,7 +11,6 @@ export async function POST(req: Request) {
   try {
     const stripe = getStripe()
     const { priceId } = await req.json()
-    const appUrl = getAppUrl(req)
     const user = await prisma.user.findUnique({ where: { id: session.user.id } })
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
@@ -22,7 +21,7 @@ export async function POST(req: Request) {
       await prisma.user.update({ where: { id: user.id }, data: { stripeCustomerId: customerId } })
     }
 
-    const appUrl = getAppUrl(new URL(req.url).origin)
+    const appUrl = getAppUrl(req)
     const checkoutSession = await stripe.checkout.sessions.create({
       customer: customerId,
       payment_method_types: ['card'],

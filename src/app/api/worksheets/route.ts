@@ -7,6 +7,15 @@ import { enforceAIDemoGuard, shouldUseStaticDemoResponses, demoWorksheet } from 
 import { forbiddenResponse, hasRequiredRole } from '@/lib/auth/roles'
 import { aiErrorResponse } from '@/lib/ai/http'
 
+function getSessionOrgId(session: Awaited<ReturnType<typeof getSessionOrDemo>>) {
+  const orgId = (session?.user as { orgId?: string | null } | undefined)?.orgId
+  return typeof orgId === 'string' && orgId.trim().length > 0 ? orgId : null
+}
+
+function canReadAllOrgWorksheets(role: string | undefined) {
+  return hasRequiredRole(role, ['OWNER', 'ADMIN', 'TUTOR'])
+}
+
 const schema = z.object({
   subject: z.string().trim().min(1, 'Subject is required'),
   curriculum: z.string().trim().optional(),
@@ -155,7 +164,7 @@ export async function POST(req: Request) {
       data: {
         orgId: orgId ?? undefined,
         userId: session.user.id,
-        title: normalizedTitle,
+        title: result.title || `${data.subject} Worksheet`,
         subject: data.subject,
         curriculum: data.curriculum,
         difficulty: data.difficulty,
@@ -184,6 +193,7 @@ export async function GET(req: Request) {
 
   const allowed = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])
   if (!allowed) return forbiddenResponse()
+  const orgId = getSessionOrgId(session)
 
   if (!DATABASE_URL_CONFIGURED) {
     return NextResponse.json([
@@ -199,7 +209,7 @@ export async function GET(req: Request) {
 
   const worksheets = await prisma.worksheet.findMany({
     where: orgId
-      ? canReadAllOrgWorksheets
+      ? canReadAllOrgWorksheets(session.user.role)
         ? { orgId }
         : { orgId, userId: session.user.id }
       : { userId: session.user.id },

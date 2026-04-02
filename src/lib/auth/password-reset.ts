@@ -4,6 +4,7 @@ import { getAppUrl } from '@/lib/app-url'
 import { prisma } from '@/lib/prisma'
 
 const RESET_LINK_PREFIX = 'reset-link:'
+const PASSWORD_RESET_PREFIX = RESET_LINK_PREFIX
 const PASSWORD_RESET_TTL_MS = 1000 * 60 * 60
 
 function normalizeEmail(email: string) {

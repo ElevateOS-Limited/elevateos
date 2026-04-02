@@ -79,6 +79,8 @@ export async function PATCH(req: NextRequest) {
 
   const { id, title, content, tags } = await req.json()
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
+  const normalizedTitle = typeof title === 'string' ? title.trim() : undefined
+  const normalizedContent = typeof content === 'string' ? content.trim() : undefined
 
   const result = await prisma.note.updateMany({
     where: { id, userId: session.user.id },
