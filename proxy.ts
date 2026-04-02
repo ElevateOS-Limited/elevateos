@@ -39,10 +39,15 @@ export function proxy(request: NextRequest) {
   }
 
   const siteVariant = getSiteVariantFromHost(host)
-  if (siteVariant === 'tutoring' && request.nextUrl.pathname === '/dashboard') {
-    const rewriteUrl = request.nextUrl.clone()
-    rewriteUrl.pathname = '/dashboard/partner'
-    return NextResponse.rewrite(rewriteUrl)
+  if (siteVariant === 'tutoring') {
+    const { pathname } = request.nextUrl
+
+    if (pathname === '/dashboard' || (pathname.startsWith('/dashboard/') && !pathname.startsWith('/dashboard/partner'))) {
+      const rewriteUrl = request.nextUrl.clone()
+      const suffix = pathname === '/dashboard' ? '' : pathname.slice('/dashboard'.length)
+      rewriteUrl.pathname = `/dashboard/partner${suffix}`
+      return NextResponse.rewrite(rewriteUrl)
+    }
   }
 
   return NextResponse.next()

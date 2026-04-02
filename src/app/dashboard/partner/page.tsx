@@ -1,15 +1,5 @@
-import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
+import TutoringOverviewPage from '@/components/tutoring/TutoringOverviewPage'
 
-import TutorDashboardClient from '@/components/tutoring/TutoringDashboardClient'
-import { getSiteVariantFromHeaders } from '@/lib/site'
-
-export default async function TutorDashboardPage() {
-  const headerStore = await headers()
-
-  if (getSiteVariantFromHeaders(headerStore) !== 'tutoring') {
-    redirect('/dashboard')
-  }
-
-  return <TutorDashboardClient />
+export default function TutoringDashboardPage() {
+  return <TutoringOverviewPage />
 }
