@@ -167,27 +167,53 @@ export default function Sidebar({ user, mobileOpen = false, onCloseMobile }: Sid
                   {group.items.map((item) => {
                     const active = pathname === item.href || (item.href !== '/dashboard' && pathname?.startsWith(item.href))
                     const locked = item.planRequired === 'PRO' && user.plan === 'FREE'
+                    const isExternal = item.href.startsWith('http')
                     return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        title={item.label}
-                        onClick={() => onCloseMobile?.()}
-                        className={cn(
-                          'flex items-center gap-3 rounded-xl text-sm transition-all',
-                          collapsed ? 'justify-center px-3 py-2.5' : 'px-3 py-2',
-                          active ? 'bg-white/10 text-white ring-1 ring-white/10' : 'text-white/70 hover:bg-white/5 hover:text-white'
-                        )}
-                      >
-                        <item.icon className="h-4 w-4 flex-shrink-0" />
-                        {!collapsed && (
-                          <>
-                            <span className="flex-1 truncate">{item.label}</span>
-                            {item.badge && <span className="rounded bg-[#f2c06d]/15 px-1.5 py-0.5 text-[10px] text-[#f5d59f]">{item.badge}</span>}
-                            {locked && <Crown className="h-3.5 w-3.5 text-[#f2c06d]" />}
-                          </>
-                        )}
-                      </Link>
+                      isExternal ? (
+                        <a
+                          key={item.href}
+                          href={item.href}
+                          title={item.label}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={() => onCloseMobile?.()}
+                          className={cn(
+                            'flex items-center gap-3 rounded-xl text-sm transition-all',
+                            collapsed ? 'justify-center px-3 py-2.5' : 'px-3 py-2',
+                            active ? 'bg-white/10 text-white ring-1 ring-white/10' : 'text-white/70 hover:bg-white/5 hover:text-white'
+                          )}
+                        >
+                          <item.icon className="h-4 w-4 flex-shrink-0" />
+                          {!collapsed && (
+                            <>
+                              <span className="flex-1 truncate">{item.label}</span>
+                              {item.badge && <span className="rounded bg-[#f2c06d]/15 px-1.5 py-0.5 text-[10px] text-[#f5d59f]">{item.badge}</span>}
+                              {locked && <Crown className="h-3.5 w-3.5 text-[#f2c06d]" />}
+                            </>
+                          )}
+                        </a>
+                      ) : (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          title={item.label}
+                          onClick={() => onCloseMobile?.()}
+                          className={cn(
+                            'flex items-center gap-3 rounded-xl text-sm transition-all',
+                            collapsed ? 'justify-center px-3 py-2.5' : 'px-3 py-2',
+                            active ? 'bg-white/10 text-white ring-1 ring-white/10' : 'text-white/70 hover:bg-white/5 hover:text-white'
+                          )}
+                        >
+                          <item.icon className="h-4 w-4 flex-shrink-0" />
+                          {!collapsed && (
+                            <>
+                              <span className="flex-1 truncate">{item.label}</span>
+                              {item.badge && <span className="rounded bg-[#f2c06d]/15 px-1.5 py-0.5 text-[10px] text-[#f5d59f]">{item.badge}</span>}
+                              {locked && <Crown className="h-3.5 w-3.5 text-[#f2c06d]" />}
+                            </>
+                          )}
+                        </Link>
+                      )
                     )
                   })}
                 </div>

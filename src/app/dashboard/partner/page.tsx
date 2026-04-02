@@ -1,410 +1,432 @@
-'use client'
-
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 import {
-  ArrowRight,
-  BarChart3,
+  Bell,
   CalendarClock,
-  CheckCircle2,
-  Clock3,
+  ChevronDown,
+  FileText,
+  LayoutDashboard,
+  LogOut,
+  Menu,
   MessageSquare,
-  ShieldAlert,
-  Sparkles,
-  TrendingUp,
+  Plus,
+  Search,
+  Settings,
   Users,
+  TrendingUp,
 } from 'lucide-react'
 
-type StatusTone = 'green' | 'amber' | 'red'
+import type { LucideIcon } from 'lucide-react'
+import { getSiteVariantFromHeaders } from '@/lib/site'
+
+type NavItem = {
+  id: string
+  label: string
+  icon: LucideIcon
+  badge?: number
+}
 
 type StudentRow = {
   initials: string
   name: string
   subject: string
+  grade: string
   sessions: number
+  status: 'Improving' | 'Stable' | 'Declining'
   progress: number
-  status: string
-  tone: StatusTone
-  next: string
-  hue: string
+  nextSession: string
 }
 
-type RecapItem = {
-  day: string
-  mon: string
-  topics: string
-  homework: string
-  next: string
-  notes: string
-}
-
-type SessionItem = {
-  time: string
-  title: string
-  detail: string
-}
-
-type ThreadItem = {
-  with: string
-  student: string
-  preview: string
-  time: string
-  unread?: number
-}
-
-type MetricCard = {
+type SummaryRow = {
   label: string
   value: string
-  note: string
-  icon: typeof Users
+  tone: 'green' | 'amber' | 'red'
 }
 
-const metrics: MetricCard[] = [
-  { label: 'Active students', value: '12', note: '4 need follow-up', icon: Users },
-  { label: 'Avg recap rating', value: '4.7/5', note: 'Last 30 days', icon: TrendingUp },
-  { label: 'Unread messages', value: '3', note: 'Tutor queue', icon: MessageSquare },
-  { label: 'Upcoming sessions', value: '5', note: 'This week', icon: CalendarClock },
+const navItems: NavItem[] = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'students', label: 'Students', icon: Users },
+  { id: 'recaps', label: 'Recaps', icon: FileText },
+  { id: 'progress', label: 'Progress', icon: TrendingUp },
+  { id: 'schedule', label: 'Schedule', icon: CalendarClock },
+  { id: 'communication', label: 'Communication', icon: MessageSquare, badge: 3 },
+  { id: 'settings', label: 'Settings', icon: Settings },
 ]
+
+const povItems = ['Demo POV', 'Tutor POV', 'Parent POV'] as const
 
 const students: StudentRow[] = [
-  { initials: 'MC', name: 'Mia Chen', subject: 'Mathematics', sessions: 18, progress: 88, status: 'On track', tone: 'green', next: 'Quadratic review', hue: '#3B82F6' },
-  { initials: 'JP', name: 'Jordan Patel', subject: 'English', sessions: 22, progress: 63, status: 'Needs focus', tone: 'amber', next: 'Essay thesis practice', hue: '#DF5B30' },
-  { initials: 'SA', name: 'Sofia Alvarez', subject: 'Biology', sessions: 14, progress: 74, status: 'Steady', tone: 'amber', next: 'Lab write-up', hue: '#10B981' },
-  { initials: 'DK', name: 'Daniel Kim', subject: 'Physics', sessions: 16, progress: 91, status: 'On track', tone: 'green', next: 'Mechanics problem set', hue: '#8B5CF6' },
+  { initials: 'AS', name: 'Aiko Sato', subject: 'Physics', grade: 'Grade 12', sessions: 31, status: 'Improving', progress: 93, nextSession: 'Thu 3:00 PM' },
+  { initials: 'HK', name: 'Hana Kobayashi', subject: 'Biology', grade: 'Grade 11', sessions: 9, status: 'Stable', progress: 68, nextSession: 'Mon 6:00 PM' },
+  { initials: 'KY', name: 'Kenji Yamamoto', subject: 'Chemistry', grade: 'Grade 10', sessions: 12, status: 'Declining', progress: 48, nextSession: 'Fri 2:00 PM' },
+  { initials: 'LM', name: 'Lucia Martinez', subject: 'Essay Writing', grade: 'Grade 11', sessions: 16, status: 'Declining', progress: 52, nextSession: 'Sat 10:00 AM' },
+  { initials: 'MP', name: 'Mina Park', subject: 'Algebra II', grade: 'Grade 9', sessions: 14, status: 'Improving', progress: 76, nextSession: 'Tue 4:30 PM' },
+  { initials: 'NW', name: 'Noah Williams', subject: 'Pre-Calculus', grade: 'Grade 12', sessions: 20, status: 'Stable', progress: 74, nextSession: 'Sun 3:00 PM' },
+  { initials: 'OH', name: 'Omar Hassan', subject: 'World History', grade: 'Grade 10', sessions: 11, status: 'Stable', progress: 61, nextSession: 'Thu 5:00 PM' },
+  { initials: 'RN', name: 'Ryo Nakamura', subject: 'English', grade: 'Grade 11', sessions: 18, status: 'Declining', progress: 59, nextSession: 'Wed 5:30 PM' },
+  { initials: 'YT', name: 'Yuki Tanaka', subject: 'Mathematics', grade: 'Grade 10', sessions: 24, status: 'Improving', progress: 82, nextSession: 'Mon 4:00 PM' },
 ]
 
-const sessions: SessionItem[] = [
-  { time: 'Today 4:00 PM', title: 'Mia Chen - Math review', detail: 'Quadratics and graph interpretation' },
-  { time: 'Tomorrow 5:30 PM', title: 'Jordan Patel - Essay workshop', detail: 'Argument structure and transitions' },
-  { time: 'Fri 6:00 PM', title: 'Daniel Kim - Physics sprint', detail: 'Mechanics practice and recap' },
+const statusSummary: SummaryRow[] = [
+  { label: 'Accelerating', value: '3', tone: 'green' },
+  { label: 'Steady', value: '3', tone: 'amber' },
+  { label: 'Intervention Plan', value: '3', tone: 'red' },
 ]
 
-const threads: ThreadItem[] = [
-  { with: 'Parent update', student: 'Mia Chen', preview: 'Could we move Saturday to Sunday afternoon?', time: 'Mon 3:20 PM', unread: 1 },
-  { with: 'Tutor check-in', student: 'Jordan Patel', preview: 'Shared the essay outline and next step.', time: 'Mon 1:10 PM' },
-  { with: 'Parent note', student: 'Daniel Kim', preview: 'Thanks for the mechanics recap and feedback.', time: 'Sun 6:40 PM' },
-]
+function statusClasses(status: StudentRow['status']) {
+  if (status === 'Improving') {
+    return 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700'
+  }
 
-const recaps: RecapItem[] = [
-  {
-    day: '12',
-    mon: 'MAR',
-    topics: 'Essay structure, thesis statements',
-    homework: 'Draft intro paragraph for assigned essay',
-    next: 'Body paragraph development',
-    notes: 'Needs more practice with argumentative framing.',
-  },
-  {
-    day: '8',
-    mon: 'MAR',
-    topics: 'Functions and graphs',
-    homework: 'Graph five functions worksheet',
-    next: 'Quadratic equations',
-    notes: 'Strong progress on notation and intercepts.',
-  },
-  {
-    day: '3',
-    mon: 'MAR',
-    topics: 'Cell biology and membranes',
-    homework: 'Memorize transport terms',
-    next: 'Photosynthesis quiz prep',
-    notes: 'Good recall when prompted with diagrams.',
-  },
-  {
-    day: '28',
-    mon: 'FEB',
-    topics: 'Newtonian mechanics',
-    homework: 'Timed practice questions',
-    next: 'Forces and free body diagrams',
-    notes: 'Can now explain solutions aloud without prompting.',
-  },
-]
+  if (status === 'Declining') {
+    return 'border-rose-500/20 bg-rose-500/10 text-rose-700'
+  }
 
-function toneClasses(tone: StatusTone) {
-  if (tone === 'green') return 'border-emerald-500/20 bg-emerald-500/10 text-emerald-200'
-  if (tone === 'amber') return 'border-amber-500/20 bg-amber-500/10 text-amber-200'
-  return 'border-rose-500/20 bg-rose-500/10 text-rose-200'
+  return 'border-amber-500/20 bg-amber-500/10 text-amber-700'
 }
 
-function ProgressBar({ value, color }: { value: number; color: string }) {
-  return (
-    <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
-      <div className="h-full rounded-full" style={{ width: `${value}%`, backgroundColor: color }} />
-    </div>
-  )
+function summaryClasses(tone: SummaryRow['tone']) {
+  if (tone === 'green') {
+    return 'border-[#A7F3D0] bg-[#E6F4ED] text-[#2D6A4F]'
+  }
+
+  if (tone === 'red') {
+    return 'border-[#FECACA] bg-[#FEE2E2] text-[#991B1B]'
+  }
+
+  return 'border-[#FDE68A] bg-[#FEF3C7] text-[#92400E]'
 }
 
-function StatCard({ label, value, note, icon: Icon }: MetricCard) {
-  return (
-    <div className="rounded-[1.25rem] border border-white/10 bg-white/5 p-4">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-xs uppercase tracking-[0.18em] text-white/55">{label}</p>
-        <Icon className="h-4 w-4 text-[#f2c06d]" />
-      </div>
-      <p className="mt-2 text-3xl font-semibold text-white">{value}</p>
-      <p className="mt-1 text-xs text-white/60">{note}</p>
-    </div>
-  )
+function progressColor(progress: number) {
+  if (progress >= 75) return '#10B981'
+  if (progress >= 50) return '#3B82F6'
+  return '#EF4444'
 }
 
-export default function PartnerDashboardPage() {
-  const { data: session } = useSession()
-  const firstName = session?.user?.name?.split(' ')?.[0] || 'Tutor'
+function progressLabel(status: StudentRow['status']) {
+  if (status === 'Improving') return '📈 Improving'
+  if (status === 'Declining') return '📉 Declining'
+  return '→ Stable'
+}
+
+export default async function TutorDashboardPage() {
+  const headerStore = await headers()
+  if (getSiteVariantFromHeaders(headerStore) !== 'tutoring') {
+    redirect('/dashboard')
+  }
 
   return (
-    <div className="space-y-8 pb-10">
-      <section className="rounded-[2rem] border border-slate-900/10 bg-white/80 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#f8f5ef] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#9a5b00] dark:border-white/10 dark:bg-white/5 dark:text-[#f5d59f]">
-              <Sparkles className="h-3.5 w-3.5" />
-              Tutoring MVP
-            </div>
-            <h1 className="font-display mt-4 text-4xl tracking-tight text-slate-950 dark:text-white sm:text-5xl">
-              Hi, {firstName}. Keep sessions, recaps, and follow-up in one place.
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600 dark:text-slate-300">
-              This view is intentionally narrow: the tutor only needs today’s sessions, the latest recap, the next action, and the parent thread that is waiting for a reply.
-            </p>
+    <div className="relative flex min-h-[100svh] overflow-hidden bg-[#1E293B] text-[#F8F9FA]">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_0%,rgba(223,91,48,0.08),transparent_28%),radial-gradient(circle_at_90%_20%,rgba(255,255,255,0.03),transparent_24%)]" />
 
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Link href="/dashboard" className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-[#f8f5ef] shadow-lg shadow-slate-950/10 transition-transform hover:-translate-y-0.5 dark:bg-white dark:text-slate-950">
-                Open main workspace
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link href="/dashboard/progress" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-5 py-3 text-sm font-semibold text-slate-700 backdrop-blur hover:border-slate-900/20 hover:text-slate-950 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:text-white">
-                Review progress
-              </Link>
-              <Link href="/dashboard/settings" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-5 py-3 text-sm font-semibold text-slate-700 backdrop-blur hover:border-slate-900/20 hover:text-slate-950 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:text-white">
-                Update schedule
-              </Link>
-            </div>
-
-            <div className="mt-5 flex flex-wrap gap-2 text-xs text-slate-600 dark:text-slate-300">
-              {['Sessions', 'Students', 'Recaps', 'Parent notes'].map((item) => (
-                <span key={item} className="rounded-full border border-slate-900/10 bg-white/70 px-3 py-1.5 dark:border-white/10 dark:bg-white/5">
-                  {item}
-                </span>
-              ))}
-            </div>
+      <aside className="hidden w-[220px] shrink-0 flex-col border-r border-[#334155] bg-[#1E293B] lg:flex">
+        <div className="flex items-center gap-2 border-b border-[#F8F9FA] px-5 py-[21px] pb-[18px]">
+          <div className="flex h-[30px] w-[30px] items-center justify-center rounded-[7px] bg-[#DF5B30] font-display text-[15px] text-white">
+            E
           </div>
+          <span className="font-display text-[16.5px] tracking-[-0.3px] text-[#F8F9FA]">
+            ElevateOS
+          </span>
+        </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:w-[30rem]">
-            {metrics.map((metric) => (
-              <StatCard key={metric.label} {...metric} />
-            ))}
+        <div className="flex items-center gap-2 border-b border-[#F8F9FA] px-5 py-[13px]">
+          <div className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#DF5B30]/20 text-[11px] font-semibold text-[#DF5B30]">
+            JC
+          </div>
+          <div className="min-w-0">
+            <div className="text-[13px] font-medium text-[#F8F9FA]">James Chen</div>
+            <div className="text-[11px] text-[#F8F9FA]/70">Tutor</div>
           </div>
         </div>
-      </section>
 
-      <section className="grid gap-4 lg:grid-cols-[1.12fr_.88fr]">
-        <article className="rounded-[2rem] border border-slate-900/10 bg-white/85 p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#d97706]">Students</p>
-              <h2 className="mt-2 text-2xl font-semibold text-slate-950 dark:text-white">Who needs attention this week</h2>
+        <nav className="flex-1 overflow-y-auto px-[10px] py-[10px]">
+          <div className="mb-[3px] mt-3 px-[10px] text-[10px] font-semibold uppercase tracking-[0.9px] text-[#9B9B9B]">
+            Main
+          </div>
+          {navItems.map((item) => {
+            const Icon = item.icon
+            const active = item.id === 'students'
+
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className={[
+                  'mb-px flex w-full items-center gap-[9px] rounded-[8px] px-[10px] py-[8.5px] text-[13px] font-[450] transition-colors',
+                  active ? 'bg-[#EFF6FF] text-[#3B82F6]' : 'text-[#F8F9FA] hover:bg-[#334155]',
+                ].join(' ')}
+              >
+                <Icon className="h-[15px] w-[15px] shrink-0 opacity-60" />
+                <span>{item.label}</span>
+                {item.badge ? (
+                  <span className="ml-auto rounded-full bg-[#DF5B30] px-[6px] py-[2px] text-[9.5px] font-semibold text-white">
+                    {item.badge}
+                  </span>
+                ) : null}
+              </button>
+            )
+          })}
+        </nav>
+
+        <div className="border-t border-[#F8F9FA] px-[10px] py-[12px]">
+          <div className="mb-3 rounded-[12px] border border-[#334155] bg-[#111827] p-3">
+            <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.7px] text-[#9B9B9B]">
+              POV
             </div>
-            <Link href="/dashboard/progress" className="text-sm font-medium text-slate-600 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
-              Open progress →
-            </Link>
+            <div className="flex flex-col gap-2">
+              {povItems.map((label) => {
+                const active = label === 'Tutor POV'
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    className={[
+                      'rounded-[8px] border px-3 py-2 text-left text-[12px] font-medium transition-colors',
+                      active
+                        ? 'border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]'
+                        : 'border-[#334155] bg-[#1E293B] text-[#F8F9FA] hover:bg-[#334155]',
+                    ].join(' ')}
+                  >
+                    {label}
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
-          <div className="mt-5 overflow-hidden rounded-[1.25rem] border border-slate-900/10 dark:border-white/10">
-            <div className="grid grid-cols-[1.6fr_1fr_.8fr_.8fr_1.05fr_1.3fr] gap-3 border-b border-slate-900/10 bg-[#f8f5ef] px-4 py-3 text-[11px] uppercase tracking-[0.18em] text-slate-500 dark:border-white/10 dark:bg-slate-950/40 dark:text-slate-400">
-              <div>Name</div>
-              <div>Subject</div>
-              <div>Sessions</div>
-              <div>Status</div>
-              <div>Progress</div>
-              <div>Next</div>
-            </div>
+          <Link
+            href="/auth/login"
+            className="flex items-center gap-[9px] rounded-[8px] px-[10px] py-[8.5px] text-[13px] font-[450] text-[#F8F9FA] transition-colors hover:bg-[#334155]"
+          >
+            <LogOut className="h-[15px] w-[15px] shrink-0 opacity-60" />
+            <span>Sign Out</span>
+          </Link>
+        </div>
+      </aside>
 
-            <div className="divide-y divide-slate-900/10 bg-white dark:divide-white/10 dark:bg-slate-950/30">
-              {students.map((student) => (
-                <div key={student.name} className="grid grid-cols-1 gap-3 px-4 py-4 md:grid-cols-[1.6fr_1fr_.8fr_.8fr_1.05fr_1.3fr] md:items-center">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold"
-                      style={{ backgroundColor: `${student.hue}18`, color: student.hue }}
-                    >
-                      {student.initials}
-                    </div>
-                    <div>
-                      <p className="font-medium text-slate-950 dark:text-white">{student.name}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">Keep the next lesson narrow and concrete.</p>
-                    </div>
-                  </div>
-                  <div className="text-sm text-slate-600 dark:text-slate-300">{student.subject}</div>
-                  <div className="text-sm font-medium text-slate-950 dark:text-white">{student.sessions}</div>
-                  <div>
-                    <span className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${toneClasses(student.tone)}`}>
-                      {student.status}
-                    </span>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                      <span>{student.progress}%</span>
-                      <span>toward term goal</span>
-                    </div>
-                    <ProgressBar value={student.progress} color={student.hue} />
-                  </div>
-                  <div className="text-sm text-slate-600 dark:text-slate-300">{student.next}</div>
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <header className="flex h-[58px] shrink-0 items-center gap-3 border-b border-[#334155] bg-[#1E293B] px-6">
+          <button
+            type="button"
+            className="mr-1 rounded-[6px] p-2 text-[#F8F9FA] transition-colors hover:bg-[#334155] lg:hidden"
+            aria-label="Open navigation"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+
+          <div className="font-display flex-1 text-[18px] tracking-[-0.3px] text-[#F8F9FA]">
+            Students
+          </div>
+
+          <label className="hidden w-[220px] items-center gap-[7px] rounded-[8px] border border-[#E9ECEF] bg-[#F8F9FA] px-[11px] py-[6px] text-[#6B6B6B] focus-within:border-[#DF5B30] lg:flex">
+            <Search className="h-[13px] w-[13px] shrink-0 text-[#9B9B9B]" />
+            <input
+              className="w-full bg-transparent text-[13px] text-[#1A1A1A] outline-none placeholder:text-[#9B9B9B]"
+              placeholder="Search students, sessions…"
+              aria-label="Search students and sessions"
+            />
+          </label>
+
+          <div className="flex items-center gap-[7px]">
+            <button
+              type="button"
+              className="flex h-[34px] w-[34px] items-center justify-center rounded-[8px] border border-[#E9ECEF] bg-[#F8F9FA] text-[#6B6B6B] transition-colors hover:bg-[#E9ECEF] hover:text-[#1A1A1A]"
+              aria-label="Create new item"
+            >
+              <Plus className="h-[14px] w-[14px]" />
+            </button>
+            <button
+              type="button"
+              className="relative flex h-[34px] w-[34px] items-center justify-center rounded-[8px] border border-[#E9ECEF] bg-[#F8F9FA] text-[#6B6B6B] transition-colors hover:bg-[#E9ECEF] hover:text-[#1A1A1A]"
+              aria-label="Notifications"
+            >
+              <Bell className="h-[14px] w-[14px]" />
+              <span className="absolute right-[5px] top-[5px] h-[6px] w-[6px] rounded-full border border-[#F1F3F4] bg-[#DF5B30]" />
+            </button>
+          </div>
+        </header>
+
+        <div className="flex min-w-0 flex-1 overflow-hidden bg-[#F8F9FA]">
+          <main className="min-w-0 flex-1 overflow-y-auto p-6">
+            <section className="mb-4 flex items-start justify-between gap-4">
+              <div>
+                <div className="text-[10.5px] font-semibold uppercase tracking-[0.7px] text-[#9B9B9B]">
+                  Students
                 </div>
-              ))}
-            </div>
-          </div>
-        </article>
-
-        <article className="rounded-[2rem] border border-slate-900/10 bg-slate-950 p-6 text-white shadow-lg shadow-slate-950/10 dark:border-white/10">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#f2c06d]">Today</p>
-              <h2 className="mt-2 text-2xl font-semibold">Schedule, risk, and next action</h2>
-            </div>
-            <BarChart3 className="h-5 w-5 text-[#f2c06d]" />
-          </div>
-
-          <div className="mt-5 grid gap-3">
-            <div className="rounded-[1.25rem] border border-white/10 bg-white/5 p-4">
-              <div className="flex items-center gap-2">
-                <ShieldAlert className="h-4 w-4 text-[#f2c06d]" />
-                <p className="text-sm font-semibold">Risk summary</p>
+                <div className="mt-1 font-display text-[20px] tracking-[-0.3px] text-[#1A1A1A]">
+                  Your current roster
+                </div>
               </div>
-              <p className="mt-3 text-3xl font-semibold">2 students declining</p>
-              <p className="mt-2 text-sm leading-7 text-white/70">Essay structure and graphing cadence need a tighter rhythm this week.</p>
-            </div>
 
-            <div className="rounded-[1.25rem] border border-white/10 bg-white/5 p-4">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-semibold">Upcoming sessions</p>
-                <Clock3 className="h-4 w-4 text-white/60" />
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-[8px] bg-[#3B82F6] px-[15px] py-[8px] text-[13px] font-medium text-white transition-colors hover:bg-[#60A5FA]"
+              >
+                <Plus className="h-4 w-4" />
+                Add Student
+              </button>
+            </section>
+
+            <section className="overflow-hidden rounded-[16px] border border-[#E9ECEF] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
+              <div className="flex items-center justify-between border-b border-[#E9ECEF] px-[18px] py-[15px]">
+                <div className="font-display text-[14px] text-[#1E293B]">
+                  All Students ({students.length})
+                </div>
+
+                <div className="flex items-center gap-[7px]">
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1 rounded-[8px] border border-[#E9ECEF] bg-white px-[11px] py-[6px] text-[12px] font-medium text-[#4A4A4A] transition-colors hover:bg-[#F8F9FA]"
+                  >
+                    Filter: all
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1 rounded-[8px] border border-[#E9ECEF] bg-white px-[11px] py-[6px] text-[12px] font-medium text-[#4A4A4A] transition-colors hover:bg-[#F8F9FA]"
+                  >
+                    Sort: name
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </div>
-              <div className="mt-4 space-y-3">
-                {sessions.map((item) => (
-                  <div key={item.title} className="rounded-2xl border border-white/10 bg-white/5 p-3">
-                    <p className="text-xs uppercase tracking-[0.18em] text-white/45">{item.time}</p>
-                    <p className="mt-2 font-semibold">{item.title}</p>
-                    <p className="mt-1 text-sm text-white/65">{item.detail}</p>
+
+              <div className="overflow-x-auto">
+                <table className="min-w-full border-collapse">
+                  <thead>
+                    <tr className="bg-[#F8F9FA]">
+                      {['Student', 'Subject', 'Grade', 'Sessions', 'Status', 'Progress', 'Next Session', ''].map(
+                        (heading) => (
+                          <th
+                            key={heading || 'actions'}
+                            className="px-[18px] py-[9px] text-left text-[10.5px] font-semibold uppercase tracking-[0.5px] text-[#9B9B9B]"
+                          >
+                            {heading}
+                          </th>
+                        ),
+                      )}
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {students.map((student) => (
+                      <tr
+                        key={student.name}
+                        className="border-t border-[#F8F9FA] transition-colors hover:bg-[#F8F9FA]"
+                      >
+                        <td className="px-[18px] py-[12px]">
+                          <div className="flex items-center gap-[9px]">
+                            <div
+                              className="flex h-[32px] w-[32px] items-center justify-center rounded-full text-[11px] font-semibold"
+                              style={{
+                                backgroundColor: `${student.status === 'Declining' ? '#EF4444' : student.status === 'Improving' ? '#10B981' : '#DF5B30'}18`,
+                                color: student.status === 'Declining' ? '#EF4444' : student.status === 'Improving' ? '#10B981' : '#DF5B30',
+                              }}
+                            >
+                              {student.initials}
+                            </div>
+                            <span className="text-[13.5px] font-medium text-[#1A1A1A]">
+                              {student.name}
+                            </span>
+                          </div>
+                        </td>
+
+                        <td className="px-[18px] py-[12px]">
+                          <span className="inline-flex rounded-full bg-[#F8F9FA] px-3 py-1 text-[11px] font-medium text-[#1E293B]">
+                            {student.subject}
+                          </span>
+                        </td>
+
+                        <td className="px-[18px] py-[12px] text-[13px] text-[#6B6B6B]">
+                          {student.grade}
+                        </td>
+
+                        <td className="px-[18px] py-[12px] text-[13.5px] font-medium text-[#1A1A1A]">
+                          {student.sessions}
+                        </td>
+
+                        <td className="px-[18px] py-[12px]">
+                          <span
+                            className={[
+                              'inline-flex rounded-full border px-[9px] py-[3px] text-[11px] font-semibold',
+                              statusClasses(student.status),
+                            ].join(' ')}
+                          >
+                            {progressLabel(student.status)}
+                          </span>
+                        </td>
+
+                        <td className="px-[18px] py-[12px]">
+                          <div className="flex items-center gap-2">
+                            <div className="h-[5px] w-[70px] overflow-hidden rounded-full bg-[#E9ECEF]">
+                              <div
+                                className="h-full rounded-full"
+                                style={{
+                                  width: `${student.progress}%`,
+                                  backgroundColor: progressColor(student.progress),
+                                }}
+                              />
+                            </div>
+                            <span className="text-[11.5px] font-semibold text-[#4A4A4A]">
+                              {student.progress}%
+                            </span>
+                          </div>
+                        </td>
+
+                        <td className="px-[18px] py-[12px] text-[12.5px] font-medium text-[#DF5B30]">
+                          {student.nextSession}
+                        </td>
+
+                        <td className="px-[12px] py-[12px]">
+                          <button
+                            type="button"
+                            className="rounded-[8px] border border-[#E9ECEF] bg-white px-[11px] py-[6px] text-[12px] font-medium text-[#1E293B] transition-colors hover:bg-[#F8F9FA]"
+                          >
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </main>
+
+          <aside className="hidden w-[272px] shrink-0 overflow-y-auto border-l border-[#E9ECEF] bg-[#F1F3F4] p-5 xl:block">
+            <div className="mb-6">
+              <div className="mb-3 text-[10px] font-semibold uppercase tracking-[0.7px] text-[#9B9B9B]">
+                Status Summary
+              </div>
+              <div className="space-y-3">
+                {statusSummary.map((item) => (
+                  <div
+                    key={item.label}
+                    className={[
+                      'rounded-[8px] border p-[10px]',
+                      summaryClasses(item.tone),
+                    ].join(' ')}
+                  >
+                    <div className="text-[12px] font-semibold">
+                      {item.label}: {item.value}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="rounded-[1.25rem] border border-white/10 bg-white/5 p-4">
-              <p className="text-sm font-semibold">Recommended next step</p>
-              <p className="mt-2 text-sm leading-7 text-white/70">Confirm the Saturday slots, then push one extra recap before Friday.</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <Link href="/dashboard/settings" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white">
-                  Update schedule
-                </Link>
-                <Link href="/dashboard/help" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950">
-                  Send feedback
-                </Link>
+            <div className="rounded-[8px] border border-[#E9ECEF] bg-white p-[10px]">
+              <div className="text-[12px] font-semibold text-[#4A4A4A]">
+                📊 Avg Progress
+              </div>
+              <div className="mt-1 text-[22px] font-bold text-[#3B82F6]">
+                68.1%
               </div>
             </div>
-          </div>
-        </article>
-      </section>
-
-      <section className="grid gap-4 xl:grid-cols-[1.15fr_.85fr]">
-        <article className="rounded-[2rem] border border-slate-900/10 bg-white/85 p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#d97706]">Recaps</p>
-              <h2 className="mt-2 text-2xl font-semibold text-slate-950 dark:text-white">Recent notes and homework</h2>
-            </div>
-            <Link href="/dashboard/study" className="text-sm font-medium text-slate-600 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
-              Open study →
-            </Link>
-          </div>
-
-          <div className="mt-5 space-y-4">
-            {recaps.map((recap) => (
-              <div key={`${recap.day}-${recap.mon}-${recap.topics}`} className="rounded-[1.25rem] border border-slate-900/10 bg-[#f8f5ef] p-4 dark:border-white/10 dark:bg-slate-950/40">
-                <div className="mb-3 flex items-start justify-between gap-4">
-                  <div>
-                    <p className="font-semibold text-slate-950 dark:text-white">
-                      {recap.day} {recap.mon}
-                    </p>
-                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{recap.topics}</p>
-                  </div>
-                </div>
-
-                <div className="grid gap-3 md:grid-cols-2">
-                  <div className="rounded-2xl border border-slate-900/10 bg-white p-3 dark:border-white/10 dark:bg-white/5">
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Homework</p>
-                    <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">{recap.homework}</p>
-                  </div>
-                  <div className="rounded-2xl border border-slate-900/10 bg-white p-3 dark:border-white/10 dark:bg-white/5">
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">Next plan</p>
-                    <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">{recap.next}</p>
-                  </div>
-                </div>
-
-                <div className="mt-3 rounded-2xl border border-[#60a5fa]/20 bg-[#eff6ff] p-3 text-sm text-slate-700 dark:border-[#60a5fa]/20 dark:bg-[#0f172a] dark:text-slate-200">
-                  <span className="font-semibold text-slate-950 dark:text-white">Notes: </span>
-                  <span className="italic">{recap.notes}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </article>
-
-        <article className="rounded-[2rem] border border-slate-900/10 bg-slate-950 p-6 text-white shadow-lg shadow-slate-950/10 dark:border-white/10">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#f2c06d]">Communication</p>
-              <h2 className="mt-2 text-2xl font-semibold">Parent and tutor threads</h2>
-            </div>
-            <MessageSquare className="h-5 w-5 text-[#f2c06d]" />
-          </div>
-
-          <div className="mt-5 space-y-3">
-            {threads.map((thread) => (
-              <div key={`${thread.student}-${thread.with}`} className="flex gap-3 rounded-[1.25rem] border border-white/10 bg-white/5 p-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-white">
-                  {thread.student
-                    .split(' ')
-                    .map((part) => part[0])
-                    .slice(0, 2)
-                    .join('')}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="truncate font-semibold text-white">{thread.with}</p>
-                    <p className="text-xs text-white/50">{thread.time}</p>
-                  </div>
-                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/45">{thread.student}</p>
-                  <p className="mt-2 text-sm text-white/70">{thread.preview}</p>
-                </div>
-                {thread.unread ? (
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#d97706] text-[10px] font-semibold text-white">
-                    {thread.unread}
-                  </div>
-                ) : null}
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-5 rounded-[1.25rem] border border-white/10 bg-white/5 p-4">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-[#f2c06d]" />
-              <p className="text-sm font-semibold">Quick actions</p>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Link href="/dashboard/study" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950">
-                Open study workspace
-              </Link>
-              <Link href="/dashboard/settings" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white">
-                Adjust availability
-              </Link>
-              <Link href="/dashboard/help" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white">
-                Send feedback
-              </Link>
-            </div>
-          </div>
-        </article>
-      </section>
+          </aside>
+        </div>
+      </div>
     </div>
   )
 }

@@ -99,7 +99,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'System',
     items: [
       { href: '/dashboard/settings', label: 'Settings', icon: Settings },
-      { href: '/dashboard/partner', label: 'Tutoring Dashboard', icon: Users, badge: 'Preview' },
+      { href: 'https://tutoring.elevateos.org/dashboard', label: 'Tutoring Dashboard', icon: Users, badge: 'Preview' },
       { href: '/pricing', label: 'Billing / Plan', icon: CreditCard },
       { href: '/dashboard/help', label: 'Help / Feedback', icon: MessageSquare },
       { href: '/dashboard/changelog', label: 'Changelog', icon: Megaphone },

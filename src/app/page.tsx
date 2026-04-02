@@ -47,11 +47,11 @@ type FeaturedProject = {
   icon: typeof Users
 }
 
-const featuredProjects: FeaturedProject[] = [
+const featuredProjectsBase: FeaturedProject[] = [
   {
     title: 'Tutoring dashboard',
     desc: 'Tutor and parent operations view for sessions, recaps, and next steps.',
-    href: '/dashboard/partner',
+    href: '/dashboard',
     cta: 'Open dashboard',
     icon: Users,
   },
@@ -81,7 +81,15 @@ const comparison = [
 export default async function Home() {
   const headerStore = await headers()
   const isTutoring = getSiteVariantFromHeaders(headerStore) === 'tutoring'
-  const primaryCtaHref = isTutoring ? '/dashboard/partner' : '/dashboard'
+  const featuredProjects = featuredProjectsBase.map((project) =>
+    project.title === 'Tutoring dashboard'
+      ? {
+          ...project,
+          href: isTutoring ? '/dashboard' : 'https://tutoring.elevateos.org/dashboard',
+        }
+      : project,
+  )
+  const primaryCtaHref = isTutoring ? '/dashboard' : '/dashboard'
   const primaryCtaLabel = isTutoring ? 'Open tutor dashboard' : 'Open the demo workspace'
   const heroBadgeText = isTutoring
     ? 'Built for tutors, parents, and school teams that need clearer execution'

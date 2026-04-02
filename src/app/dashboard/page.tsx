@@ -64,7 +64,7 @@ export default function DashboardPage() {
     { href: '/dashboard/planner', label: 'Activity Planner', icon: CalendarClock, desc: 'Map open time to meaningful activity slots.' },
     { href: '/dashboard/paper-scan', label: 'Paper Scanner', icon: ScanLine, desc: 'Mark right or wrong from photographed papers.' },
     { href: '/dashboard/extracurriculars', label: 'EC Scoring', icon: Trophy, desc: 'Score extracurricular strength against targets.' },
-    { href: '/dashboard/partner', label: 'Tutoring Dashboard', icon: Users, desc: 'Tutor and parent operations view for sessions, recaps, and follow-ups.' },
+    { href: 'https://tutoring.elevateos.org/dashboard', label: 'Tutoring Dashboard', icon: Users, desc: 'Tutor and parent operations view for sessions, recaps, and follow-ups.' },
   ]
 
   const now = new Date()
@@ -238,14 +238,31 @@ export default function DashboardPage() {
 
         <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {quickActions.map((action) => (
-            <Link key={action.href} href={action.href} className="group rounded-[1.5rem] border border-slate-900/10 bg-white p-5 transition-transform hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-950/5 dark:border-white/10 dark:bg-white/5">
-              <div className="flex items-center justify-between gap-3">
-                <action.icon className="h-6 w-6 text-[#d97706]" />
-                <ArrowRight className="h-4 w-4 text-slate-400 transition-transform group-hover:translate-x-1 group-hover:text-[#d97706]" />
-              </div>
-              <h3 className="mt-4 text-lg font-semibold text-slate-950 dark:text-white">{action.label}</h3>
-              <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{action.desc}</p>
-            </Link>
+            action.href.startsWith('http') ? (
+              <a
+                key={action.href}
+                href={action.href}
+                target="_blank"
+                rel="noreferrer"
+                className="group rounded-[1.5rem] border border-slate-900/10 bg-white p-5 transition-transform hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-950/5 dark:border-white/10 dark:bg-white/5"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <action.icon className="h-6 w-6 text-[#d97706]" />
+                  <ArrowRight className="h-4 w-4 text-slate-400 transition-transform group-hover:translate-x-1 group-hover:text-[#d97706]" />
+                </div>
+                <h3 className="mt-4 text-lg font-semibold text-slate-950 dark:text-white">{action.label}</h3>
+                <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{action.desc}</p>
+              </a>
+            ) : (
+              <Link key={action.href} href={action.href} className="group rounded-[1.5rem] border border-slate-900/10 bg-white p-5 transition-transform hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-950/5 dark:border-white/10 dark:bg-white/5">
+                <div className="flex items-center justify-between gap-3">
+                  <action.icon className="h-6 w-6 text-[#d97706]" />
+                  <ArrowRight className="h-4 w-4 text-slate-400 transition-transform group-hover:translate-x-1 group-hover:text-[#d97706]" />
+                </div>
+                <h3 className="mt-4 text-lg font-semibold text-slate-950 dark:text-white">{action.label}</h3>
+                <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{action.desc}</p>
+              </Link>
+            )
           ))}
         </div>
       </section>
