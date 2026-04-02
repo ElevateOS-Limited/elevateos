@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma, DATABASE_URL_CONFIGURED } from '@/lib/prisma'
 import { generateStructuredOutput } from '@/lib/ai/openai'
 import { z } from 'zod'
 import { getSessionOrDemo } from '@/lib/auth/session'
-import { enforceAIDemoGuard, useStaticDemoResponses, demoWorksheet } from '@/lib/demo-ai'
+import { enforceAIDemoGuard, shouldUseStaticDemoResponses, demoWorksheet } from '@/lib/demo-ai'
 import { forbiddenResponse, hasRequiredRole } from '@/lib/auth/roles'
 import { aiErrorResponse } from '@/lib/ai/http'
 
@@ -15,6 +15,39 @@ const schema = z.object({
   topics: z.string().optional(),
   count: z.number().min(1).max(30).default(10),
 })
+
+function buildDemoWorksheetRecord(input: {
+  id?: string
+  subject: string
+  curriculum?: string
+  difficulty: 'easy' | 'medium' | 'hard' | 'exam'
+  questionType: string
+  title?: string
+}) {
+  const demo = demoWorksheet(input.subject)
+  return {
+    id: input.id ?? 'demo-worksheet',
+    userId: 'demo-user',
+    title: input.title ?? `${input.subject} Demo Worksheet`,
+    subject: input.subject,
+    curriculum: input.curriculum ?? null,
+    difficulty: input.difficulty,
+    questionType: input.questionType,
+    questions: demo.questions.map((q, i) => ({
+      id: i + 1,
+      question: q.question,
+      type: q.type,
+      points: q.marks,
+      options: q.options,
+    })),
+    answers: demo.questions.map((q, i) => ({
+      id: i + 1,
+      answer: q.answer,
+      explanation: 'Model response for demo walkthrough.',
+    })),
+    createdAt: new Date().toISOString(),
+  }
+}
 
 export async function POST(req: Request) {
   const session = await getSessionOrDemo()
@@ -46,7 +79,9 @@ export async function POST(req: Request) {
       }>
     }
 
-    if (useStaticDemoResponses()) {
+    const previewMode = !DATABASE_URL_CONFIGURED
+
+    if (previewMode || shouldUseStaticDemoResponses()) {
       const demo = demoWorksheet(data.topics || data.subject)
       result = {
         title: `${data.subject} Demo Worksheet`,
@@ -98,6 +133,23 @@ export async function POST(req: Request) {
       }>(systemPrompt, userPrompt, 4000)
     }
 
+    if (previewMode) {
+      return NextResponse.json({
+        ...buildDemoWorksheetRecord({
+          id: `demo-worksheet-${Date.now()}`,
+          subject: data.subject,
+          curriculum: data.curriculum,
+          difficulty: data.difficulty,
+          questionType: data.questionType,
+          title: result.title || `${data.subject} Worksheet`,
+        }),
+        userId: session.user.id,
+        title: result.title || `${data.subject} Worksheet`,
+        questions: result.questions,
+        answers: result.answers,
+      })
+    }
+
     const worksheet = await prisma.worksheet.create({
       data: {
         userId: session.user.id,
@@ -124,6 +176,18 @@ export async function GET(req: Request) {
 
   const allowed = hasRequiredRole(session.user.role, ['OWNER', 'ADMIN', 'TUTOR', 'USER'])
   if (!allowed) return forbiddenResponse()
+
+  if (!DATABASE_URL_CONFIGURED) {
+    return NextResponse.json([
+      buildDemoWorksheetRecord({
+        id: 'demo-worksheet-1',
+        subject: 'Biology',
+        curriculum: 'IB',
+        difficulty: 'exam',
+        questionType: 'mixed',
+      }),
+    ])
+  }
 
   const worksheets = await prisma.worksheet.findMany({
     where: { userId: session.user.id },

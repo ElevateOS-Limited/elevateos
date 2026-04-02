@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { aiComplete } from '@/lib/ai'
 import { getSessionOrDemo } from '@/lib/auth/session'
-import { enforceAIDemoGuard, useStaticDemoResponses, demoEssayFeedback } from '@/lib/demo-ai'
+import { enforceAIDemoGuard, shouldUseStaticDemoResponses, demoEssayFeedback } from '@/lib/demo-ai'
 import { aiErrorResponse } from '@/lib/ai/http'
 
 export async function POST(request: NextRequest) {
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     const { essay, major } = await request.json()
     if (!essay?.trim()) return NextResponse.json({ error: 'Essay content required' }, { status: 400 })
 
-    if (useStaticDemoResponses()) {
+    if (shouldUseStaticDemoResponses()) {
       return NextResponse.json(demoEssayFeedback(major))
     }
 

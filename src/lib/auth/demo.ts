@@ -7,8 +7,10 @@ export const DEMO_MODE = process.env.DEMO_MODE === 'true'
 export const DEMO_EMAIL = process.env.DEMO_USER_EMAIL ?? 'demo@thinkcollegelevel.com'
 export const DEMO_PASSWORD = process.env.DEMO_USER_PASSWORD ?? 'demopassword123'
 export const DEMO_NAME = process.env.DEMO_USER_NAME ?? 'ElevateOS Demo Student'
+const DEMO_ROLE_NAME = (process.env.DEMO_USER_ROLE ?? 'USER').toUpperCase()
+
 export const DEMO_ROLE: Role =
-  process.env.DEMO_USER_ROLE === 'ADMIN' ? Role.ADMIN : Role.USER
+  DEMO_ROLE_NAME in Role ? Role[DEMO_ROLE_NAME as keyof typeof Role] : Role.USER
 export const DEMO_PLAN = process.env.DEMO_USER_PLAN ?? 'FREE'
 export const DEMO_USER_ID = process.env.DEMO_USER_ID ?? 'demo-user'
 

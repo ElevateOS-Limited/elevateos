@@ -1,17 +1,16 @@
+import { headers } from 'next/headers'
 import Link from 'next/link'
+import { getSiteVariantFromHeaders } from '@/lib/site'
 import {
   ArrowRight,
   BadgeCheck,
   BookOpen,
   Brain,
   CheckCircle2,
-  Cloud,
   Clock3,
-  Database,
   FileText,
   GraduationCap,
   ShieldCheck,
-  Sparkles,
   Target,
   TrendingUp,
   Users,
@@ -40,9 +39,36 @@ const featureBlocks = [
   },
 ]
 
-const cloudStack = [
-  ['Cloud Run', 'Vertex AI', 'Cloud SQL'],
-  ['Cloud Storage', 'Logging', 'Monitoring'],
+type FeaturedProject = {
+  title: string
+  desc: string
+  href: string
+  cta: string
+  icon: typeof Users
+}
+
+const featuredProjects: FeaturedProject[] = [
+  {
+    title: 'Tutoring dashboard',
+    desc: 'Tutor and parent operations view for sessions, recaps, and next steps.',
+    href: '/dashboard/partner',
+    cta: 'Open dashboard',
+    icon: Users,
+  },
+  {
+    title: 'ElevateOS workspace',
+    desc: 'Student study, admissions, and execution flows in one shared system.',
+    href: '/dashboard',
+    cta: 'Open workspace',
+    icon: BookOpen,
+  },
+  {
+    title: 'Admissions planning',
+    desc: 'Track targets, timelines, and profile-building tasks in one place.',
+    href: '/dashboard/admissions',
+    cta: 'Review admissions',
+    icon: GraduationCap,
+  },
 ]
 
 const comparison = [
@@ -52,7 +78,37 @@ const comparison = [
   ['Progress visibility', 'Scattered messages', 'Shared execution view'],
 ]
 
-export default function Home() {
+export default async function Home() {
+  const headerStore = await headers()
+  const isTutoring = getSiteVariantFromHeaders(headerStore) === 'tutoring'
+  const primaryCtaHref = isTutoring ? '/dashboard/partner' : '/dashboard'
+  const primaryCtaLabel = isTutoring ? 'Open tutor dashboard' : 'Open the demo workspace'
+  const heroBadgeText = isTutoring
+    ? 'Built for tutors, parents, and school teams that need clearer execution'
+    : 'Built for students, tutors, and school teams that need clearer execution'
+  const heroLead = isTutoring ? 'A tutoring workspace for' : 'An operating system for'
+  const heroAccent = isTutoring
+    ? 'sessions, recaps, and parent visibility.'
+    : 'academic execution and admissions.'
+  const heroBody = isTutoring
+    ? 'ElevateOS turns tutor operations into one workflow: session notes, recap follow-up, parent visibility, and next-step tracking. The goal is fewer scattered messages and faster coordination.'
+    : 'ElevateOS turns scattered study habits, profile building, and application planning into one focused workflow. It is designed for IB, AP, SAT, ACT, and school teams that want structure without adding more clutter.'
+  const heroChips = isTutoring
+    ? ['Tutoring dashboard', 'Parent visibility', 'Session recaps', 'Workflow tracking']
+    : ['IB / AP / SAT / ACT', 'Study systems', 'Admissions planning', 'Built for schools']
+  const overviewLabel = isTutoring ? 'Tutor overview' : 'Executive overview'
+  const overviewTitle = isTutoring ? 'Today’s tutoring workflow in one view' : 'Today’s workflow in one view'
+  const overviewBadge = isTutoring ? 'Team ready' : 'System ready'
+  const nextActionTitle = isTutoring
+    ? 'Open the tutor dashboard and review the next recap'
+    : 'Generate a worksheet for IB Biology HL'
+  const nextActionBody = isTutoring
+    ? 'The system keeps sessions, parent notes, and follow-ups in one place.'
+    : 'The system already knows the curriculum, subject mix, and pace.'
+  const footerCopy = isTutoring
+    ? 'Tutoring operations, parent visibility, and student execution in one workspace.'
+    : 'Study systems, admissions planning, and school visibility on one workspace.'
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#f8f5ef] text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -74,7 +130,7 @@ export default function Home() {
 
           <div className="hidden items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300 md:flex">
             <a href="#product" className="hover:text-slate-950 dark:hover:text-white">Product</a>
-            <a href="#cloud" className="hover:text-slate-950 dark:hover:text-white">Google Cloud</a>
+            <a href="#projects" className="hover:text-slate-950 dark:hover:text-white">Related work</a>
             <a href="#plans" className="hover:text-slate-950 dark:hover:text-white">Plans</a>
             <a href="#audience" className="hover:text-slate-950 dark:hover:text-white">Who it serves</a>
           </div>
@@ -83,8 +139,8 @@ export default function Home() {
             <Link href="/pricing" className="hidden rounded-full border border-slate-900/10 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-900/20 hover:text-slate-950 dark:border-white/10 dark:text-slate-200 dark:hover:text-white sm:inline-flex">
               Pricing
             </Link>
-            <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-[#f8f5ef] transition-transform hover:-translate-y-0.5 dark:bg-white dark:text-slate-950">
-              Open demo <ArrowRight className="h-4 w-4" />
+            <Link href={primaryCtaHref} className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-[#f8f5ef] transition-transform hover:-translate-y-0.5 dark:bg-white dark:text-slate-950">
+              {primaryCtaLabel} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
@@ -95,25 +151,23 @@ export default function Home() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/70 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
               <TrendingUp className="h-4 w-4 text-[#d97706]" />
-              Built for students, tutors, and school teams that need clearer execution
+              {heroBadgeText}
             </div>
 
             <h1 className="font-display mt-6 text-5xl leading-[0.95] tracking-tight text-slate-950 sm:text-6xl lg:text-7xl dark:text-white">
-              An operating system for
+              {heroLead}
               <span className="block bg-gradient-to-r from-slate-950 via-slate-700 to-[#d97706] bg-clip-text text-transparent dark:from-white dark:via-slate-200 dark:to-[#f2c06d]">
-                academic execution and admissions.
+                {heroAccent}
               </span>
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300">
-              ElevateOS turns scattered study habits, profile building, and application planning into one
-              focused workflow. It is designed for IB, AP, SAT, ACT, and school teams that want structure
-              without adding more clutter.
+              {heroBody}
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/dashboard" className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-950 px-6 py-3 text-sm font-semibold text-[#f8f5ef] shadow-lg shadow-slate-950/10 transition-transform hover:-translate-y-0.5 dark:bg-white dark:text-slate-950">
-                Open the demo workspace <ArrowRight className="h-4 w-4" />
+              <Link href={primaryCtaHref} className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-950 px-6 py-3 text-sm font-semibold text-[#f8f5ef] shadow-lg shadow-slate-950/10 transition-transform hover:-translate-y-0.5 dark:bg-white dark:text-slate-950">
+                {primaryCtaLabel} <ArrowRight className="h-4 w-4" />
               </Link>
               <Link href="/pricing" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-6 py-3 text-sm font-semibold text-slate-700 backdrop-blur hover:border-slate-900/20 hover:text-slate-950 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:text-white">
                 Review plans
@@ -121,7 +175,7 @@ export default function Home() {
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3 text-sm text-slate-600 dark:text-slate-300">
-              {['IB / AP / SAT / ACT', 'Google Cloud ready', 'Vertex AI routing', 'Built for schools'].map((item) => (
+              {heroChips.map((item) => (
                 <span key={item} className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/70 px-3 py-1.5 dark:border-white/10 dark:bg-white/5">
                   <BadgeCheck className="h-4 w-4 text-[#d97706]" />
                   {item}
@@ -135,19 +189,19 @@ export default function Home() {
             <div className="glass relative overflow-hidden rounded-[2rem] border border-slate-900/10 bg-white/80 p-5 shadow-2xl shadow-slate-950/5 backdrop-blur dark:border-white/10 dark:bg-slate-900/75">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">Executive overview</p>
-                  <p className="mt-1 text-xl font-semibold text-slate-950 dark:text-white">Today’s workflow in one view</p>
+                  <p className="text-xs uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">{overviewLabel}</p>
+                  <p className="mt-1 text-xl font-semibold text-slate-950 dark:text-white">{overviewTitle}</p>
                 </div>
                 <div className="rounded-full bg-[#f2c06d]/20 px-3 py-1 text-xs font-semibold text-[#9a5b00] dark:text-[#f5d59f]">
-                  GCP ready
+                  {overviewBadge}
                 </div>
               </div>
 
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 <div className="rounded-2xl border border-slate-900/10 bg-[#f8f5ef] p-4 dark:border-white/10 dark:bg-white/5">
                   <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Next action</p>
-                  <p className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">Generate a worksheet for IB Biology HL</p>
-                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">The system already knows the curriculum, subject mix, and pace.</p>
+                  <p className="mt-2 text-lg font-semibold text-slate-950 dark:text-white">{nextActionTitle}</p>
+                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{nextActionBody}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-900/10 bg-slate-950 p-4 text-white dark:border-white/10">
                   <p className="text-xs uppercase tracking-[0.2em] text-white/60">Profile health</p>
@@ -172,19 +226,6 @@ export default function Home() {
                 ))}
               </div>
 
-              <div className="mt-4 rounded-2xl border border-slate-900/10 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-slate-950 dark:text-white">Google Cloud deployment path</p>
-                  <Sparkles className="h-4 w-4 text-[#d97706]" />
-                </div>
-                <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                  {cloudStack.flat().map((item) => (
-                    <div key={item} className="rounded-full border border-slate-900/10 bg-white px-3 py-2 text-center text-xs font-semibold text-slate-600 dark:border-white/10 dark:bg-slate-900/40 dark:text-slate-200">
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </section>
@@ -252,26 +293,22 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="cloud" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-12">
+        <section id="projects" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-12">
           <div className="grid gap-6 rounded-[2rem] border border-slate-900/10 bg-slate-950 p-8 text-white shadow-2xl shadow-slate-950/10 md:grid-cols-[1fr_.9fr] dark:border-white/10">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#f2c06d]">Infrastructure</p>
-              <h2 className="mt-3 font-display text-3xl tracking-tight sm:text-4xl">Use the GCP credits on something that can grow into production.</h2>
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#f2c06d]">Related work</p>
+              <h2 className="mt-3 font-display text-3xl tracking-tight sm:text-4xl">Tutoring, study, and admissions stay in the same product family.</h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-white/72">
-                ElevateOS already supports a provider stack that can prefer Google Cloud when configured. That makes the credits useful for a real product path instead of a one-off demo.
+                ElevateOS keeps the public site focused on student execution and tutoring operations without mixing in unrelated portfolio items.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
-                {['Vertex AI', 'Cloud Run', 'Cloud SQL', 'Cloud Storage', 'Observability'].map((item) => (
+                {['Tutoring dashboard', 'Study systems', 'Admissions', 'Portfolio'].map((item) => (
                   <span key={item} className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white/80">{item}</span>
                 ))}
               </div>
             </div>
             <div className="grid gap-3">
-              {[
-                { icon: Cloud, title: 'Google Cloud ready', desc: 'A production deployment path instead of disposable demo infra.' },
-                { icon: Sparkles, title: 'Vertex AI first', desc: 'AI routing can prefer Gemini when the project is configured for it.' },
-                { icon: Database, title: 'Operationally sane', desc: 'Structured storage and repeatable workflows make the GCP credits matter.' },
-              ].map((item) => (
+              {featuredProjects.map((item) => (
                 <div key={item.title} className="rounded-[1.4rem] border border-white/10 bg-white/5 p-4">
                   <div className="flex items-center gap-3">
                     <div className="rounded-xl bg-[#f2c06d]/15 p-2 text-[#f2c06d]">
@@ -280,6 +317,17 @@ export default function Home() {
                     <h3 className="text-base font-semibold">{item.title}</h3>
                   </div>
                   <p className="mt-3 text-sm leading-7 text-white/70">{item.desc}</p>
+                  {item.href.startsWith('http') ? (
+                    <a href={item.href} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-[#f2c06d]">
+                      {item.cta}
+                      <ArrowRight className="h-4 w-4" />
+                    </a>
+                  ) : (
+                    <Link href={item.href} className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-[#f2c06d]">
+                      {item.cta}
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  )}
                 </div>
               ))}
             </div>
@@ -349,12 +397,12 @@ export default function Home() {
 
       <footer className="border-t border-slate-900/10 bg-white/60 py-10 text-sm text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 sm:px-6 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="font-semibold text-slate-950 dark:text-white">ElevateOS</p>
-            <p className="mt-1">Study systems, admissions planning, and school visibility on one workspace.</p>
-          </div>
-          <div className="flex flex-wrap gap-4">
-            <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-[#d97706]" /> Privacy-first by design</span>
+            <div>
+              <p className="font-semibold text-slate-950 dark:text-white">ElevateOS</p>
+              <p className="mt-1">{footerCopy}</p>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-[#d97706]" /> Privacy-first by design</span>
             <span className="inline-flex items-center gap-2"><Clock3 className="h-4 w-4 text-[#d97706]" /> Weekly measurable progress</span>
             <span className="inline-flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-[#d97706]" /> Built for high-intent applicants</span>
           </div>

@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
 interface WriteAuditInput {
@@ -6,24 +7,26 @@ interface WriteAuditInput {
   resourceId: string
   action: 'create' | 'update' | 'delete'
   result: 'success' | 'not_found' | 'forbidden' | 'error'
-  details?: Record<string, unknown>
+  details?: Prisma.InputJsonValue
 }
 
 export async function writeAuditLog(input: WriteAuditInput) {
   try {
+    const meta: Prisma.InputJsonObject = {
+      actorUserId: input.actorUserId,
+      resourceType: input.resourceType,
+      resourceId: input.resourceId,
+      action: input.action,
+      result: input.result,
+      details: input.details ?? null,
+      at: new Date().toISOString(),
+    }
+
     await prisma.eventLog.create({
       data: {
         userId: input.actorUserId,
         eventType: 'write_audit',
-        meta: {
-          actorUserId: input.actorUserId,
-          resourceType: input.resourceType,
-          resourceId: input.resourceId,
-          action: input.action,
-          result: input.result,
-          details: input.details ?? null,
-          at: new Date().toISOString(),
-        },
+        meta,
       },
     })
   } catch (error) {

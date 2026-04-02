@@ -74,7 +74,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 {item.label}
               </Link>
             ))}
-            {session?.user?.role === 'ADMIN' && (
+            {(session?.user?.role === 'OWNER' || session?.user?.role === 'ADMIN') && (
               <Link href="/admin" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[#f2c06d] hover:bg-white/5">
                 <Shield className="w-4 h-4" />
                 Admin Panel

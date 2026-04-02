@@ -84,7 +84,7 @@ export default function LoginPage() {
 
           {providersLoaded && !googleAvailable && (
             <p className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200">
-              Google sign-in is not configured on this deployment yet. Use email/password until host envs and Google console callbacks are synced.
+              Google sign-in is not configured on this deployment yet. Use email and password for now.
             </p>
           )}
 

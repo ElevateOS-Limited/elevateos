@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { useMutation } from '@tanstack/react-query'
 import { Briefcase, Loader2, MapPin, Clock, DollarSign } from 'lucide-react'
-import toast from 'react-hot-toast'
+import toast from '@/lib/toast'
 
 const MAJORS = ['Computer Science', 'Engineering', 'Biology/Pre-Med', 'Business', 'Economics', 'Psychology', 'Political Science', 'Mathematics', 'Physics', 'Chemistry', 'Environmental Science', 'Art & Design', 'Law', 'Education', 'Other']
 
@@ -113,7 +113,7 @@ export default function InternshipsPage() {
               <div className="flex flex-col items-center justify-center h-full min-h-64 text-gray-400">
                 <Briefcase className="w-16 h-16 mb-4 opacity-30" />
                 <p className="text-lg font-medium">Complete your profile to find internships</p>
-                <p className="text-sm">We'll recommend curated opportunities</p>
+                <p className="text-sm">We&apos;ll recommend curated opportunities</p>
               </div>
             )}
           </div>

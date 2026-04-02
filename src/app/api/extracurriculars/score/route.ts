@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateStructuredOutput } from '@/lib/ai/openai'
 import { getSessionOrDemo } from '@/lib/auth/session'
-import { enforceAIDemoGuard, useStaticDemoResponses, demoExtracurricularScore } from '@/lib/demo-ai'
+import { enforceAIDemoGuard, shouldUseStaticDemoResponses, demoExtracurricularScore } from '@/lib/demo-ai'
 import { aiErrorResponse } from '@/lib/ai/http'
 
 type Activity = { name: string; role?: string; impact?: string; hoursPerWeek?: number }
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
 Input:
 ${JSON.stringify(payload, null, 2)}`
 
-    if (useStaticDemoResponses()) {
+    if (shouldUseStaticDemoResponses()) {
       return NextResponse.json(demoExtracurricularScore())
     }
 

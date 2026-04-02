@@ -1,12 +1,16 @@
 {
-  "name": "edutech",
+  "name": "elevateos",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22 <25"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "node scripts/start-prod.mjs",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "test:ci": "vitest run --passWithNoTests",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
@@ -50,6 +54,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.2",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^25",
     "@types/nodemailer": "^7.0.11",
     "@types/pdf-parse": "^1.1.5",
