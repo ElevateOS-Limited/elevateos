@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Trophy, Loader, Clock, CheckCircle, XCircle } from 'lucide-react'
 import { CURRICULA, IB_SUBJECTS, AP_SUBJECTS } from '@/lib/utils'
 
@@ -37,11 +37,27 @@ export default function PastPapersPage() {
   const [timeLeft, setTimeLeft] = useState(0)
   const [score, setScore] = useState(0)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const examRef = useRef<Question[] | null>(null)
+  const answersRef = useRef<Record<number, string>>({})
 
   const subjects = setup.curriculum === 'IB' ? IB_SUBJECTS : setup.curriculum === 'AP' ? AP_SUBJECTS : []
 
+  const handleSubmit = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    setSubmitted(true)
+    setScore(calculateScore(examRef.current, answersRef.current))
+  }, [])
+
   useEffect(() => {
-    if (exam && !submitted && timeLeft > 0) {
+    examRef.current = exam
+  }, [exam])
+
+  useEffect(() => {
+    answersRef.current = answers
+  }, [answers])
+
+  useEffect(() => {
+    if (exam && !submitted) {
       timerRef.current = setInterval(() => {
         setTimeLeft(t => {
           if (t <= 1) { handleSubmit(); return 0 }
@@ -52,7 +68,7 @@ export default function PastPapersPage() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
     }
-  }, [exam, submitted])
+  }, [exam, submitted, handleSubmit])
 
   const startExam = async () => {
     setLoading(true)
@@ -79,12 +95,6 @@ export default function PastPapersPage() {
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleSubmit = () => {
-    if (timerRef.current) clearInterval(timerRef.current)
-    setSubmitted(true)
-    setScore(calculateScore(exam, answers))
   }
 
   const formatTime = (s: number) => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`

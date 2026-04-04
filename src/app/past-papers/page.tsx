@@ -35,6 +35,16 @@ export default function PastPapersPage() {
   const [finished, setFinished] = useState(false)
   const [score, setScore] = useState<number | null>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const examRef = useRef<any>(null)
+  const answersRef = useRef<Record<number, string>>({})
+
+  useEffect(() => {
+    examRef.current = exam
+  }, [exam])
+
+  useEffect(() => {
+    answersRef.current = answers
+  }, [answers])
 
   const mutation = useMutation({
     mutationFn: (data: any) => fetch('/api/worksheets', {
@@ -57,7 +67,7 @@ export default function PastPapersPage() {
     } else if (timeLeft === 0 && running) {
       setRunning(false)
       setFinished(true)
-      setScore(calculateScore(exam, answers))
+      setScore(calculateScore(examRef.current, answersRef.current))
     }
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
@@ -67,7 +77,7 @@ export default function PastPapersPage() {
   const handleFinish = () => {
     setFinished(true)
     setRunning(false)
-    setScore(calculateScore(exam, answers))
+    setScore(calculateScore(examRef.current, answersRef.current))
   }
 
   const formatTime = (s: number) => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`
