@@ -33,24 +33,30 @@ export function useTutoringUi() {
   return value
 }
 
-export default function TutoringDashboardShell({ children }: { children: ReactNode }) {
-  const pathname = usePathname()
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [activePov, setActivePov] = useState<TutoringPov>('Tutor POV')
-
-  const activeNav = useMemo(() => getTutoringNavId(pathname), [pathname])
-  const section = tutoringSectionMeta[activeNav]
-  const povLabel = isParentPov(activePov) ? 'Parent view' : 'Tutor workspace'
-
-  const Sidebar = ({ mobile }: { mobile?: boolean }) => (
+function TutoringSidebar({
+  activeNav,
+  activePov,
+  mobile = false,
+  povLabel,
+  onClose,
+  onSetActivePov,
+}: {
+  activeNav: TutoringNavId
+  activePov: TutoringPov
+  mobile?: boolean
+  povLabel: string
+  onClose: () => void
+  onSetActivePov: (value: TutoringPov) => void
+}) {
+  return (
     <div className={cn('flex h-full flex-col bg-[#1E293B] text-[#F8F9FA]', mobile ? 'w-[84vw] max-w-[280px]' : 'w-[220px]')}>
-        <div className="flex items-center gap-2 border-b border-[#334155] px-5 py-[21px] pb-[18px]">
-          <div className="flex h-[30px] w-[30px] items-center justify-center rounded-[7px] bg-[#DF5B30] font-display text-[15px] text-white">E</div>
-          <div className="min-w-0">
-            <div className="font-display text-[16.5px] tracking-[-0.3px] text-[#F8F9FA]">ElevateOS</div>
+      <div className="flex items-center gap-2 border-b border-[#334155] px-5 py-[21px] pb-[18px]">
+        <div className="flex h-[30px] w-[30px] items-center justify-center rounded-[7px] bg-[#DF5B30] font-display text-[15px] text-white">E</div>
+        <div className="min-w-0">
+          <div className="font-display text-[16.5px] tracking-[-0.3px] text-[#F8F9FA]">ElevateOS</div>
           <div className="text-[10px] font-semibold uppercase tracking-[0.9px] text-[#9B9B9B]">{povLabel}</div>
-          </div>
         </div>
+      </div>
 
       <div className="flex items-center gap-2 border-b border-[#334155] px-5 py-[13px]">
         <div className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-[#DF5B30]/20 text-[11px] font-semibold text-[#DF5B30]">JC</div>
@@ -70,7 +76,7 @@ export default function TutoringDashboardShell({ children }: { children: ReactNo
             <Link
               key={item.id}
               href={item.href}
-              onClick={() => setMobileOpen(false)}
+              onClick={onClose}
               className={cn(
                 'mb-px flex w-full items-center gap-[9px] rounded-[8px] px-[10px] py-[8.5px] text-[13px] font-[450] transition-colors',
                 active ? 'bg-[#EFF6FF] text-[#3B82F6]' : 'text-[#F8F9FA] hover:bg-[#334155]',
@@ -89,16 +95,16 @@ export default function TutoringDashboardShell({ children }: { children: ReactNo
           <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.7px] text-[#9B9B9B]">POV</div>
           <div className="flex flex-col gap-2">
             {tutoringPovItems.map((label) => {
-              const active = label === activePov
+              const isActive = label === activePov
 
               return (
                 <button
                   key={label}
                   type="button"
-                  onClick={() => setActivePov(label)}
+                  onClick={() => onSetActivePov(label)}
                   className={cn(
                     'rounded-[8px] border px-3 py-2 text-left text-[12px] font-medium transition-colors',
-                    active ? 'border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]' : 'border-[#334155] bg-[#1E293B] text-[#F8F9FA] hover:bg-[#334155]',
+                    isActive ? 'border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]' : 'border-[#334155] bg-[#1E293B] text-[#F8F9FA] hover:bg-[#334155]',
                   )}
                 >
                   {label}
@@ -109,7 +115,7 @@ export default function TutoringDashboardShell({ children }: { children: ReactNo
         </div>
         <Link
           href="/auth/login"
-          onClick={() => setMobileOpen(false)}
+          onClick={onClose}
           className="flex items-center gap-[9px] rounded-[8px] px-[10px] py-[8.5px] text-[13px] font-[450] text-[#F8F9FA] transition-colors hover:bg-[#334155]"
         >
           <LogOut className="h-[15px] w-[15px] shrink-0 opacity-60" />
@@ -118,6 +124,16 @@ export default function TutoringDashboardShell({ children }: { children: ReactNo
       </div>
     </div>
   )
+}
+
+export default function TutoringDashboardShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname()
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [activePov, setActivePov] = useState<TutoringPov>('Tutor POV')
+
+  const activeNav = useMemo(() => getTutoringNavId(pathname), [pathname])
+  const section = tutoringSectionMeta[activeNav]
+  const povLabel = isParentPov(activePov) ? 'Parent view' : 'Tutor workspace'
 
   return (
     <TutoringUiContext.Provider value={{ activePov, setActivePov, activeNav }}>
@@ -125,7 +141,7 @@ export default function TutoringDashboardShell({ children }: { children: ReactNo
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_0%,rgba(223,91,48,0.08),transparent_28%),radial-gradient(circle_at_90%_20%,rgba(255,255,255,0.03),transparent_24%)]" />
 
         <aside className="hidden shrink-0 border-r border-[#334155] bg-[#1E293B] lg:flex">
-          <Sidebar />
+          <TutoringSidebar activeNav={activeNav} activePov={activePov} onClose={() => setMobileOpen(false)} onSetActivePov={setActivePov} povLabel={povLabel} />
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
@@ -177,7 +193,7 @@ export default function TutoringDashboardShell({ children }: { children: ReactNo
                   <X className="h-5 w-5" />
                 </button>
               </div>
-              <Sidebar mobile />
+              <TutoringSidebar activeNav={activeNav} activePov={activePov} mobile onClose={() => setMobileOpen(false)} onSetActivePov={setActivePov} povLabel={povLabel} />
             </aside>
           </div>
         ) : null}
