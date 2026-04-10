@@ -14,9 +14,15 @@ const blockedAgents = [
 ]
 
 const badQuery = /(\.\.|%2e%2e|union\s+select|select\s+.*from|<script|\/etc\/passwd)/i
-const healthPaths = new Set(['/healthz', '/api/health'])
+const healthPaths = new Set(['/healthz'])
 
 export function applyRequestGuards(request: NextRequest) {
+  if (request.nextUrl.pathname === '/api/health') {
+    const rewriteUrl = request.nextUrl.clone()
+    rewriteUrl.pathname = '/api/status'
+    return NextResponse.rewrite(rewriteUrl)
+  }
+
   if (healthPaths.has(request.nextUrl.pathname)) {
     return NextResponse.next()
   }
