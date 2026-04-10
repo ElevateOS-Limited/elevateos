@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { execSync } from 'node:child_process'
+import { DATABASE_URL_CONFIGURED, prisma } from '@/lib/prisma'
 import { getConfiguredAIStatus } from '@/lib/ai/provider'
 import { GOOGLE_AUTH_CONFIGURED } from '@/lib/auth/options'
 import { withServiceDbContext } from '@/lib/db/rls'
@@ -28,14 +27,16 @@ export async function GET(req: Request) {
   const startedAt = Date.now()
   const detailed = healthAuthOk(req)
 
-  const dbOk = await withServiceDbContext(async () => {
-    try {
-      await prisma.$queryRaw`SELECT 1`
-      return true
-    } catch {
-      return false
-    }
-  })
+  const dbOk = DATABASE_URL_CONFIGURED
+    ? await withServiceDbContext(async () => {
+        try {
+          await prisma.$queryRaw`SELECT 1`
+          return true
+        } catch {
+          return false
+        }
+      })
+    : false
 
   const status = dbOk ? 'ok' : 'degraded'
 
