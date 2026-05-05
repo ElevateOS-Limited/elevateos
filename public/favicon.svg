@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke="#00C4B4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="ElevateOS">
+  <title>ElevateOS</title>
+  <path d="M5 8 C 11 5.5, 14.5 8, 16 9.2 C 17.5 8, 21 5.5, 27 8 L 27 24 C 21 21.5, 17.5 24, 16 25.2 C 14.5 24, 11 21.5, 5 24 Z" fill="#CBFBF1"></path>
+  <path d="M16 9.2 L 16 25.2"></path>
+  <path d="M17.5 19.5 L 20 19.5 L 20 16.5 L 23 16.5 L 23 12 C 23.5 10, 24.5 9, 25.5 8"></path>
+</svg>

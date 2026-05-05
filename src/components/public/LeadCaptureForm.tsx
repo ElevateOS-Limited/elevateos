@@ -73,7 +73,7 @@ export function LeadCaptureForm({
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             placeholder="name@family.com"
-            className="rounded-2xl border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-slate-400 dark:border-white/10 dark:bg-slate-950/60 dark:text-white"
+            className="rounded-2xl border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-[#00C4B4] dark:border-white/10 dark:bg-slate-950/60 dark:text-white"
           />
         </label>
 
@@ -82,7 +82,7 @@ export function LeadCaptureForm({
           <select
             value={roleInterest}
             onChange={(event) => setRoleInterest(event.target.value as (typeof leadInterestValues)[number])}
-            className="rounded-2xl border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-slate-400 dark:border-white/10 dark:bg-slate-950/60 dark:text-white"
+            className="rounded-2xl border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-[#00C4B4] dark:border-white/10 dark:bg-slate-950/60 dark:text-white"
           >
             {leadInterestValues.map((value) => (
               <option key={value} value={value}>
@@ -100,7 +100,7 @@ export function LeadCaptureForm({
           onChange={(event) => setMessage(event.target.value)}
           rows={compact ? 3 : 4}
           placeholder="Tell us the subject, year level, and what support you need."
-          className="rounded-2xl border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-slate-400 dark:border-white/10 dark:bg-slate-950/60 dark:text-white"
+          className="rounded-2xl border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-[#00C4B4] dark:border-white/10 dark:bg-slate-950/60 dark:text-white"
         />
       </label>
 
@@ -108,7 +108,7 @@ export function LeadCaptureForm({
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-slate-950"
+          className="inline-flex items-center gap-2 rounded-full bg-[#00C4B4] px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           Send inquiry

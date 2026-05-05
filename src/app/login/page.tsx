@@ -2,9 +2,10 @@
 
 import { useEffect, useState, type FormEvent } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { getProviders, getSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { BookOpen, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { getRoleHomePath } from '@/lib/auth/routes'
 
 export default function LoginPage() {
@@ -59,42 +60,36 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(245,201,111,.18),_transparent_28%),linear-gradient(180deg,#f8f5ef_0%,#ffffff_100%)] px-4 py-10 text-slate-950 dark:bg-slate-950 dark:text-white">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(0,196,180,.10),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(13,58,92,.10),_transparent_25%),linear-gradient(180deg,#f9fafb_0%,#ffffff_100%)] px-4 py-10 text-slate-950 dark:bg-slate-950 dark:text-white">
       <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl items-center gap-8 lg:grid-cols-[.9fr_1.1fr]">
         <section className="max-w-xl">
           <Link href="/home" className="inline-flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-white dark:bg-white dark:text-slate-950">
-              <BookOpen className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-lg font-semibold">ElevateOS</p>
-              <p className="text-[11px] uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">Student planning and tutoring dashboard</p>
-            </div>
+            <Image src="/elevateos-logo.png" alt="ElevateOS" width={64} height={64} className="h-16 w-16 shadow-[0_8px_24px_-6px_rgba(10,37,64,.2)]" priority />
           </Link>
 
           <h1 className="font-display mt-8 text-5xl leading-[0.95] tracking-tight sm:text-6xl">
-            Sign in and go straight to the right dashboard.
+            Sign in and go straight to the right tutoring view.
           </h1>
 
           <p className="mt-6 max-w-lg text-lg leading-8 text-slate-600 dark:text-slate-300">
-            Students go to planning, tutors go to the tutor area, parents go to the family summary, and admins go to admin tools.
+            Students land on tasks, tutors land on the workspace, parents land on the report view, and admins land on the management panel.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3 text-sm text-slate-600 dark:text-slate-300">
-            {['Student planning', 'Tutor tools', 'Family summaries', 'Admin tools'].map((item) => (
-              <span key={item} className="rounded-full border border-slate-900/10 bg-white/80 px-3 py-1.5 dark:border-white/10 dark:bg-white/5">
+            {['Role routing', 'Parent visibility', 'Tutor workflow', 'AI-assisted summaries'].map((item) => (
+              <span key={item} className="rounded-full border border-[#CBFBF1] bg-[#F0FDFA] px-3 py-1.5 dark:border-white/10 dark:bg-white/5">
                 {item}
               </span>
             ))}
           </div>
         </section>
 
-        <section className="rounded-[2rem] border border-slate-900/10 bg-white/90 p-6 shadow-2xl shadow-slate-950/5 backdrop-blur dark:border-white/10 dark:bg-white/5">
+        <section className="rounded-[2rem] border border-slate-900/10 bg-white/95 p-6 shadow-2xl shadow-[0_20px_60px_rgba(15,23,42,.08)] backdrop-blur dark:border-white/10 dark:bg-white/5">
           {googleAvailable ? (
             <button
               type="button"
               onClick={() => signIn('google', { callbackUrl: '/login' })}
-              className="flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-900/10 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-900/20 hover:text-slate-950 dark:border-white/10 dark:bg-slate-950/60 dark:text-slate-200 dark:hover:text-white"
+              className="flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-900/10 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-[#00C4B4]/30 hover:text-slate-950 dark:border-white/10 dark:bg-slate-950/60 dark:text-slate-200 dark:hover:text-white"
             >
               Continue with Google
             </button>
@@ -116,7 +111,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="rounded-2xl border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-slate-400 dark:border-white/10 dark:bg-slate-950/60 dark:text-white"
+                className="rounded-2xl border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-[#00C4B4] dark:border-white/10 dark:bg-slate-950/60 dark:text-white"
               />
             </label>
 
@@ -127,14 +122,14 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                className="rounded-2xl border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-slate-400 dark:border-white/10 dark:bg-slate-950/60 dark:text-white"
+                className="rounded-2xl border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-[#00C4B4] dark:border-white/10 dark:bg-slate-950/60 dark:text-white"
               />
             </label>
 
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-slate-950"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#00C4B4] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-12px_rgba(0,196,180,.45)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
               Sign in
@@ -145,8 +140,8 @@ export default function LoginPage() {
             ) : null}
           </form>
 
-          <div className="mt-6 rounded-[1.5rem] border border-slate-900/10 bg-[#f8f5ef] p-4 text-sm text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
-            New families should start with onboarding so we can capture the right role, contact details, and student context.
+          <div className="mt-6 rounded-[1.5rem] border border-[#CBFBF1] bg-[#F0FDFA] p-4 text-sm text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+            New families should start with onboarding so we can capture the right role, the right contact path, and the right tutoring context.
           </div>
 
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm">

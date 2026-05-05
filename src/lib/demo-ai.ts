@@ -12,11 +12,9 @@ function parseAllowlist() {
     .filter(Boolean)
 }
 
-export function useStaticDemoResponses() {
+export function shouldUseStaticDemoResponses() {
   return STATIC_RESPONSES
 }
-
-export const shouldUseStaticDemoResponses = useStaticDemoResponses
 
 export async function enforceAIDemoGuard(session: Session, feature: string) {
   if (STATIC_RESPONSES) return null

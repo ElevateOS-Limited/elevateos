@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { ArrowRight, BookOpen, CheckCircle2, ChevronDown, MessageSquareText, ShieldCheck, Sparkles, Users } from 'lucide-react'
+import Image from 'next/image'
+import { ArrowRight, BookOpen, CheckCircle2, ChevronDown, MessageSquareText, ShieldCheck, Sparkles } from 'lucide-react'
 import { LeadCaptureForm } from '@/components/public/LeadCaptureForm'
 
 const howItWorks = [
@@ -70,18 +71,12 @@ const faqs = [
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(245,201,111,.18),_transparent_30%),linear-gradient(180deg,#f8f5ef_0%,#ffffff_100%)] text-slate-950 dark:bg-slate-950 dark:text-white">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(0,196,180,.10),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(13,58,92,.10),_transparent_25%),linear-gradient(180deg,#f9fafb_0%,#ffffff_100%)] text-slate-950 dark:bg-slate-950 dark:text-white">
 
       {/* ── Nav ── */}
       <header className="mx-auto flex max-w-7xl items-center justify-between px-4 py-6 sm:px-6">
         <Link href="/home" className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-white dark:bg-white dark:text-slate-950">
-            <Users className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-lg font-semibold tracking-tight">ElevateOS</p>
-            <p className="text-[11px] uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">IB Tutoring</p>
-          </div>
+          <Image src="/elevateos-logo.png" alt="ElevateOS" width={64} height={64} className="h-16 w-16 shadow-[0_8px_24px_-6px_rgba(10,37,64,.2)]" priority />
         </Link>
 
         <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300 md:flex">
@@ -94,10 +89,10 @@ export default function HomePage() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link href="/login" className="rounded-full border border-slate-900/10 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-900/20 hover:text-slate-950 dark:border-white/10 dark:text-slate-200 dark:hover:text-white">
+          <Link href="/login" className="rounded-full border border-[#00C4B4]/20 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-[#00C4B4]/40 hover:text-slate-950 dark:border-white/10 dark:text-slate-200 dark:hover:text-white">
             Login
           </Link>
-          <Link href="/onboarding" className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white dark:bg-white dark:text-slate-950">
+          <Link href="/onboarding" className="inline-flex items-center gap-2 rounded-full bg-[#00C4B4] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_24px_-10px_rgba(0,196,180,.5)]">
             Book trial <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -107,8 +102,8 @@ export default function HomePage() {
 
         {/* ── 1. Hero ── */}
         <section className="py-16 lg:py-24 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
-            <ShieldCheck className="h-4 w-4 text-[#9a5b00]" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#CBFBF1] bg-[#F0FDFA] px-4 py-2 text-sm font-medium text-[#0E5060] shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+            <ShieldCheck className="h-4 w-4 text-[#00C4B4]" />
             IB-specialist tutors · Structured execution · Parent visibility
           </div>
 
@@ -121,13 +116,13 @@ export default function HomePage() {
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Link href="/demo" className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-7 py-3.5 text-sm font-semibold text-slate-700 backdrop-blur hover:border-slate-900/20 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+            <Link href="/demo" className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-7 py-3.5 text-sm font-semibold text-slate-700 backdrop-blur hover:border-[#00C4B4]/30 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
               Open student demo <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link href="/onboarding" className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-slate-950/10 transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-950">
+            <Link href="/onboarding" className="inline-flex items-center gap-2 rounded-full bg-[#00C4B4] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[0_14px_30px_-12px_rgba(0,196,180,.45)] transition hover:-translate-y-0.5">
               Book your free trial lesson <ArrowRight className="h-4 w-4" />
             </Link>
-            <a href="#how-it-works" className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-7 py-3.5 text-sm font-semibold text-slate-700 backdrop-blur hover:border-slate-900/20 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+            <a href="#how-it-works" className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-7 py-3.5 text-sm font-semibold text-slate-700 backdrop-blur hover:border-[#00C4B4]/30 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
               See how it works <ChevronDown className="h-4 w-4" />
             </a>
           </div>
@@ -135,8 +130,8 @@ export default function HomePage() {
 
         {/* ── 2. Problem ── */}
         <section className="py-12 lg:py-16">
-          <div className="rounded-[2rem] border border-slate-900/10 bg-slate-950 p-8 text-white shadow-2xl shadow-slate-950/10 dark:border-white/10 lg:p-12">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#f2c06d]">The problem with IB tutoring today</p>
+          <div className="rounded-[2rem] border border-[#0A2540] bg-[linear-gradient(135deg,#0A2540_0%,#0D3A5C_60%,#0E5060_100%)] p-8 text-white shadow-2xl shadow-[0_20px_60px_rgba(10,37,64,.18)] dark:border-white/10 lg:p-12">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#CBFBF1]">The problem with IB tutoring today</p>
             <h2 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight lg:text-4xl">
               IB support is fragmented, opaque, and hard to track.
             </h2>
@@ -146,8 +141,8 @@ export default function HomePage() {
                 ['No accountability', 'Parents pay but cannot see what was covered, what was assigned, or whether the student actually submitted anything.'],
                 ['No IB specificity', 'Generic tutors cover "math" — not HL Further Maths Paper 3 or the specific command terms examiners use to grade.'],
               ].map(([title, copy]) => (
-                <div key={title as string} className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5">
-                  <h3 className="text-base font-semibold text-[#f5d59f]">{title}</h3>
+                <div key={title as string} className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5 backdrop-blur">
+                  <h3 className="text-base font-semibold text-[#CBFBF1]">{title}</h3>
                   <p className="mt-3 text-sm leading-7 text-white/75">{copy}</p>
                 </div>
               ))}
@@ -157,7 +152,7 @@ export default function HomePage() {
 
         {/* ── 3. Solution ── */}
         <section className="py-12 lg:py-16">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#9a5b00]">The solution</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">The solution</p>
           <h2 className="mt-4 max-w-2xl text-3xl font-semibold leading-tight lg:text-4xl">
             Structured tutoring with AI exactly where it helps — and nowhere else.
           </h2>
@@ -170,8 +165,8 @@ export default function HomePage() {
               { icon: MessageSquareText, title: 'Execution & accountability', copy: 'Tasks are assigned, deadlines are tracked, submissions are reviewed. Nothing disappears between sessions.' },
               { icon: Sparkles, title: 'AI-powered session recaps', copy: 'After each session, AI turns raw tutor notes into a clean parent summary — what happened, what\'s next, where to focus.' },
             ].map(({ icon: Icon, title, copy }) => (
-              <article key={title} className="rounded-[1.8rem] border border-slate-900/10 bg-white/90 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
-                <Icon className="h-5 w-5 text-[#9a5b00]" />
+              <article key={title} className="rounded-[1.8rem] border border-slate-900/10 bg-white/95 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
+                <Icon className="h-5 w-5 text-[#00C4B4]" />
                 <h3 className="mt-4 text-lg font-semibold">{title}</h3>
                 <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{copy}</p>
               </article>
@@ -181,14 +176,14 @@ export default function HomePage() {
 
         {/* ── 4. How it works ── */}
         <section id="how-it-works" className="py-12 lg:py-16">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#9a5b00]">How it works</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">How it works</p>
           <h2 className="mt-4 max-w-xl text-3xl font-semibold leading-tight lg:text-4xl">
             Three steps from first session to parent report.
           </h2>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {howItWorks.map(({ step, title, copy }) => (
               <div key={step} className="rounded-[1.8rem] border border-slate-900/10 bg-white/90 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-sm font-semibold text-[#f2c06d] dark:bg-white/10">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0A2540] text-sm font-semibold text-[#CBFBF1]">
                   {step}
                 </div>
                 <h3 className="mt-5 text-lg font-semibold">{title}</h3>
@@ -200,7 +195,7 @@ export default function HomePage() {
 
         {/* ── 5. Tutor credibility ── */}
         <section id="tutors" className="py-12 lg:py-16">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#9a5b00]">Our tutors</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">Our tutors</p>
           <h2 className="mt-4 max-w-xl text-3xl font-semibold leading-tight lg:text-4xl">
             Tutors who actually sat the exams you&apos;re preparing for.
           </h2>
@@ -210,15 +205,15 @@ export default function HomePage() {
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {tutors.map((tutor) => (
               <article key={tutor.name} className="rounded-[1.8rem] border border-slate-900/10 bg-white/90 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f8f5ef] text-2xl font-semibold text-slate-700 dark:bg-white/10 dark:text-slate-100">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F0FDFA] text-2xl font-semibold text-[#0E5060] dark:bg-white/10 dark:text-slate-100">
                   {tutor.name[0]}
                 </div>
                 <h3 className="mt-4 text-lg font-semibold">{tutor.name}</h3>
-                <p className="mt-1 text-sm font-medium text-[#9a5b00]">IB score: {tutor.score}</p>
+                <p className="mt-1 text-sm font-medium text-[#00C4B4]">IB score: {tutor.score}</p>
                 <p className="text-sm text-slate-500 dark:text-slate-400">{tutor.university}</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {tutor.subjects.map((s) => (
-                    <span key={s} className="rounded-full border border-slate-900/10 bg-[#f8f5ef] px-3 py-1 text-xs font-medium text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+                    <span key={s} className="rounded-full border border-slate-900/10 bg-[#F0FDFA] px-3 py-1 text-xs font-medium text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
                       {s}
                     </span>
                   ))}
@@ -227,7 +222,7 @@ export default function HomePage() {
             ))}
           </div>
           <div className="mt-6 rounded-[1.5rem] border border-slate-900/10 bg-white/90 p-5 text-sm text-slate-600 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-slate-300">
-            <CheckCircle2 className="mb-2 h-4 w-4 text-[#9a5b00]" />
+            <CheckCircle2 className="mb-2 h-4 w-4 text-[#00C4B4]" />
             All tutors are background-checked, IB-vetted, and trained on the ElevateOS structured session format before taking on students.
           </div>
         </section>
@@ -236,7 +231,7 @@ export default function HomePage() {
         <section id="parent-visibility" className="py-12 lg:py-16">
           <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
             <article className="rounded-[2rem] border border-slate-900/10 bg-white/90 p-8 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#9a5b00]">For parents</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">For parents</p>
               <h2 className="mt-3 text-3xl font-semibold leading-tight">
                 No jargon. No clutter. Just the essentials.
               </h2>
@@ -245,8 +240,8 @@ export default function HomePage() {
               </p>
               <div className="mt-6 space-y-3">
                 {parentSummaryItems.map((item) => (
-                  <div key={item} className="flex items-center gap-3 rounded-2xl border border-slate-900/10 bg-[#f8f5ef] px-4 py-3 text-sm text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-[#9a5b00]" />
+                  <div key={item} className="flex items-center gap-3 rounded-2xl border border-slate-900/10 bg-[#F0FDFA] px-4 py-3 text-sm text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-[#00C4B4]" />
                     {item}
                   </div>
                 ))}
@@ -256,8 +251,8 @@ export default function HomePage() {
               </p>
             </article>
 
-            <div className="rounded-[2rem] border border-slate-900/10 bg-slate-950 p-8 text-white shadow-2xl shadow-slate-950/10 dark:border-white/10">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#f2c06d]">Sample session summary</p>
+            <div className="rounded-[2rem] border border-[#0A2540] bg-[linear-gradient(135deg,#0A2540_0%,#0D3A5C_70%,#0E5060_100%)] p-8 text-white shadow-2xl shadow-[0_20px_60px_rgba(10,37,64,.18)] dark:border-white/10">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#CBFBF1]">Sample session summary</p>
               <div className="mt-5 space-y-3">
                 {[
                   { label: 'Session', value: 'HL Mathematics – Calculus (Paper 2)' },
@@ -281,7 +276,7 @@ export default function HomePage() {
         <section id="book" className="py-12 lg:py-16">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#9a5b00]">Book your trial lesson</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">Book your trial lesson</p>
               <h2 className="mt-4 text-3xl font-semibold leading-tight lg:text-4xl">
                 Start with a free session. No commitment required.
               </h2>
@@ -296,14 +291,14 @@ export default function HomePage() {
                   'Cancel or pause any time',
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-200">
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-[#9a5b00]" />
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-[#00C4B4]" />
                     {item}
                   </div>
                 ))}
               </div>
             </div>
 
-            <article className="rounded-[2rem] border border-slate-900/10 bg-[#f8f5ef] p-8 shadow-sm dark:border-white/10 dark:bg-slate-950/60">
+            <article className="rounded-[2rem] border border-[#CBFBF1] bg-[#F0FDFA] p-8 shadow-sm dark:border-white/10 dark:bg-slate-950/60">
               <LeadCaptureForm source="home" className="mt-0" />
             </article>
           </div>
@@ -311,13 +306,13 @@ export default function HomePage() {
 
         {/* ── 8. FAQ ── */}
         <section className="py-12 lg:py-16">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#9a5b00]">FAQ</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">FAQ</p>
           <h2 className="mt-4 max-w-xl text-3xl font-semibold leading-tight">Common questions</h2>
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             {faqs.map(({ q, a }) => (
               <div key={q} className="rounded-[1.5rem] border border-slate-900/10 bg-white/90 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5">
                 <div className="flex items-start gap-3">
-                  <ChevronDown className="mt-0.5 h-4 w-4 shrink-0 text-[#9a5b00]" />
+                  <ChevronDown className="mt-0.5 h-4 w-4 shrink-0 text-[#00C4B4]" />
                   <div>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{q}</p>
                     <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{a}</p>

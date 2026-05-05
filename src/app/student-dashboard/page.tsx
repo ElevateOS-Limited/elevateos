@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { ArrowRight, BookOpen, CheckCircle2, Clock3, FileText, Star } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Star } from 'lucide-react'
 import { getSessionOrDemo } from '@/lib/auth/session'
 import { getRoleHomePath, isStudentRole } from '@/lib/auth/routes'
 import { prisma, DATABASE_URL_CONFIGURED } from '@/lib/prisma'
@@ -140,10 +140,10 @@ export default async function StudentDashboardPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 text-slate-950 dark:text-white sm:px-6">
-      <section className="rounded-[2rem] border border-slate-900/10 bg-white/90 p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
+      <section className="rounded-[2rem] border border-slate-900/10 bg-white/95 p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#9a5b00]">Student dashboard</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">Student dashboard</p>
             <h1 className="font-display mt-3 text-4xl tracking-tight">What needs doing next.</h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600 dark:text-slate-300">
               Keep the workflow short. Open each task, submit work, and read the latest feedback without hunting through chat history.
@@ -156,7 +156,7 @@ export default async function StudentDashboardPage() {
               ['Reviewed', reviewedTasks],
               ['Due soon', dueSoon],
             ].map(([label, value]) => (
-              <div key={label as string} className="rounded-[1.25rem] border border-slate-900/10 bg-[#f8f5ef] p-4 dark:border-white/10 dark:bg-white/5">
+              <div key={label as string} className="rounded-[1.25rem] border border-slate-900/10 bg-[#F0FDFA] p-4 dark:border-white/10 dark:bg-white/5">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">{label}</p>
                 <p className="mt-2 text-3xl font-semibold">{value as number}</p>
               </div>
@@ -166,13 +166,13 @@ export default async function StudentDashboardPage() {
       </section>
 
       <section className="grid gap-4 py-6 lg:grid-cols-[1.08fr_.92fr]">
-        <article className="rounded-[2rem] border border-slate-900/10 bg-slate-950 p-6 text-white shadow-2xl shadow-slate-950/10 dark:border-white/10">
+        <article className="rounded-[2rem] border border-[#0A2540] bg-[linear-gradient(135deg,#0A2540_0%,#0D3A5C_60%,#0E5060_100%)] p-6 text-white shadow-2xl shadow-[0_20px_60px_rgba(10,37,64,.18)] dark:border-white/10">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#f2c06d]">Latest feedback</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#CBFBF1]">Latest feedback</p>
               <h2 className="mt-2 text-2xl font-semibold">What the tutor just said</h2>
             </div>
-            <Star className="h-5 w-5 text-[#f2c06d]" />
+            <Star className="h-5 w-5 text-[#CBFBF1]" />
           </div>
           <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
             {latestFeedback ? (
@@ -199,13 +199,13 @@ export default async function StudentDashboardPage() {
           </div>
         </article>
 
-        <article className="rounded-[2rem] border border-slate-900/10 bg-white/90 p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#9a5b00]">Recent note</p>
+        <article className="rounded-[2rem] border border-slate-900/10 bg-white/95 p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">Recent note</p>
           <h2 className="mt-2 text-2xl font-semibold">Where the tutor wants the next effort to go</h2>
           <div className="mt-5 space-y-3">
             {notes.length ? (
               notes.map((note) => (
-                <div key={note.id} className="rounded-2xl border border-slate-900/10 bg-[#f8f5ef] p-4 dark:border-white/10 dark:bg-white/5">
+                <div key={note.id} className="rounded-2xl border border-slate-900/10 bg-[#F0FDFA] p-4 dark:border-white/10 dark:bg-white/5">
                   <p className="text-sm font-semibold">{note.summary}</p>
                   <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
                     {note.subject || 'General'} · {formatDate(note.sessionDate)}
@@ -222,7 +222,7 @@ export default async function StudentDashboardPage() {
       <section>
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#9a5b00]">Tasks</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">Tasks</p>
             <h2 className="mt-2 text-2xl font-semibold">Open assignments</h2>
           </div>
         </div>
@@ -231,13 +231,13 @@ export default async function StudentDashboardPage() {
           {tasks.length ? (
             tasks.map((task) => (
               <Link
-                key={task.id}
-                href={`/student-dashboard/tasks/${task.id}`}
-                className="group rounded-[1.5rem] border border-slate-900/10 bg-white/90 p-5 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-slate-950/5 dark:border-white/10 dark:bg-white/5"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-lg font-semibold text-slate-950 dark:text-white">{task.title}</p>
+              key={task.id}
+              href={`/student-dashboard/tasks/${task.id}`}
+              className="group rounded-[1.5rem] border border-slate-900/10 bg-white/95 p-5 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[0_16px_30px_-18px_rgba(10,37,64,.18)] dark:border-white/10 dark:bg-white/5"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-lg font-semibold text-slate-950 dark:text-white">{task.title}</p>
                     <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
                       {task.subject} · {task.topic}
                     </p>
@@ -246,10 +246,10 @@ export default async function StudentDashboardPage() {
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                  <span className="rounded-full border border-slate-900/10 bg-[#f8f5ef] px-3 py-1.5 text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+                  <span className="rounded-full border border-slate-900/10 bg-[#F0FDFA] px-3 py-1.5 text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
                     {fromDbTaskStatus(task.status)}
                   </span>
-                  <span className="rounded-full border border-slate-900/10 bg-[#f8f5ef] px-3 py-1.5 text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+                  <span className="rounded-full border border-slate-900/10 bg-[#F0FDFA] px-3 py-1.5 text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
                     Due {formatDate(task.dueAt)}
                   </span>
                   {task.feedback[0] ? (

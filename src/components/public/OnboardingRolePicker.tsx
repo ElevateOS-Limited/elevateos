@@ -73,11 +73,11 @@ export function OnboardingRolePicker({ className }: OnboardingRolePickerProps) {
             className={cn(
               'rounded-[1.5rem] border p-5 text-left transition hover:-translate-y-0.5',
               selected === value
-                ? 'border-slate-900 bg-slate-950 text-white dark:border-white dark:bg-white dark:text-slate-950'
-                : 'border-slate-900/10 bg-[#f8f5ef] text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200',
+                ? 'border-[#0A2540] bg-[linear-gradient(135deg,#0A2540_0%,#0D3A5C_60%,#0E5060_100%)] text-white dark:border-white dark:bg-white dark:text-slate-950'
+                : 'border-slate-900/10 bg-[#F0FDFA] text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200',
             )}
           >
-            <Icon className={cn('h-5 w-5', selected === value ? 'text-[#f2c06d]' : 'text-[#9a5b00]')} />
+            <Icon className={cn('h-5 w-5', selected === value ? 'text-[#CBFBF1]' : 'text-[#00C4B4]')} />
             <h3 className="mt-4 text-lg font-semibold">{label}</h3>
             <p className={cn('mt-2 text-sm leading-6', selected === value ? 'text-white/75 dark:text-slate-700' : 'text-slate-600 dark:text-slate-300')}>
               {description}
@@ -91,7 +91,7 @@ export function OnboardingRolePicker({ className }: OnboardingRolePickerProps) {
           type="button"
           disabled={loading}
           onClick={handleConfirm}
-          className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-slate-950"
+          className="inline-flex items-center gap-2 rounded-full bg-[#00C4B4] px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" />}
           Continue as {roles.find((r) => r.value === selected)?.label}

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
-import { ArrowLeft, FileText, Link2, Paperclip, Star } from 'lucide-react'
+import { ArrowLeft, Link2, Paperclip, Star } from 'lucide-react'
 import { getSessionOrDemo } from '@/lib/auth/session'
 import { getRoleHomePath, isStudentRole } from '@/lib/auth/routes'
 import { prisma } from '@/lib/prisma'
@@ -78,16 +78,16 @@ export default async function StudentTaskPage({ params }: PageProps) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 text-slate-950 dark:text-white sm:px-6">
       <div className="mb-6">
-        <Link href="/student-dashboard" className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+        <Link href="/student-dashboard" className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-[#00C4B4] dark:text-slate-300 dark:hover:text-white">
           <ArrowLeft className="h-4 w-4" />
           Back to dashboard
         </Link>
       </div>
 
-      <section className="rounded-[2rem] border border-slate-900/10 bg-white/90 p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
+      <section className="rounded-[2rem] border border-slate-900/10 bg-white/95 p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#9a5b00]">Task detail</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">Task detail</p>
             <h1 className="font-display mt-3 text-4xl tracking-tight">{task.title}</h1>
             <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">
               {task.subject} · {task.topic} · Assigned by {task.assignedBy?.name || 'Tutor'}
@@ -100,7 +100,7 @@ export default async function StudentTaskPage({ params }: PageProps) {
               ['Due', formatDate(task.dueAt)],
               ['Resources', task.resources.length],
             ].map(([label, value]) => (
-              <div key={label as string} className="rounded-[1.25rem] border border-slate-900/10 bg-[#f8f5ef] p-4 dark:border-white/10 dark:bg-white/5">
+              <div key={label as string} className="rounded-[1.25rem] border border-slate-900/10 bg-[#F0FDFA] p-4 dark:border-white/10 dark:bg-white/5">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">{label}</p>
                 <p className="mt-2 text-lg font-semibold">{value as string | number}</p>
               </div>
@@ -110,25 +110,25 @@ export default async function StudentTaskPage({ params }: PageProps) {
       </section>
 
       <section className="grid gap-5 py-6 lg:grid-cols-[1fr_.95fr]">
-        <article className="rounded-[2rem] border border-slate-900/10 bg-white/90 p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#9a5b00]">Instructions</p>
+        <article className="rounded-[2rem] border border-slate-900/10 bg-white/95 p-6 shadow-sm dark:border-white/10 dark:bg-white/5">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">Instructions</p>
           <p className="mt-4 text-sm leading-7 text-slate-600 dark:text-slate-300">{task.instructions}</p>
 
           <div className="mt-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#9a5b00]">Attached resources</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">Attached resources</p>
             <div className="mt-4 space-y-3">
               {task.resources.length ? (
                 task.resources.map((resource) => (
-                  <div key={resource.id} className="rounded-2xl border border-slate-900/10 bg-[#f8f5ef] p-4 dark:border-white/10 dark:bg-white/5">
+                  <div key={resource.id} className="rounded-2xl border border-slate-900/10 bg-[#F0FDFA] p-4 dark:border-white/10 dark:bg-white/5">
                     <div className="flex items-center gap-3">
-                      <Paperclip className="h-4 w-4 text-[#9a5b00]" />
+                      <Paperclip className="h-4 w-4 text-[#00C4B4]" />
                       <p className="text-sm font-semibold">{resource.title}</p>
                     </div>
                     {resource.summary ? <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{resource.summary}</p> : null}
                     <div className="mt-2 flex flex-wrap gap-3 text-sm">
                       {resource.fileName ? <span className="text-slate-500 dark:text-slate-400">File: {resource.fileName}</span> : null}
                       {resource.externalLink ? (
-                        <a href={resource.externalLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-[#9a5b00]">
+                        <a href={resource.externalLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-[#00C4B4]">
                           Open link <Link2 className="h-4 w-4" />
                         </a>
                       ) : null}
@@ -145,10 +145,10 @@ export default async function StudentTaskPage({ params }: PageProps) {
         <div className="grid gap-5">
           <TaskSubmissionForm taskId={task.id} />
 
-          <article className="rounded-[1.5rem] border border-slate-900/10 bg-slate-950 p-5 text-white shadow-2xl shadow-slate-950/10 dark:border-white/10">
+          <article className="rounded-[1.5rem] border border-[#0A2540] bg-[linear-gradient(135deg,#0A2540_0%,#0D3A5C_60%,#0E5060_100%)] p-5 text-white shadow-2xl shadow-[0_20px_60px_rgba(10,37,64,.18)] dark:border-white/10">
             <div className="flex items-center gap-2">
-              <Star className="h-4 w-4 text-[#f2c06d]" />
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#f2c06d]">Feedback history</p>
+              <Star className="h-4 w-4 text-[#CBFBF1]" />
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#CBFBF1]">Feedback history</p>
             </div>
 
             <div className="mt-4 space-y-3">
@@ -176,12 +176,12 @@ export default async function StudentTaskPage({ params }: PageProps) {
             </div>
           </article>
 
-          <article className="rounded-[1.5rem] border border-slate-900/10 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/5">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#9a5b00]">Previous submissions</p>
+          <article className="rounded-[1.5rem] border border-slate-900/10 bg-white/95 p-5 shadow-sm dark:border-white/10 dark:bg-white/5">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">Previous submissions</p>
             <div className="mt-4 space-y-3">
               {task.submissions.length ? (
                 task.submissions.map((submission) => (
-                  <div key={submission.id} className="rounded-2xl border border-slate-900/10 bg-[#f8f5ef] p-4 dark:border-white/10 dark:bg-white/5">
+                  <div key={submission.id} className="rounded-2xl border border-slate-900/10 bg-[#F0FDFA] p-4 dark:border-white/10 dark:bg-white/5">
                     <p className="text-sm font-semibold">Submitted {submission.submittedAt.toLocaleString()}</p>
                     <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">By {submission.submittedBy?.name || 'Student'}</p>
                     {submission.textResponse ? <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{submission.textResponse}</p> : null}

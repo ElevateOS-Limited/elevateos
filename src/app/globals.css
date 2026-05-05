@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: 38 35% 95%;
+  --background: 210 20% 98%;
   --foreground: 222 47% 11%;
 }
 
@@ -24,30 +24,30 @@ html {
 
 body {
   background:
-    radial-gradient(circle at top left, rgba(223, 91, 48, 0.08), transparent 28%),
-    radial-gradient(circle at top right, rgba(15, 23, 42, 0.08), transparent 25%),
-    linear-gradient(180deg, #f8f5ef 0%, #f4ede2 100%);
+    radial-gradient(circle at top left, rgba(0, 196, 180, 0.10), transparent 28%),
+    radial-gradient(circle at top right, rgba(13, 58, 92, 0.10), transparent 25%),
+    linear-gradient(180deg, #f9fafb 0%, #ffffff 100%);
   color: rgb(15 23 42);
-  font-family: var(--font-geist-sans), 'Inter', sans-serif;
+  font-family: var(--font-inter), 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 .dark body {
   background:
-    radial-gradient(circle at top left, rgba(223, 91, 48, 0.12), transparent 28%),
-    radial-gradient(circle at top right, rgba(14, 165, 233, 0.08), transparent 25%),
-    linear-gradient(180deg, #0f172a 0%, #020617 100%);
+    radial-gradient(circle at top left, rgba(0, 196, 180, 0.12), transparent 28%),
+    radial-gradient(circle at top right, rgba(13, 58, 92, 0.12), transparent 25%),
+    linear-gradient(180deg, #0a2540 0%, #020617 100%);
   color: rgb(248 245 239);
 }
 
 ::selection {
-  background-color: rgba(223, 91, 48, 0.28);
+  background-color: rgba(0, 196, 180, 0.28);
   color: rgb(15 23 42);
 }
 
 .gradient-text {
-  background-image: linear-gradient(90deg, #0f172a 0%, #334155 50%, #df5b30 100%);
+  background-image: linear-gradient(90deg, #0a2540 0%, #0d3a5c 55%, #00c4b4 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -66,5 +66,5 @@ body {
 }
 
 .font-display {
-  font-family: var(--font-instrument-serif), 'Instrument Serif', Georgia, serif;
+  font-family: var(--font-inter), 'Inter', sans-serif;
 }

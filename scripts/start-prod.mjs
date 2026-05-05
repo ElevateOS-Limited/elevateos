@@ -39,6 +39,29 @@ function hydrateGoogleApplicationCredentials() {
 hydrateGoogleApplicationCredentials()
 
 const port = process.env.PORT || '8080'
+const nextAuthUrl = process.env.NEXTAUTH_URL?.trim() || `http://localhost:${port}`
+
+if (!process.env.NEXTAUTH_SECRET?.trim()) {
+  // Local production demo runs need a secret so next-auth can initialize.
+  process.env.NEXTAUTH_SECRET = 'elevateos-local-demo-nextauth-secret'
+}
+
+if (!process.env.NEXTAUTH_URL?.trim()) {
+  process.env.NEXTAUTH_URL = nextAuthUrl
+}
+
+if (!process.env.NEXT_PUBLIC_APP_URL?.trim()) {
+  process.env.NEXT_PUBLIC_APP_URL = nextAuthUrl
+}
+
+if (!process.env.DEMO_MODE?.trim()) {
+  process.env.DEMO_MODE = 'true'
+}
+
+if (!process.env.NEXT_PUBLIC_DEMO_MODE?.trim()) {
+  process.env.NEXT_PUBLIC_DEMO_MODE = 'true'
+}
+
 const nextBin = resolve('node_modules/next/dist/bin/next')
 
 const child = spawn(process.execPath, [nextBin, 'start', '-H', '0.0.0.0', '-p', port], {
