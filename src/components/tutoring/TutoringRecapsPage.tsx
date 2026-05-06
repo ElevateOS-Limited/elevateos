@@ -48,11 +48,11 @@ export default function TutoringRecapsPage() {
         <div className="rounded-[1.5rem] border border-slate-900/10 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#f8f5ef] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#9a5b00]">
+              <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#F9FAFB] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#00C4B4]">
                 <FileText className="h-3.5 w-3.5" />
                 Recaps
               </div>
-              <h1 className="font-display mt-4 text-3xl tracking-tight text-slate-950">
+              <h1 className="font-sans mt-4 text-3xl tracking-tight text-slate-950">
                 {parentView ? 'Recent parent updates' : studentView ? 'Your recent session summaries' : 'Recent session summaries'}
               </h1>
               <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600">
@@ -65,15 +65,15 @@ export default function TutoringRecapsPage() {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
-              <div className="rounded-[1.25rem] border border-slate-900/10 bg-[#f8f5ef] p-4 text-center">
+              <div className="rounded-[1.25rem] border border-slate-900/10 bg-[#F9FAFB] p-4 text-center">
               <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{parentView ? 'Shown' : 'Visible'}</p>
               <p className="mt-2 text-2xl font-semibold text-slate-950">{recapCount}</p>
             </div>
-              <div className="rounded-[1.25rem] border border-slate-900/10 bg-[#f8f5ef] p-4 text-center">
+              <div className="rounded-[1.25rem] border border-slate-900/10 bg-[#F9FAFB] p-4 text-center">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{parentView ? 'Follow up' : 'Declining'}</p>
                 <p className="mt-2 text-2xl font-semibold text-slate-950">{attentionCount}</p>
               </div>
-              <div className="rounded-[1.25rem] border border-slate-900/10 bg-[#f8f5ef] p-4 text-center">
+              <div className="rounded-[1.25rem] border border-slate-900/10 bg-[#F9FAFB] p-4 text-center">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Average</p>
                 <p className="mt-2 text-2xl font-semibold text-slate-950">{averageProgress}%</p>
               </div>
@@ -93,11 +93,11 @@ export default function TutoringRecapsPage() {
             </label>
 
             {parentView ? (
-              <div className="rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] px-4 py-3 text-sm leading-7 text-slate-600">
+              <div className="rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] px-4 py-3 text-sm leading-7 text-slate-600">
                 These summaries are trimmed for parents. Use Messages for the full thread.
               </div>
             ) : studentView ? (
-              <div className="rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] px-4 py-3 text-sm leading-7 text-slate-600">
+              <div className="rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] px-4 py-3 text-sm leading-7 text-slate-600">
                 These recaps are written for student use. Use Messages to message your tutor.
               </div>
             ) : (
@@ -109,7 +109,7 @@ export default function TutoringRecapsPage() {
                     onClick={() => setFilterKey(option.key)}
                     className={[
                       'rounded-full border px-3 py-1 transition-colors',
-                      filterKey === option.key ? 'border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]' : 'border-[#E9ECEF] bg-white hover:bg-[#F8F9FA]',
+                      filterKey === option.key ? 'border-[#00C4B4] bg-[#F0FDFA] text-[#00C4B4]' : 'border-[#E9ECEF] bg-white hover:bg-[#F8F9FA]',
                     ].join(' ')}
                   >
                     {option.label}
@@ -128,7 +128,7 @@ export default function TutoringRecapsPage() {
               onClick={() => setSelectedId(student.id)}
               className={[
                 'w-full rounded-[1.25rem] border p-4 text-left transition-all',
-                selectedStudent?.id === student.id ? 'border-[#3B82F6] bg-[#EFF6FF] shadow-sm' : 'border-slate-900/10 bg-white hover:-translate-y-0.5 hover:shadow-md',
+                selectedStudent?.id === student.id ? 'border-[#00C4B4] bg-[#F0FDFA] shadow-sm' : 'border-slate-900/10 bg-white hover:-translate-y-0.5 hover:shadow-md',
               ].join(' ')}
             >
               <div className="flex items-start justify-between gap-4">
@@ -162,7 +162,7 @@ export default function TutoringRecapsPage() {
                 <p className="text-lg font-semibold text-slate-950">{selectedStudent.name}</p>
                 <p className="text-sm text-slate-500">{selectedStudent.subject} · {selectedStudent.grade}</p>
               </div>
-              <div className="rounded-[1rem] bg-[#f8f5ef] p-4 text-sm leading-7 text-slate-700">
+              <div className="rounded-[1rem] bg-[#F9FAFB] p-4 text-sm leading-7 text-slate-700">
                 {parentView ? `What parents should know: ${selectedStudent.recap}` : studentView ? `What you should review: ${selectedStudent.recap}` : selectedStudent.recap}
               </div>
               <div className="rounded-[1rem] border border-slate-900/10 p-4 text-sm leading-7 text-slate-700">
@@ -179,11 +179,11 @@ export default function TutoringRecapsPage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Link href="/dashboard/communication" className="inline-flex flex-1 items-center justify-center gap-2 rounded-[0.9rem] bg-[#3B82F6] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#60A5FA]">
+                <Link href="/dashboard/communication" className="inline-flex flex-1 items-center justify-center gap-2 rounded-[0.9rem] bg-[#00C4B4] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0E5060]">
                   <ArrowRight className="h-4 w-4" />
                   {parentView ? 'Message tutor' : studentView ? 'Message tutor' : 'Send update'}
                 </Link>
-                <Link href="/dashboard/schedule" className="inline-flex flex-1 items-center justify-center rounded-[0.9rem] border border-slate-900/10 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-[#f8f5ef]">
+                <Link href="/dashboard/schedule" className="inline-flex flex-1 items-center justify-center rounded-[0.9rem] border border-slate-900/10 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-[#F9FAFB]">
                   {parentView ? 'Check next session' : 'Review schedule'}
                 </Link>
               </div>
@@ -196,3 +196,4 @@ export default function TutoringRecapsPage() {
     </div>
   )
 }
+

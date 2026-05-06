@@ -86,11 +86,11 @@ export default function TutoringTasksPage() {
     <div className="grid gap-4 xl:grid-cols-[1.02fr_.98fr]">
       <section className="space-y-4">
         <div className="rounded-[1.5rem] border border-slate-900/10 bg-white p-6 shadow-sm">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#f8f5ef] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#9a5b00]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#F9FAFB] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#00C4B4]">
             <FileText className="h-3.5 w-3.5" />
             {tutoringSectionMeta.tasks.title}
           </div>
-          <h1 className="font-display mt-4 text-3xl tracking-tight text-slate-950">
+          <h1 className="font-sans mt-4 text-3xl tracking-tight text-slate-950">
             {parentView ? 'Family assignments and due dates' : studentView ? 'Today’s assignments and uploads' : 'Weekly assignments and submissions'}
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600">
@@ -101,7 +101,7 @@ export default function TutoringTasksPage() {
 
           <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {summary.map((item) => (
-              <div key={item.label} className="rounded-[1.25rem] border border-slate-900/10 bg-[#f8f5ef] p-4">
+              <div key={item.label} className="rounded-[1.25rem] border border-slate-900/10 bg-[#F9FAFB] p-4">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{item.label}</p>
                 <p className="mt-2 text-3xl font-semibold text-slate-950">{item.value}</p>
               </div>
@@ -121,7 +121,7 @@ export default function TutoringTasksPage() {
                 onClick={() => setSelectedTaskId(task.id)}
                 className={[
                   'w-full rounded-[1.25rem] border p-4 text-left transition-all',
-                  selected ? 'border-[#3B82F6] bg-[#EFF6FF] shadow-sm' : 'border-slate-900/10 bg-white hover:-translate-y-0.5 hover:shadow-md',
+                  selected ? 'border-[#00C4B4] bg-[#F0FDFA] shadow-sm' : 'border-slate-900/10 bg-white hover:-translate-y-0.5 hover:shadow-md',
                 ].join(' ')}
               >
                 <div className="flex items-start justify-between gap-4">
@@ -148,7 +148,7 @@ export default function TutoringTasksPage() {
 
       <aside className="space-y-4">
         <div className="rounded-[1.5rem] border border-slate-900/10 bg-slate-950 p-6 text-white shadow-lg shadow-slate-950/10">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#f2c06d]">Task detail</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#00C4B4]">Task detail</p>
           {selectedTask ? (
             <div className="mt-4 space-y-4">
               <div className="flex items-start justify-between gap-4">
@@ -229,7 +229,7 @@ export default function TutoringTasksPage() {
               onChange={(event) => setSubmissionText(event.target.value)}
               rows={6}
               placeholder="Write the answer, summary, or correction here..."
-              className="w-full rounded-[1rem] border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-[#3B82F6]"
+              className="w-full rounded-[1rem] border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-[#00C4B4]"
             />
           </label>
 
@@ -241,7 +241,7 @@ export default function TutoringTasksPage() {
                 onChange={(event) => setSubmissionLink(event.target.value)}
                 type="url"
                 placeholder="https://..."
-                className="w-full rounded-[1rem] border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-[#3B82F6]"
+                className="w-full rounded-[1rem] border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-[#00C4B4]"
               />
             </label>
             <label className="block">
@@ -254,7 +254,7 @@ export default function TutoringTasksPage() {
             </label>
           </div>
 
-          <div className="mt-4 rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] p-4 text-sm leading-7 text-slate-600">
+          <div className="mt-4 rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] p-4 text-sm leading-7 text-slate-600">
             {submittedTaskId === selectedTask?.id
               ? 'Submission saved locally for now.'
               : selectedSubmission
@@ -264,7 +264,7 @@ export default function TutoringTasksPage() {
           </div>
 
           <div className="mt-4 flex gap-2">
-            <button type="submit" className="inline-flex flex-1 items-center justify-center gap-2 rounded-[0.9rem] bg-[#3B82F6] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#60A5FA]">
+            <button type="submit" className="inline-flex flex-1 items-center justify-center gap-2 rounded-[0.9rem] bg-[#00C4B4] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0E5060]">
               <CheckCircle2 className="h-4 w-4" />
               {submittedTaskId === selectedTask?.id ? 'Update submission' : 'Submit work'}
             </button>
@@ -275,7 +275,7 @@ export default function TutoringTasksPage() {
                 setSubmissionLink('')
                 setSubmissionFileName('')
               }}
-              className="inline-flex items-center justify-center rounded-[0.9rem] border border-slate-900/10 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-[#f8f5ef]"
+              className="inline-flex items-center justify-center rounded-[0.9rem] border border-slate-900/10 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-[#F9FAFB]"
             >
               Clear
             </button>
@@ -285,3 +285,5 @@ export default function TutoringTasksPage() {
     </div>
   )
 }
+
+

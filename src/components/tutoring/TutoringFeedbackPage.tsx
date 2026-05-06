@@ -69,11 +69,11 @@ export default function TutoringFeedbackPage() {
     <div className="grid gap-4 xl:grid-cols-[1.05fr_.95fr]">
       <section className="space-y-4">
         <div className="rounded-[1.5rem] border border-slate-900/10 bg-white p-6 shadow-sm">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#f8f5ef] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#9a5b00]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#F9FAFB] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#00C4B4]">
             <Sparkles className="h-3.5 w-3.5" />
             {tutoringSectionMeta.feedback.title}
           </div>
-          <h1 className="font-display mt-4 text-3xl tracking-tight text-slate-950">
+          <h1 className="font-sans mt-4 text-3xl tracking-tight text-slate-950">
             {parentView ? 'Parent-friendly review snapshots' : studentView ? 'Reviewed work and next steps' : 'Reviewed work, weak areas, and next steps'}
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600">
@@ -90,7 +90,7 @@ export default function TutoringFeedbackPage() {
               ['Average score', metrics.averageScore ? `${metrics.averageScore}` : '—'],
               ['Top weak topics', metrics.weakTopics.length],
             ].map(([label, value]) => (
-              <div key={label as string} className="rounded-[1.25rem] border border-slate-900/10 bg-[#f8f5ef] p-4">
+              <div key={label as string} className="rounded-[1.25rem] border border-slate-900/10 bg-[#F9FAFB] p-4">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{label}</p>
                 <p className="mt-2 text-3xl font-semibold text-slate-950">{value as string | number}</p>
               </div>
@@ -110,7 +110,7 @@ export default function TutoringFeedbackPage() {
                 onClick={() => setSelectedFeedbackId(item.id)}
                 className={[
                   'w-full rounded-[1.25rem] border p-4 text-left transition-all',
-                  selected ? 'border-[#3B82F6] bg-[#EFF6FF] shadow-sm' : 'border-slate-900/10 bg-white hover:-translate-y-0.5 hover:shadow-md',
+                  selected ? 'border-[#00C4B4] bg-[#F0FDFA] shadow-sm' : 'border-slate-900/10 bg-white hover:-translate-y-0.5 hover:shadow-md',
                 ].join(' ')}
               >
                 <div className="flex items-start justify-between gap-4">
@@ -134,7 +134,7 @@ export default function TutoringFeedbackPage() {
 
       <aside className="space-y-4">
         <div className="rounded-[1.5rem] border border-slate-900/10 bg-slate-950 p-6 text-white shadow-lg shadow-slate-950/10">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#f2c06d]">{parentView ? 'Review detail' : studentView ? 'Student review detail' : 'Review detail'}</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#00C4B4]">{parentView ? 'Review detail' : studentView ? 'Student review detail' : 'Review detail'}</p>
           {selectedFeedback ? (
             <div className="mt-4 space-y-4">
               <div className="flex items-start justify-between gap-4">
@@ -192,19 +192,19 @@ export default function TutoringFeedbackPage() {
           <div className="mt-4 space-y-3">
             {metrics.weakTopics.length ? (
               metrics.weakTopics.map(([label, count]) => (
-                <div key={label} className="flex items-center justify-between rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] px-4 py-3 text-sm">
+                <div key={label} className="flex items-center justify-between rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] px-4 py-3 text-sm">
                   <span>{label}</span>
                   <span className="font-semibold text-slate-950">{count}</span>
                 </div>
               ))
             ) : (
-              <div className="rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] px-4 py-3 text-sm text-slate-600">No weak-topic tags yet.</div>
+              <div className="rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] px-4 py-3 text-sm text-slate-600">No weak-topic tags yet.</div>
             )}
           </div>
 
           <div className="mt-5 rounded-[1rem] border border-slate-900/10 bg-white p-4">
             <div className="flex items-center gap-2 text-sm font-semibold text-slate-950">
-              <Star className="h-4 w-4 text-[#d97706]" />
+              <Star className="h-4 w-4 text-[#00C4B4]" />
               {studentView ? 'Next step' : 'Next action'}
             </div>
             <p className="mt-2 text-sm leading-7 text-slate-600">
@@ -217,7 +217,7 @@ export default function TutoringFeedbackPage() {
             <span className="font-semibold">{selectedFeedback?.aiSummary ? 'Yes' : 'No'}</span>
           </div>
           {selectedFeedback?.aiSummary ? (
-            <div className="mt-3 rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] p-4 text-sm leading-7 text-slate-600">
+            <div className="mt-3 rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] p-4 text-sm leading-7 text-slate-600">
               {selectedFeedback.aiSummary}
             </div>
           ) : null}
@@ -226,3 +226,5 @@ export default function TutoringFeedbackPage() {
     </div>
   )
 }
+
+

@@ -59,11 +59,11 @@ export default function TutoringSettingsPage() {
     <div className="grid gap-4 xl:grid-cols-[1.05fr_.95fr]">
       <section className="space-y-4">
         <div className="rounded-[1.5rem] border border-slate-900/10 bg-white p-6 shadow-sm">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#f8f5ef] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#9a5b00]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#F9FAFB] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#00C4B4]">
             <Settings className="h-3.5 w-3.5" />
             Settings
           </div>
-          <h1 className="font-display mt-4 text-3xl tracking-tight text-slate-950">
+          <h1 className="font-sans mt-4 text-3xl tracking-tight text-slate-950">
             {parentView ? 'Family notification preferences' : studentView ? 'Student preferences and reminders' : 'Tutor preferences and dashboard settings'}
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600">
@@ -88,7 +88,7 @@ export default function TutoringSettingsPage() {
                 <input
                   value={(form as typeof form & { primaryContact: string }).primaryContact}
                   onChange={(event) => setForm((current) => ({ ...current, primaryContact: event.target.value }))}
-                  className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#3B82F6]"
+                  className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#00C4B4]"
                 />
               </label>
 
@@ -99,7 +99,7 @@ export default function TutoringSettingsPage() {
                     type="checkbox"
                     checked={(form as typeof form & { emailReports: boolean }).emailReports}
                     onChange={(event) => setForm((current) => ({ ...current, emailReports: event.target.checked }))}
-                    className="h-4 w-4 accent-[#3B82F6]"
+                    className="h-4 w-4 accent-[#00C4B4]"
                   />
                 </label>
                 <label className="flex items-center justify-between gap-3 rounded-[1rem] border border-slate-900/10 px-4 py-3">
@@ -108,7 +108,7 @@ export default function TutoringSettingsPage() {
                     type="checkbox"
                     checked={(form as typeof form & { smsReminders: boolean }).smsReminders}
                     onChange={(event) => setForm((current) => ({ ...current, smsReminders: event.target.checked }))}
-                    className="h-4 w-4 accent-[#3B82F6]"
+                    className="h-4 w-4 accent-[#00C4B4]"
                   />
                 </label>
               </div>
@@ -118,7 +118,7 @@ export default function TutoringSettingsPage() {
                 <select
                   value={(form as typeof form & { updateFrequency: string }).updateFrequency}
                   onChange={(event) => setForm((current) => ({ ...current, updateFrequency: event.target.value }))}
-                  className="w-full rounded-[0.9rem] border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#3B82F6]"
+                  className="w-full rounded-[0.9rem] border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#00C4B4]"
                 >
                   <option>After every session</option>
                   <option>Weekly</option>
@@ -131,7 +131,7 @@ export default function TutoringSettingsPage() {
                 <input
                   value={(form as typeof form & { preferredChannel: string }).preferredChannel}
                   onChange={(event) => setForm((current) => ({ ...current, preferredChannel: event.target.value }))}
-                  className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#3B82F6]"
+                  className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#00C4B4]"
                 />
               </label>
             </>
@@ -142,7 +142,7 @@ export default function TutoringSettingsPage() {
                 <input
                   value={(form as typeof form & { studentName: string }).studentName}
                   onChange={(event) => setForm((current) => ({ ...current, studentName: event.target.value }))}
-                  className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#3B82F6]"
+                  className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#00C4B4]"
                 />
               </label>
 
@@ -153,7 +153,7 @@ export default function TutoringSettingsPage() {
                     type="checkbox"
                     checked={(form as typeof form & { emailReports: boolean }).emailReports}
                     onChange={(event) => setForm((current) => ({ ...current, emailReports: event.target.checked }))}
-                    className="h-4 w-4 accent-[#3B82F6]"
+                    className="h-4 w-4 accent-[#00C4B4]"
                   />
                 </label>
                 <label className="flex items-center justify-between gap-3 rounded-[1rem] border border-slate-900/10 px-4 py-3">
@@ -162,7 +162,7 @@ export default function TutoringSettingsPage() {
                     type="checkbox"
                     checked={(form as typeof form & { smsReminders: boolean }).smsReminders}
                     onChange={(event) => setForm((current) => ({ ...current, smsReminders: event.target.checked }))}
-                    className="h-4 w-4 accent-[#3B82F6]"
+                    className="h-4 w-4 accent-[#00C4B4]"
                   />
                 </label>
               </div>
@@ -172,7 +172,7 @@ export default function TutoringSettingsPage() {
                 <input
                   value={(form as typeof form & { studyFocus: string }).studyFocus}
                   onChange={(event) => setForm((current) => ({ ...current, studyFocus: event.target.value }))}
-                  className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#3B82F6]"
+                  className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#00C4B4]"
                 />
               </label>
 
@@ -182,7 +182,7 @@ export default function TutoringSettingsPage() {
                   <input
                     value={(form as typeof form & { quietHours: string }).quietHours}
                     onChange={(event) => setForm((current) => ({ ...current, quietHours: event.target.value }))}
-                    className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#3B82F6]"
+                    className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#00C4B4]"
                   />
                 </label>
                 <label className="block">
@@ -190,7 +190,7 @@ export default function TutoringSettingsPage() {
                   <select
                     value={(form as typeof form & { weeklySummary: string }).weeklySummary}
                     onChange={(event) => setForm((current) => ({ ...current, weeklySummary: event.target.value }))}
-                    className="w-full rounded-[0.9rem] border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#3B82F6]"
+                    className="w-full rounded-[0.9rem] border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#00C4B4]"
                   >
                     <option>After every session</option>
                     <option>Weekly</option>
@@ -206,7 +206,7 @@ export default function TutoringSettingsPage() {
                 <input
                   value={(form as typeof form & { tutorName: string }).tutorName}
                   onChange={(event) => setForm((current) => ({ ...current, tutorName: event.target.value }))}
-                  className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#3B82F6]"
+                  className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#00C4B4]"
                 />
               </label>
 
@@ -217,7 +217,7 @@ export default function TutoringSettingsPage() {
                     type="checkbox"
                     checked={(form as typeof form & { emailReports: boolean }).emailReports}
                     onChange={(event) => setForm((current) => ({ ...current, emailReports: event.target.checked }))}
-                    className="h-4 w-4 accent-[#3B82F6]"
+                    className="h-4 w-4 accent-[#00C4B4]"
                   />
                 </label>
                 <label className="flex items-center justify-between gap-3 rounded-[1rem] border border-slate-900/10 px-4 py-3">
@@ -226,7 +226,7 @@ export default function TutoringSettingsPage() {
                     type="checkbox"
                     checked={(form as typeof form & { smsReminders: boolean }).smsReminders}
                     onChange={(event) => setForm((current) => ({ ...current, smsReminders: event.target.checked }))}
-                    className="h-4 w-4 accent-[#3B82F6]"
+                    className="h-4 w-4 accent-[#00C4B4]"
                   />
                 </label>
               </div>
@@ -236,7 +236,7 @@ export default function TutoringSettingsPage() {
                 <input
                   value={(form as typeof form & { defaultSubject: string }).defaultSubject}
                   onChange={(event) => setForm((current) => ({ ...current, defaultSubject: event.target.value }))}
-                  className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#3B82F6]"
+                  className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#00C4B4]"
                 />
               </label>
 
@@ -246,13 +246,13 @@ export default function TutoringSettingsPage() {
                   value={(form as typeof form & { signature: string }).signature}
                   onChange={(event) => setForm((current) => ({ ...current, signature: event.target.value }))}
                   rows={4}
-                  className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#3B82F6]"
+                  className="w-full rounded-[0.9rem] border border-slate-900/10 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#00C4B4]"
                 />
               </label>
             </>
           )}
 
-          <button type="submit" className="inline-flex items-center gap-2 rounded-[0.9rem] bg-[#3B82F6] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#60A5FA]">
+          <button type="submit" className="inline-flex items-center gap-2 rounded-[0.9rem] bg-[#00C4B4] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0E5060]">
             <Save className="h-4 w-4" />
             Save settings
           </button>
@@ -262,7 +262,7 @@ export default function TutoringSettingsPage() {
 
       <aside className="space-y-4">
         <div className="rounded-[1.25rem] border border-slate-900/10 bg-slate-950 p-5 text-white shadow-lg shadow-slate-950/10">
-          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[#f2c06d]">Default view</div>
+          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[#00C4B4]">Default view</div>
           <p className="mt-3 text-sm leading-7 text-white/75">
             {parentView
               ? 'Parents see a family snapshot: progress, next sessions, and message history.'
@@ -278,7 +278,7 @@ export default function TutoringSettingsPage() {
                 onClick={() => setActivePov(pov)}
                 className={[
                   'rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors',
-                  pov === activePov ? 'border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]' : 'border-white/10 bg-white/5 text-white/70 hover:bg-white/10',
+                  pov === activePov ? 'border-[#00C4B4] bg-[#F0FDFA] text-[#00C4B4]' : 'border-white/10 bg-white/5 text-white/70 hover:bg-white/10',
                 ].join(' ')}
               >
                 {pov}
@@ -294,7 +294,7 @@ export default function TutoringSettingsPage() {
             <li>• Keep profile details current so the dashboard stays useful.</li>
             <li>• Use the menu above to move between sections.</li>
           </ul>
-          <Link href="/auth/login" className="mt-4 inline-flex items-center gap-2 rounded-[0.9rem] border border-slate-900/10 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-[#f8f5ef]">
+          <Link href="/auth/login" className="mt-4 inline-flex items-center gap-2 rounded-[0.9rem] border border-slate-900/10 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-[#F9FAFB]">
             Sign out
           </Link>
         </div>
@@ -302,3 +302,5 @@ export default function TutoringSettingsPage() {
     </div>
   )
 }
+
+

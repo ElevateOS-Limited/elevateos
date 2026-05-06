@@ -22,7 +22,7 @@ async function fetchWeeklyReport(studentId: string): Promise<WeeklyParentReport>
 
 function MetricCard({ label, value, hint }: { label: string; value: string | number; hint?: string }) {
   return (
-    <div className="rounded-[1.25rem] border border-slate-900/10 bg-[#f8f5ef] p-4">
+    <div className="rounded-[1.25rem] border border-slate-900/10 bg-[#F9FAFB] p-4">
       <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{label}</p>
       <p className="mt-2 text-3xl font-semibold text-slate-950">{value}</p>
       {hint ? <p className="mt-2 text-xs leading-6 text-slate-500">{hint}</p> : null}
@@ -90,11 +90,11 @@ export default function TutoringReportsPage() {
     <div className="grid gap-4 xl:grid-cols-[1.02fr_.98fr]">
       <section className="space-y-4">
         <div className="rounded-[1.5rem] border border-slate-900/10 bg-white p-6 shadow-sm">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#f8f5ef] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#9a5b00]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#F9FAFB] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#00C4B4]">
             <FileText className="h-3.5 w-3.5" />
             {tutoringSectionMeta.reports.title}
           </div>
-          <h1 className="font-display mt-4 text-3xl tracking-tight text-slate-950">
+          <h1 className="font-sans mt-4 text-3xl tracking-tight text-slate-950">
             {parentView ? 'Family-ready weekly report' : studentView ? 'Student weekly report' : 'Weekly report with parent-facing summary'}
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600">
@@ -120,8 +120,8 @@ export default function TutoringReportsPage() {
               onClick={() => setSelectedStudentId(student.id)}
               className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
                 selectedStudentId === student.id
-                  ? 'border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]'
-                  : 'border-slate-900/10 bg-white text-slate-600 hover:bg-[#f8f5ef]'
+                  ? 'border-[#00C4B4] bg-[#F0FDFA] text-[#00C4B4]'
+                  : 'border-slate-900/10 bg-white text-slate-600 hover:bg-[#F9FAFB]'
               }`}
             >
               {student.name}
@@ -139,7 +139,7 @@ export default function TutoringReportsPage() {
         <div className="rounded-[1.5rem] border border-slate-900/10 bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#d97706]">Task digest</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#00C4B4]">Task digest</p>
               <h2 className="mt-2 text-2xl font-semibold text-slate-950">What happened this week</h2>
             </div>
             <button
@@ -153,7 +153,7 @@ export default function TutoringReportsPage() {
                   .catch((fetchError) => setReportError(fetchError instanceof Error ? fetchError.message : 'Failed to refresh report'))
                   .finally(() => setLoadingReport(false))
               }}
-              className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-[#f8f5ef]"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-[#F9FAFB]"
               disabled={loadingReport || !selectedStudentId}
             >
               <RefreshCw className={`h-4 w-4 ${loadingReport ? 'animate-spin' : ''}`} />
@@ -164,7 +164,7 @@ export default function TutoringReportsPage() {
           {report ? (
             <div className="mt-5 space-y-3">
               {report.taskDigest.map((task) => (
-                <div key={task.id} className="rounded-[1.25rem] border border-slate-900/10 bg-[#f8f5ef] p-4">
+                <div key={task.id} className="rounded-[1.25rem] border border-slate-900/10 bg-[#F9FAFB] p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-semibold text-slate-950">{task.title}</p>
@@ -185,7 +185,7 @@ export default function TutoringReportsPage() {
               ))}
             </div>
           ) : (
-            <div className="mt-5 rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] p-4 text-sm text-slate-600">
+            <div className="mt-5 rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] p-4 text-sm text-slate-600">
               {reportError || 'Select a student to generate the weekly report.'}
             </div>
           )}
@@ -194,7 +194,7 @@ export default function TutoringReportsPage() {
 
       <aside className="space-y-4">
         <div className="rounded-[1.5rem] border border-slate-900/10 bg-slate-950 p-6 text-white shadow-lg shadow-slate-950/10">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#f2c06d]">{parentView ? 'Parent summary' : studentView ? 'Student summary' : 'Parent summary'}</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#00C4B4]">{parentView ? 'Parent summary' : studentView ? 'Student summary' : 'Parent summary'}</p>
           {report ? (
             <div className="mt-4 space-y-4">
               <div className="flex items-start justify-between gap-4">
@@ -226,7 +226,7 @@ export default function TutoringReportsPage() {
 
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                 <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                  <Sparkles className="h-4 w-4 text-[#f2c06d]" />
+                  <Sparkles className="h-4 w-4 text-[#00C4B4]" />
                   Strengths
                 </div>
                 <ul className="mt-3 space-y-2 text-sm leading-7 text-white/75">
@@ -277,18 +277,18 @@ export default function TutoringReportsPage() {
             Report signals
           </div>
           <div className="mt-4 space-y-3">
-            <div className="rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] p-4">
+            <div className="rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] p-4">
               <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Top weak topic</p>
               <p className="mt-2 text-sm font-semibold text-slate-950">{topWeakTopic ? `${topWeakTopic.label} (${topWeakTopic.count})` : 'None logged yet'}</p>
             </div>
-            <div className="rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] p-4">
+            <div className="rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] p-4">
               <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Latest report window</p>
               <p className="mt-2 text-sm font-semibold text-slate-950">
                 {report ? `${new Date(report.window.weekStart).toLocaleDateString()} - ${new Date(report.window.weekEnd).toLocaleDateString()}` : 'No report yet'}
               </p>
             </div>
             {report?.metrics.scoreTrend.length ? (
-              <div className="rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] p-4">
+              <div className="rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] p-4">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Score trend</p>
                 <div className="mt-3 space-y-2">
                   {report.metrics.scoreTrend.map((point) => (
@@ -298,7 +298,7 @@ export default function TutoringReportsPage() {
                         <span className="font-semibold text-slate-950">{point.value}</span>
                       </div>
                       <div className="h-2 rounded-full bg-slate-200">
-                        <div className="h-2 rounded-full bg-[#d97706]" style={{ width: `${Math.max(8, point.value)}%` }} />
+                        <div className="h-2 rounded-full bg-[#00C4B4]" style={{ width: `${Math.max(8, point.value)}%` }} />
                       </div>
                     </div>
                   ))}
@@ -311,3 +311,5 @@ export default function TutoringReportsPage() {
     </div>
   )
 }
+
+

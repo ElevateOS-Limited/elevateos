@@ -38,11 +38,11 @@ export default function TutoringCommunicationPage() {
     <div className="grid gap-4 xl:grid-cols-[1.05fr_.95fr]">
       <section className="space-y-4">
         <div className="rounded-[1.5rem] border border-slate-900/10 bg-white p-6 shadow-sm">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#f8f5ef] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#9a5b00]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#F9FAFB] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#00C4B4]">
             <MessageSquare className="h-3.5 w-3.5" />
             Communication
           </div>
-          <h1 className="font-display mt-4 text-3xl tracking-tight text-slate-950">
+          <h1 className="font-sans mt-4 text-3xl tracking-tight text-slate-950">
             {parentView ? 'Parent updates and follow-ups' : studentView ? 'Student messages and tutor replies' : 'Threads that need a reply'}
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600">
@@ -62,7 +62,7 @@ export default function TutoringCommunicationPage() {
               onClick={() => setSelectedThreadId(thread.id)}
               className={[
                 'w-full rounded-[1.25rem] border p-4 text-left transition-all',
-                selectedThread?.id === thread.id ? 'border-[#3B82F6] bg-[#EFF6FF] shadow-sm' : 'border-slate-900/10 bg-white hover:-translate-y-0.5 hover:shadow-md',
+                selectedThread?.id === thread.id ? 'border-[#00C4B4] bg-[#F0FDFA] shadow-sm' : 'border-slate-900/10 bg-white hover:-translate-y-0.5 hover:shadow-md',
               ].join(' ')}
             >
               <div className="flex items-start justify-between gap-4">
@@ -72,7 +72,7 @@ export default function TutoringCommunicationPage() {
                 </div>
                 <div className="text-right">
                   <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{thread.updatedAt}</p>
-                  {thread.unread ? <p className="mt-1 text-xs font-semibold text-[#d97706]">Unread</p> : null}
+                  {thread.unread ? <p className="mt-1 text-xs font-semibold text-[#00C4B4]">Unread</p> : null}
                 </div>
               </div>
               <p className="mt-3 text-sm leading-7 text-slate-600">{thread.lastMessage}</p>
@@ -91,7 +91,7 @@ export default function TutoringCommunicationPage() {
                 <p className="text-sm text-slate-500">{parentView ? selectedThread.subject : `${selectedThread.channel} · ${selectedThread.subject}`}</p>
               </div>
 
-              <div className="rounded-[1rem] bg-[#f8f5ef] p-4 text-sm leading-7 text-slate-700">{selectedThread.detail}</div>
+              <div className="rounded-[1rem] bg-[#F9FAFB] p-4 text-sm leading-7 text-slate-700">{selectedThread.detail}</div>
 
               <div className="rounded-[1rem] border border-slate-900/10 p-4 text-sm leading-7 text-slate-700">
                 <span className="font-semibold text-slate-950">Latest message:</span> {selectedThread.lastMessage}
@@ -104,7 +104,7 @@ export default function TutoringCommunicationPage() {
                   onChange={(event) => setDraft(event.target.value)}
                   rows={5}
                   placeholder={parentView ? 'Write a clear family update...' : studentView ? 'Write a concise note for your tutor...' : 'Write a concise reply for the parent or student...'}
-                  className="w-full rounded-[1rem] border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-[#3B82F6]"
+                  className="w-full rounded-[1rem] border border-slate-900/10 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-[#00C4B4]"
                 />
               </label>
 
@@ -119,7 +119,7 @@ export default function TutoringCommunicationPage() {
                     key={snippet}
                     type="button"
                     onClick={() => setDraft(snippet)}
-                    className="rounded-full border border-slate-900/10 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-[#f8f5ef]"
+                    className="rounded-full border border-slate-900/10 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-[#F9FAFB]"
                   >
                     {snippet}
                   </button>
@@ -127,11 +127,11 @@ export default function TutoringCommunicationPage() {
               </div>
 
               <div className="flex gap-2">
-                <button type="button" className="inline-flex flex-1 items-center justify-center gap-2 rounded-[0.9rem] bg-[#3B82F6] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#60A5FA]">
+                <button type="button" className="inline-flex flex-1 items-center justify-center gap-2 rounded-[0.9rem] bg-[#00C4B4] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0E5060]">
                   <Send className="h-4 w-4" />
                   {parentView ? 'Send parent update' : studentView ? 'Send note' : 'Send reply'}
                 </button>
-                <Link href="/dashboard/recaps" className="inline-flex flex-1 items-center justify-center gap-2 rounded-[0.9rem] border border-slate-900/10 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-[#f8f5ef]">
+                <Link href="/dashboard/recaps" className="inline-flex flex-1 items-center justify-center gap-2 rounded-[0.9rem] border border-slate-900/10 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-[#F9FAFB]">
                   <ArrowRight className="h-4 w-4" />
                   {parentView ? 'Review recap' : studentView ? 'Open recaps' : 'View recap'}
                 </Link>
@@ -141,7 +141,7 @@ export default function TutoringCommunicationPage() {
         </div>
 
         <div className="rounded-[1.25rem] border border-slate-900/10 bg-slate-950 p-5 text-white shadow-lg shadow-slate-950/10">
-          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[#f2c06d]">{queueLabel}</div>
+          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[#00C4B4]">{queueLabel}</div>
           <div className="mt-4 grid grid-cols-3 gap-3 text-center">
             {[
               ['Unread', visibleThreads.filter((thread) => thread.unread).length],
@@ -160,3 +160,5 @@ export default function TutoringCommunicationPage() {
     </div>
   )
 }
+
+

@@ -41,7 +41,7 @@ function MenuButton({ label, active, onClick }: { label: string; active: boolean
       onClick={onClick}
       className={[
         'flex h-[34px] items-center gap-1 rounded-[8px] border px-[11px] py-[6px] text-[12px] font-medium transition-colors',
-        active ? 'border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]' : 'border-[#E9ECEF] bg-white text-[#4A4A4A] hover:bg-[#F8F9FA]',
+        active ? 'border-[#00C4B4] bg-[#F0FDFA] text-[#00C4B4]' : 'border-[#E9ECEF] bg-white text-[#4A4A4A] hover:bg-[#F8F9FA]',
       ].join(' ')}
     >
       {label}
@@ -170,7 +170,7 @@ export default function TutoringStudentsPageClient() {
       <section className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
         <div>
           <div className="text-[10.5px] font-semibold uppercase tracking-[0.7px] text-[#9B9B9B]">Students</div>
-          <div className="mt-1 font-display text-[20px] tracking-[-0.3px] text-[#1A1A1A]">
+          <div className="mt-1 font-sans text-[20px] tracking-[-0.3px] text-[#1A1A1A]">
             {parentView ? 'Family snapshot' : studentView ? 'Student profile' : 'Student list'}
           </div>
           <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-medium text-[#4A4A4A]">
@@ -179,7 +179,7 @@ export default function TutoringStudentsPageClient() {
               {parentView || studentView ? 'Showing current student' : `Showing ${visibleStudents.length} of ${students.length}`}
             </span>
             {query || (!parentView && (filterKey !== 'all' || sortKey !== 'name')) ? (
-              <button type="button" onClick={clearFilters} className="rounded-full border border-[#E9ECEF] bg-white px-3 py-1 text-[#DF5B30] transition-colors hover:bg-[#F8F9FA]">
+              <button type="button" onClick={clearFilters} className="rounded-full border border-[#E9ECEF] bg-white px-3 py-1 text-[#00C4B4] transition-colors hover:bg-[#F8F9FA]">
                 Clear filters
               </button>
             ) : null}
@@ -198,7 +198,7 @@ export default function TutoringStudentsPageClient() {
         {parentView ? (
           <Link
             href="/dashboard/communication"
-            className="inline-flex items-center gap-2 rounded-[8px] bg-[#3B82F6] px-[15px] py-[8px] text-[13px] font-medium text-white transition-colors hover:bg-[#60A5FA]"
+            className="inline-flex items-center gap-2 rounded-[8px] bg-[#00C4B4] px-[15px] py-[8px] text-[13px] font-medium text-white transition-colors hover:bg-[#0E5060]"
           >
             <MessageSquare className="h-4 w-4" />
             Request update
@@ -210,7 +210,7 @@ export default function TutoringStudentsPageClient() {
         ) : (
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-[8px] bg-[#3B82F6] px-[15px] py-[8px] text-[13px] font-medium text-white transition-colors hover:bg-[#60A5FA]"
+            className="inline-flex items-center gap-2 rounded-[8px] bg-[#00C4B4] px-[15px] py-[8px] text-[13px] font-medium text-white transition-colors hover:bg-[#0E5060]"
             onClick={() => setAddOpen((current) => !current)}
           >
             <Plus className="h-4 w-4" />
@@ -224,7 +224,7 @@ export default function TutoringStudentsPageClient() {
           <div className="mb-4 flex items-center justify-between gap-3">
             <div>
               <div className="text-[10.5px] font-semibold uppercase tracking-[0.7px] text-[#9B9B9B]">Quick add</div>
-              <div className="mt-1 font-display text-[16px] tracking-[-0.3px] text-[#1A1A1A]">Add a new student locally</div>
+              <div className="mt-1 font-sans text-[16px] tracking-[-0.3px] text-[#1A1A1A]">Add a new student locally</div>
             </div>
             <button type="button" onClick={() => setAddOpen(false)} className="rounded-full border border-[#E9ECEF] px-3 py-1.5 text-[12px] font-medium text-[#4A4A4A] transition-colors hover:bg-[#F8F9FA]">
               Hide
@@ -234,38 +234,38 @@ export default function TutoringStudentsPageClient() {
           <form className="grid gap-3 md:grid-cols-2 xl:grid-cols-3" onSubmit={submitStudentDraft}>
             <label className="flex flex-col gap-1.5 text-[12px] font-medium text-[#4A4A4A]">
               Name
-              <input value={draft.name} onChange={(event) => setDraft((current) => ({ ...current, name: event.target.value }))} className="rounded-[8px] border border-[#E9ECEF] px-3 py-2 text-[13px] text-[#1A1A1A] outline-none focus:border-[#3B82F6]" placeholder="Student name" />
+              <input value={draft.name} onChange={(event) => setDraft((current) => ({ ...current, name: event.target.value }))} className="rounded-[8px] border border-[#E9ECEF] px-3 py-2 text-[13px] text-[#1A1A1A] outline-none focus:border-[#00C4B4]" placeholder="Student name" />
             </label>
             <label className="flex flex-col gap-1.5 text-[12px] font-medium text-[#4A4A4A]">
               Subject
-              <input value={draft.subject} onChange={(event) => setDraft((current) => ({ ...current, subject: event.target.value }))} className="rounded-[8px] border border-[#E9ECEF] px-3 py-2 text-[13px] text-[#1A1A1A] outline-none focus:border-[#3B82F6]" placeholder="Physics" />
+              <input value={draft.subject} onChange={(event) => setDraft((current) => ({ ...current, subject: event.target.value }))} className="rounded-[8px] border border-[#E9ECEF] px-3 py-2 text-[13px] text-[#1A1A1A] outline-none focus:border-[#00C4B4]" placeholder="Physics" />
             </label>
             <label className="flex flex-col gap-1.5 text-[12px] font-medium text-[#4A4A4A]">
               Grade
-              <input value={draft.grade} onChange={(event) => setDraft((current) => ({ ...current, grade: event.target.value }))} className="rounded-[8px] border border-[#E9ECEF] px-3 py-2 text-[13px] text-[#1A1A1A] outline-none focus:border-[#3B82F6]" placeholder="Grade 11" />
+              <input value={draft.grade} onChange={(event) => setDraft((current) => ({ ...current, grade: event.target.value }))} className="rounded-[8px] border border-[#E9ECEF] px-3 py-2 text-[13px] text-[#1A1A1A] outline-none focus:border-[#00C4B4]" placeholder="Grade 11" />
             </label>
             <label className="flex flex-col gap-1.5 text-[12px] font-medium text-[#4A4A4A]">
               Sessions
-              <input value={draft.sessions} onChange={(event) => setDraft((current) => ({ ...current, sessions: event.target.value }))} type="number" min="0" className="rounded-[8px] border border-[#E9ECEF] px-3 py-2 text-[13px] text-[#1A1A1A] outline-none focus:border-[#3B82F6]" placeholder="12" />
+              <input value={draft.sessions} onChange={(event) => setDraft((current) => ({ ...current, sessions: event.target.value }))} type="number" min="0" className="rounded-[8px] border border-[#E9ECEF] px-3 py-2 text-[13px] text-[#1A1A1A] outline-none focus:border-[#00C4B4]" placeholder="12" />
             </label>
             <label className="flex flex-col gap-1.5 text-[12px] font-medium text-[#4A4A4A]">
               Progress
-              <input value={draft.progress} onChange={(event) => setDraft((current) => ({ ...current, progress: event.target.value }))} type="number" min="0" max="100" className="rounded-[8px] border border-[#E9ECEF] px-3 py-2 text-[13px] text-[#1A1A1A] outline-none focus:border-[#3B82F6]" placeholder="72" />
+              <input value={draft.progress} onChange={(event) => setDraft((current) => ({ ...current, progress: event.target.value }))} type="number" min="0" max="100" className="rounded-[8px] border border-[#E9ECEF] px-3 py-2 text-[13px] text-[#1A1A1A] outline-none focus:border-[#00C4B4]" placeholder="72" />
             </label>
             <label className="flex flex-col gap-1.5 text-[12px] font-medium text-[#4A4A4A]">
               Next session
-              <input value={draft.nextSession} onChange={(event) => setDraft((current) => ({ ...current, nextSession: event.target.value }))} className="rounded-[8px] border border-[#E9ECEF] px-3 py-2 text-[13px] text-[#1A1A1A] outline-none focus:border-[#3B82F6]" placeholder="Thu 4:00 PM" />
+              <input value={draft.nextSession} onChange={(event) => setDraft((current) => ({ ...current, nextSession: event.target.value }))} className="rounded-[8px] border border-[#E9ECEF] px-3 py-2 text-[13px] text-[#1A1A1A] outline-none focus:border-[#00C4B4]" placeholder="Thu 4:00 PM" />
             </label>
             <label className="flex flex-col gap-1.5 text-[12px] font-medium text-[#4A4A4A]">
               Status
-              <select value={draft.status} onChange={(event) => setDraft((current) => ({ ...current, status: event.target.value as StudentStatus }))} className="rounded-[8px] border border-[#E9ECEF] bg-white px-3 py-2 text-[13px] text-[#1A1A1A] outline-none focus:border-[#3B82F6]">
+              <select value={draft.status} onChange={(event) => setDraft((current) => ({ ...current, status: event.target.value as StudentStatus }))} className="rounded-[8px] border border-[#E9ECEF] bg-white px-3 py-2 text-[13px] text-[#1A1A1A] outline-none focus:border-[#00C4B4]">
                 <option value="Improving">Improving</option>
                 <option value="Stable">Stable</option>
                 <option value="Declining">Declining</option>
               </select>
             </label>
             <div className="flex items-end gap-2 md:col-span-2 xl:col-span-3">
-              <button type="submit" className="inline-flex items-center gap-2 rounded-[8px] bg-[#3B82F6] px-[15px] py-[8px] text-[13px] font-medium text-white transition-colors hover:bg-[#60A5FA]">
+              <button type="submit" className="inline-flex items-center gap-2 rounded-[8px] bg-[#00C4B4] px-[15px] py-[8px] text-[13px] font-medium text-white transition-colors hover:bg-[#0E5060]">
                 <Plus className="h-4 w-4" />
                 Save Student
               </button>
@@ -280,7 +280,7 @@ export default function TutoringStudentsPageClient() {
       <section className="grid gap-4 xl:grid-cols-[1.45fr_.9fr]">
         <section className="overflow-hidden rounded-[16px] border border-[#E9ECEF] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E9ECEF] px-[18px] py-[15px]">
-            <div className="font-display text-[14px] text-[#1E293B]">
+            <div className="font-sans text-[14px] text-[#0A2540]">
               {parentView ? `Family snapshot (${visibleStudents.length})` : studentView ? `Student profile (${visibleStudents.length})` : `Student list (${visibleStudents.length})`}
             </div>
             {!parentView && !studentView ? (
@@ -306,7 +306,7 @@ export default function TutoringStudentsPageClient() {
                           }}
                           className={[
                             'flex w-full items-center justify-between px-4 py-3 text-left text-[13px] transition-colors hover:bg-[#F8F9FA]',
-                            filterKey === option.key ? 'font-semibold text-[#3B82F6]' : 'text-[#1E293B]',
+                            filterKey === option.key ? 'font-semibold text-[#00C4B4]' : 'text-[#0A2540]',
                           ].join(' ')}
                         >
                           <span>{option.label}</span>
@@ -337,7 +337,7 @@ export default function TutoringStudentsPageClient() {
                           }}
                           className={[
                             'flex w-full items-center justify-between px-4 py-3 text-left text-[13px] transition-colors hover:bg-[#F8F9FA]',
-                            sortKey === option.key ? 'font-semibold text-[#3B82F6]' : 'text-[#1E293B]',
+                            sortKey === option.key ? 'font-semibold text-[#00C4B4]' : 'text-[#0A2540]',
                           ].join(' ')}
                         >
                           <span>{option.label}</span>
@@ -371,18 +371,18 @@ export default function TutoringStudentsPageClient() {
                   const isSelected = student.id === selectedStudent?.id
 
                   return (
-                    <tr key={student.id} className={['border-t border-[#F8F9FA] transition-colors', isSelected ? 'bg-[#EFF6FF]' : 'hover:bg-[#F8F9FA]'].join(' ')}>
+                    <tr key={student.id} className={['border-t border-[#F8F9FA] transition-colors', isSelected ? 'bg-[#F0FDFA]' : 'hover:bg-[#F8F9FA]'].join(' ')}>
                       <td className="px-[18px] py-[12px]">
                         <div className="flex items-center gap-[9px]">
-                          <div className="flex h-[32px] w-[32px] items-center justify-center rounded-full text-[11px] font-semibold" style={{ backgroundColor: `${student.status === 'Declining' ? '#EF4444' : student.status === 'Improving' ? '#10B981' : '#DF5B30'}18`, color: student.status === 'Declining' ? '#EF4444' : student.status === 'Improving' ? '#10B981' : '#DF5B30' }}>
+                          <div className="flex h-[32px] w-[32px] items-center justify-center rounded-full text-[11px] font-semibold" style={{ backgroundColor: `${student.status === 'Declining' ? '#EF4444' : student.status === 'Improving' ? '#10B981' : '#00C4B4'}18`, color: student.status === 'Declining' ? '#EF4444' : student.status === 'Improving' ? '#10B981' : '#00C4B4' }}>
                             {student.initials}
                           </div>
-                          <button type="button" onClick={() => setSelectedId(student.id)} className="text-left text-[13.5px] font-medium text-[#1A1A1A] transition-colors hover:text-[#3B82F6]">
+                          <button type="button" onClick={() => setSelectedId(student.id)} className="text-left text-[13.5px] font-medium text-[#1A1A1A] transition-colors hover:text-[#00C4B4]">
                             {student.name}
                           </button>
                         </div>
                       </td>
-                      <td className="px-[18px] py-[12px]"><span className="inline-flex rounded-full bg-[#F8F9FA] px-3 py-1 text-[11px] font-medium text-[#1E293B]">{student.subject}</span></td>
+                      <td className="px-[18px] py-[12px]"><span className="inline-flex rounded-full bg-[#F8F9FA] px-3 py-1 text-[11px] font-medium text-[#0A2540]">{student.subject}</span></td>
                       <td className="px-[18px] py-[12px] text-[13px] text-[#6B6B6B]">{student.grade}</td>
                       <td className="px-[18px] py-[12px] text-[13.5px] font-medium text-[#1A1A1A]">{student.sessions}</td>
                       <td className="px-[18px] py-[12px]"><span className={['inline-flex rounded-full border px-[9px] py-[3px] text-[11px] font-semibold', statusClasses(student.status)].join(' ')}>{progressLabel(student.status)}</span></td>
@@ -394,21 +394,21 @@ export default function TutoringStudentsPageClient() {
                           <span className="text-[11.5px] font-semibold text-[#4A4A4A]">{student.progress}%</span>
                         </div>
                       </td>
-                      <td className="px-[18px] py-[12px] text-[12.5px] font-medium text-[#DF5B30]">{student.nextSession}</td>
+                      <td className="px-[18px] py-[12px] text-[12.5px] font-medium text-[#00C4B4]">{student.nextSession}</td>
                       <td className="px-[12px] py-[12px]">
                         {parentView ? (
                           <Link
                             href="/dashboard/recaps"
-                            className="rounded-[8px] border border-[#E9ECEF] bg-white px-[11px] py-[6px] text-[12px] font-medium text-[#1E293B] transition-colors hover:bg-[#F8F9FA]"
+                            className="rounded-[8px] border border-[#E9ECEF] bg-white px-[11px] py-[6px] text-[12px] font-medium text-[#0A2540] transition-colors hover:bg-[#F8F9FA]"
                           >
                             Recap
                           </Link>
                         ) : studentView ? (
-                          <button type="button" onClick={() => setSelectedId(student.id)} className="rounded-[8px] border border-[#E9ECEF] bg-white px-[11px] py-[6px] text-[12px] font-medium text-[#1E293B] transition-colors hover:bg-[#F8F9FA]">
+                          <button type="button" onClick={() => setSelectedId(student.id)} className="rounded-[8px] border border-[#E9ECEF] bg-white px-[11px] py-[6px] text-[12px] font-medium text-[#0A2540] transition-colors hover:bg-[#F8F9FA]">
                             View progress
                           </button>
                         ) : (
-                          <button type="button" onClick={() => setSelectedId(student.id)} className="rounded-[8px] border border-[#E9ECEF] bg-white px-[11px] py-[6px] text-[12px] font-medium text-[#1E293B] transition-colors hover:bg-[#F8F9FA]">
+                          <button type="button" onClick={() => setSelectedId(student.id)} className="rounded-[8px] border border-[#E9ECEF] bg-white px-[11px] py-[6px] text-[12px] font-medium text-[#0A2540] transition-colors hover:bg-[#F8F9FA]">
                             View
                           </button>
                         )}
@@ -419,7 +419,7 @@ export default function TutoringStudentsPageClient() {
                   <tr>
                     <td className="px-[18px] py-[24px]" colSpan={8}>
                       <div className="rounded-[12px] border border-dashed border-[#E9ECEF] bg-[#F8F9FA] p-6 text-center">
-                        <p className="text-[14px] font-semibold text-[#1E293B]">
+                        <p className="text-[14px] font-semibold text-[#0A2540]">
                           {parentView ? 'No parent updates match the current search.' : studentView ? 'No student matches the current search.' : 'No students match the current filter.'}
                         </p>
                         <p className="mt-1 text-[12px] text-[#6B6B6B]">
@@ -430,13 +430,13 @@ export default function TutoringStudentsPageClient() {
                               : 'Try a broader search or clear the filter to restore the full list.'}
                         </p>
                         <div className="mt-4 flex flex-wrap justify-center gap-2">
-                          <button type="button" onClick={clearFilters} className="inline-flex items-center gap-2 rounded-[8px] bg-[#3B82F6] px-[15px] py-[8px] text-[13px] font-medium text-white transition-colors hover:bg-[#60A5FA]">
+                          <button type="button" onClick={clearFilters} className="inline-flex items-center gap-2 rounded-[8px] bg-[#00C4B4] px-[15px] py-[8px] text-[13px] font-medium text-white transition-colors hover:bg-[#0E5060]">
                           Reset view
                           </button>
                           {parentView ? (
                             <Link
                               href="/dashboard/communication"
-                              className="inline-flex items-center gap-2 rounded-[8px] border border-[#E9ECEF] bg-white px-[15px] py-[8px] text-[13px] font-medium text-[#1E293B] transition-colors hover:bg-[#F8F9FA]"
+                              className="inline-flex items-center gap-2 rounded-[8px] border border-[#E9ECEF] bg-white px-[15px] py-[8px] text-[13px] font-medium text-[#0A2540] transition-colors hover:bg-[#F8F9FA]"
                             >
                               <MessageSquare className="h-4 w-4" />
                               Request update
@@ -482,7 +482,7 @@ export default function TutoringStudentsPageClient() {
 
           <div className="rounded-[8px] border border-[#E9ECEF] bg-white p-[10px]">
             <div className="text-[12px] font-semibold text-[#4A4A4A]">📊 Avg Progress</div>
-            <div className="mt-1 text-[22px] font-bold text-[#3B82F6]">{averageProgress ? `${averageProgress}%` : '—'}</div>
+            <div className="mt-1 text-[22px] font-bold text-[#00C4B4]">{averageProgress ? `${averageProgress}%` : '—'}</div>
             <div className="mt-1 text-[11px] text-[#6B6B6B]">
               {parentView ? 'Showing the current student' : `Showing ${visibleStudents.length} of ${students.length} students`}
             </div>
@@ -492,7 +492,7 @@ export default function TutoringStudentsPageClient() {
             <div className="mb-3 flex items-center justify-between gap-3">
               <div className="text-[12px] font-semibold text-[#4A4A4A]">Selected student</div>
               {selectedStudent ? (
-                <button type="button" onClick={() => setSelectedId(selectedStudent.id)} className="inline-flex items-center gap-1 rounded-full border border-[#E9ECEF] px-2 py-1 text-[11px] font-medium text-[#3B82F6]">
+                <button type="button" onClick={() => setSelectedId(selectedStudent.id)} className="inline-flex items-center gap-1 rounded-full border border-[#E9ECEF] px-2 py-1 text-[11px] font-medium text-[#00C4B4]">
                   <ArrowRight className="h-3 w-3" />
                   Focus
                 </button>
@@ -502,7 +502,7 @@ export default function TutoringStudentsPageClient() {
             {selectedStudent ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-[36px] w-[36px] items-center justify-center rounded-full text-[11px] font-semibold" style={{ backgroundColor: `${selectedStudent.status === 'Declining' ? '#EF4444' : selectedStudent.status === 'Improving' ? '#10B981' : '#DF5B30'}18`, color: selectedStudent.status === 'Declining' ? '#EF4444' : selectedStudent.status === 'Improving' ? '#10B981' : '#DF5B30' }}>
+                  <div className="flex h-[36px] w-[36px] items-center justify-center rounded-full text-[11px] font-semibold" style={{ backgroundColor: `${selectedStudent.status === 'Declining' ? '#EF4444' : selectedStudent.status === 'Improving' ? '#10B981' : '#00C4B4'}18`, color: selectedStudent.status === 'Declining' ? '#EF4444' : selectedStudent.status === 'Improving' ? '#10B981' : '#00C4B4' }}>
                     {selectedStudent.initials}
                   </div>
                   <div>
@@ -571,14 +571,14 @@ export default function TutoringStudentsPageClient() {
                   <div className="flex flex-wrap gap-2">
                     <Link
                       href="/dashboard/communication"
-                      className="inline-flex items-center gap-2 rounded-[8px] bg-[#3B82F6] px-[15px] py-[8px] text-[13px] font-medium text-white transition-colors hover:bg-[#60A5FA]"
+                      className="inline-flex items-center gap-2 rounded-[8px] bg-[#00C4B4] px-[15px] py-[8px] text-[13px] font-medium text-white transition-colors hover:bg-[#0E5060]"
                     >
                       <MessageSquare className="h-4 w-4" />
                       Message tutor
                     </Link>
                     <Link
                       href="/dashboard/recaps"
-                      className="inline-flex items-center gap-2 rounded-[8px] border border-[#E9ECEF] bg-white px-[15px] py-[8px] text-[13px] font-medium text-[#1E293B] transition-colors hover:bg-[#F8F9FA]"
+                      className="inline-flex items-center gap-2 rounded-[8px] border border-[#E9ECEF] bg-white px-[15px] py-[8px] text-[13px] font-medium text-[#0A2540] transition-colors hover:bg-[#F8F9FA]"
                     >
                       <ArrowRight className="h-4 w-4" />
                       Review recaps
@@ -599,3 +599,4 @@ export default function TutoringStudentsPageClient() {
     </div>
   )
 }
+

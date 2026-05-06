@@ -60,11 +60,11 @@ export default function TutoringProgressPage() {
     <div className="grid gap-4 xl:grid-cols-[1.05fr_.95fr]">
       <section className="space-y-4">
         <div className="rounded-[1.5rem] border border-slate-900/10 bg-white p-6 shadow-sm">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#f8f5ef] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#9a5b00]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#F9FAFB] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#00C4B4]">
             <TrendingUp className="h-3.5 w-3.5" />
             Progress
           </div>
-          <h1 className="font-display mt-4 text-3xl tracking-tight text-slate-950">
+          <h1 className="font-sans mt-4 text-3xl tracking-tight text-slate-950">
             {parentView ? 'Parent progress snapshot' : studentView ? 'Student progress snapshot' : 'Trend lines and intervention signals'}
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600">
@@ -77,7 +77,7 @@ export default function TutoringProgressPage() {
 
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             {summaryCards.map((card) => (
-              <div key={card.label} className="rounded-[1.25rem] border border-slate-900/10 bg-[#f8f5ef] p-4">
+              <div key={card.label} className="rounded-[1.25rem] border border-slate-900/10 bg-[#F9FAFB] p-4">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{card.label}</p>
                 <p className="mt-2 text-3xl font-semibold text-slate-950">{card.value}</p>
               </div>
@@ -104,7 +104,7 @@ export default function TutoringProgressPage() {
                 onClick={() => setSelectedId(student.id)}
                 className={[
                   'w-full rounded-[1rem] border p-4 text-left transition-colors',
-                  selectedStudent?.id === student.id ? 'border-[#3B82F6] bg-[#EFF6FF]' : 'border-slate-900/10 hover:bg-[#f8f5ef]',
+                  selectedStudent?.id === student.id ? 'border-[#00C4B4] bg-[#F0FDFA]' : 'border-slate-900/10 hover:bg-[#F9FAFB]',
                 ].join(' ')}
               >
                 <div className="flex items-center justify-between gap-4">
@@ -130,7 +130,7 @@ export default function TutoringProgressPage() {
 
       <aside className="space-y-4">
         <div className="rounded-[1.25rem] border border-slate-900/10 bg-slate-950 p-5 text-white shadow-lg shadow-slate-950/10">
-          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[#f2c06d]">{parentView ? 'Family snapshot' : studentView ? 'Student snapshot' : 'Selected student'}</div>
+          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[#00C4B4]">{parentView ? 'Family snapshot' : studentView ? 'Student snapshot' : 'Selected student'}</div>
           {selectedStudent ? (
             <div className="mt-4 space-y-4">
               <div>
@@ -171,7 +171,7 @@ export default function TutoringProgressPage() {
                 </div>
               ))}
             </div>
-            <Link href="/dashboard/communication" className="mt-4 inline-flex items-center gap-2 rounded-[0.9rem] bg-[#3B82F6] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#60A5FA]">
+            <Link href="/dashboard/communication" className="mt-4 inline-flex items-center gap-2 rounded-[0.9rem] bg-[#00C4B4] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0E5060]">
               <ArrowRight className="h-4 w-4" />
               Message tutor
             </Link>
@@ -183,16 +183,16 @@ export default function TutoringProgressPage() {
               Your next steps
             </div>
             <div className="mt-4 space-y-3">
-              <div className="rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] p-4">
+              <div className="rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] p-4">
                 <p className="text-sm font-semibold text-slate-950">Keep going</p>
                 <p className="mt-1 text-sm leading-6 text-slate-600">{selectedStudent?.weakTopics[0] ? `Review ${selectedStudent.weakTopics[0]} before the next session.` : 'Review the latest recap before the next session.'}</p>
               </div>
-              <div className="rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] p-4">
+              <div className="rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] p-4">
                 <p className="text-sm font-semibold text-slate-950">Open work</p>
                 <p className="mt-1 text-sm leading-6 text-slate-600">{selectedStudent?.nextSession ? `Bring one question and be ready for ${selectedStudent.nextSession}.` : 'Bring one question to the next class.'}</p>
               </div>
             </div>
-            <Link href="/dashboard/tasks" className="mt-4 inline-flex items-center gap-2 rounded-[0.9rem] bg-[#3B82F6] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#60A5FA]">
+            <Link href="/dashboard/tasks" className="mt-4 inline-flex items-center gap-2 rounded-[0.9rem] bg-[#00C4B4] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0E5060]">
               <ArrowRight className="h-4 w-4" />
               Open tasks
             </Link>
@@ -211,7 +211,7 @@ export default function TutoringProgressPage() {
                 </div>
               ))}
             </div>
-            <Link href="/dashboard/communication" className="mt-4 inline-flex items-center gap-2 rounded-[0.9rem] bg-[#3B82F6] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#60A5FA]">
+            <Link href="/dashboard/communication" className="mt-4 inline-flex items-center gap-2 rounded-[0.9rem] bg-[#00C4B4] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0E5060]">
               <ArrowRight className="h-4 w-4" />
               Notify parents
             </Link>
@@ -230,7 +230,7 @@ export default function TutoringProgressPage() {
                 </div>
               ))}
             </div>
-            <Link href="/dashboard/communication" className="mt-4 inline-flex items-center gap-2 rounded-[0.9rem] bg-[#3B82F6] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#60A5FA]">
+            <Link href="/dashboard/communication" className="mt-4 inline-flex items-center gap-2 rounded-[0.9rem] bg-[#00C4B4] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0E5060]">
               <ArrowRight className="h-4 w-4" />
               Notify parents
             </Link>
@@ -240,3 +240,5 @@ export default function TutoringProgressPage() {
     </div>
   )
 }
+
+

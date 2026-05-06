@@ -49,11 +49,11 @@ export default function TutoringSchedulePage() {
     <div className="grid gap-4 xl:grid-cols-[1.05fr_.95fr]">
       <section className="space-y-4">
         <div className="rounded-[1.5rem] border border-slate-900/10 bg-white p-6 shadow-sm">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#f8f5ef] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#9a5b00]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#F9FAFB] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#00C4B4]">
             <CalendarClock className="h-3.5 w-3.5" />
             Schedule
           </div>
-          <h1 className="font-display mt-4 text-3xl tracking-tight text-slate-950">
+          <h1 className="font-sans mt-4 text-3xl tracking-tight text-slate-950">
             {parentView ? 'Family calendar and next sessions' : studentView ? 'Your sessions and upcoming deadlines' : 'Weekly availability and session timing'}
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600">
@@ -70,7 +70,7 @@ export default function TutoringSchedulePage() {
               ['Upcoming', upcoming.length],
               [parentView ? 'Reminder items' : studentView ? 'Prep items' : 'Blocked dates', parentView ? blockedDates.length + (upcoming.length > 0 ? 1 : 0) : studentView ? upcoming.length : blockedDates.length],
             ].map(([label, value]) => (
-              <div key={label as string} className="rounded-[1.25rem] border border-slate-900/10 bg-[#f8f5ef] p-4 text-center">
+              <div key={label as string} className="rounded-[1.25rem] border border-slate-900/10 bg-[#F9FAFB] p-4 text-center">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{label}</p>
                 <p className="mt-2 text-3xl font-semibold text-slate-950">{value as number}</p>
               </div>
@@ -96,7 +96,7 @@ export default function TutoringSchedulePage() {
                     key={day}
                     type="button"
                     onClick={() => setAvailability((current) => ({ ...current, [day]: current[day] === 'open' ? 'busy' : 'open' }))}
-                    className={`rounded-2xl border p-4 text-left transition-colors ${open ? 'border-emerald-200 bg-emerald-50' : 'border-slate-900/10 bg-slate-50 hover:bg-[#f8f5ef]'}`}
+                    className={`rounded-2xl border p-4 text-left transition-colors ${open ? 'border-emerald-200 bg-emerald-50' : 'border-slate-900/10 bg-slate-50 hover:bg-[#F9FAFB]'}`}
                   >
                     <p className="text-xs uppercase tracking-[0.16em] text-slate-500">{day}</p>
                     <p className={`mt-2 text-sm font-semibold ${open ? 'text-emerald-700' : 'text-slate-700'}`}>{open ? 'Open' : 'Busy'}</p>
@@ -125,13 +125,13 @@ export default function TutoringSchedulePage() {
 
             <div className="mt-4 space-y-3">
               {upcoming.map((student) => (
-                <div key={student.id} className="rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] p-4">
+                <div key={student.id} className="rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-semibold text-slate-950">{student.name}</p>
                       <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{student.subject}</p>
                     </div>
-                    <span className="text-sm font-semibold text-[#d97706]">{student.nextSession}</span>
+                    <span className="text-sm font-semibold text-[#00C4B4]">{student.nextSession}</span>
                   </div>
                   <p className="mt-2 text-sm leading-7 text-slate-600">
                     {parentView
@@ -149,9 +149,9 @@ export default function TutoringSchedulePage() {
             <div className="flex items-center justify-between gap-3">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Monthly calendar</p>
               <div className="flex items-center gap-2">
-                <button type="button" onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1))} className="rounded-lg border border-slate-900/10 px-2 py-1 text-sm hover:bg-[#f8f5ef]">←</button>
+                <button type="button" onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1))} className="rounded-lg border border-slate-900/10 px-2 py-1 text-sm hover:bg-[#F9FAFB]">←</button>
                 <span className="min-w-[140px] text-center text-sm font-medium text-slate-700">{viewMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })}</span>
-                <button type="button" onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1))} className="rounded-lg border border-slate-900/10 px-2 py-1 text-sm hover:bg-[#f8f5ef]">→</button>
+                <button type="button" onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1))} className="rounded-lg border border-slate-900/10 px-2 py-1 text-sm hover:bg-[#F9FAFB]">→</button>
               </div>
             </div>
 
@@ -178,7 +178,7 @@ export default function TutoringSchedulePage() {
                         ? 'border-slate-200 bg-white text-slate-400'
                         : isBlocked
                           ? 'border-amber-300 bg-amber-50 text-amber-800'
-                          : 'border-slate-200 bg-white text-slate-700 hover:bg-[#f8f5ef]'
+                          : 'border-slate-200 bg-white text-slate-700 hover:bg-[#F9FAFB]'
                     }`}
                   >
                     {date.getDate()}
@@ -191,7 +191,7 @@ export default function TutoringSchedulePage() {
         ) : (
           <div className="rounded-[1.25rem] border border-slate-900/10 bg-white p-5 shadow-sm">
             <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Calendar notes</div>
-            <div className="mt-4 rounded-[1rem] bg-[#f8f5ef] p-4 text-sm leading-7 text-slate-600">
+            <div className="mt-4 rounded-[1rem] bg-[#F9FAFB] p-4 text-sm leading-7 text-slate-600">
               {parentView ? 'Family-only access. Use Messages if a date needs to move.' : 'Student-only access. Use Messages if a date needs to move.'}
             </div>
           </div>
@@ -206,13 +206,13 @@ export default function TutoringSchedulePage() {
           </div>
           <div className="mt-4 space-y-3">
             {upcoming.map((student) => (
-              <div key={student.id} className="rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] p-4">
+              <div key={student.id} className="rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-slate-950">{student.name}</p>
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{student.subject}</p>
                   </div>
-                  <span className="text-sm font-semibold text-[#d97706]">{student.nextSession}</span>
+                  <span className="text-sm font-semibold text-[#00C4B4]">{student.nextSession}</span>
                 </div>
                 <p className="mt-2 text-sm leading-7 text-slate-600">
                   {parentView ? 'Family-facing reminder: keep this time open and review the recap after class.' : `${student.progress}% progress · ${student.note}`}
@@ -223,7 +223,7 @@ export default function TutoringSchedulePage() {
         </div>
 
         <div className="rounded-[1.25rem] border border-slate-900/10 bg-slate-950 p-5 text-white shadow-lg shadow-slate-950/10">
-          <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#f2c06d]">
+          <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#00C4B4]">
             <CheckCircle2 className="h-4 w-4" />
             {parentView ? 'Request help' : 'Open slots'}
           </div>
@@ -234,7 +234,7 @@ export default function TutoringSchedulePage() {
                 ? 'Keep your upcoming sessions visible and review the task list before class.'
                 : `Keep ${openDays} day(s) open for new sessions and move blocked dates into the calendar above when plans change.`}
           </p>
-          <Link href="/dashboard/communication" className="mt-4 inline-flex items-center gap-2 rounded-[0.9rem] bg-[#3B82F6] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#60A5FA]">
+          <Link href="/dashboard/communication" className="mt-4 inline-flex items-center gap-2 rounded-[0.9rem] bg-[#00C4B4] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#0E5060]">
             {parentView ? 'Message tutor' : studentView ? 'Open tasks' : 'Send scheduling update'}
           </Link>
         </div>
@@ -242,3 +242,5 @@ export default function TutoringSchedulePage() {
     </div>
   )
 }
+
+

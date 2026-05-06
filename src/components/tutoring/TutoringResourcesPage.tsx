@@ -82,11 +82,11 @@ export default function TutoringResourcesPage() {
     <div className="grid gap-4 xl:grid-cols-[1.02fr_.98fr]">
       <section className="space-y-4">
         <div className="rounded-[1.5rem] border border-slate-900/10 bg-white p-6 shadow-sm">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#f8f5ef] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#9a5b00]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-[#F9FAFB] px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#00C4B4]">
             <Library className="h-3.5 w-3.5" />
             {tutoringSectionMeta.resources.title}
           </div>
-          <h1 className="font-display mt-4 text-3xl tracking-tight text-slate-950">
+          <h1 className="font-sans mt-4 text-3xl tracking-tight text-slate-950">
             {parentView ? 'Resources visible to families and students' : studentView ? 'Study files and practice banks' : 'Lesson files, question banks, and tutor notes'}
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600">
@@ -99,7 +99,7 @@ export default function TutoringResourcesPage() {
 
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             {summary.map((item) => (
-              <div key={item.label} className="rounded-[1.25rem] border border-slate-900/10 bg-[#f8f5ef] p-4">
+              <div key={item.label} className="rounded-[1.25rem] border border-slate-900/10 bg-[#F9FAFB] p-4">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{item.label}</p>
                 <p className="mt-2 text-3xl font-semibold text-slate-950">{item.value}</p>
               </div>
@@ -111,7 +111,7 @@ export default function TutoringResourcesPage() {
           <button
             type="button"
             onClick={() => setKindFilter('all')}
-            className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${kindFilter === 'all' ? 'border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]' : 'border-slate-900/10 bg-white text-slate-600 hover:bg-[#f8f5ef]'}`}
+            className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${kindFilter === 'all' ? 'border-[#00C4B4] bg-[#F0FDFA] text-[#00C4B4]' : 'border-slate-900/10 bg-white text-slate-600 hover:bg-[#F9FAFB]'}`}
           >
             All kinds
           </button>
@@ -120,7 +120,7 @@ export default function TutoringResourcesPage() {
               key={kind}
               type="button"
               onClick={() => setKindFilter(kind)}
-              className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${kindFilter === kind ? 'border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]' : 'border-slate-900/10 bg-white text-slate-600 hover:bg-[#f8f5ef]'}`}
+              className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${kindFilter === kind ? 'border-[#00C4B4] bg-[#F0FDFA] text-[#00C4B4]' : 'border-slate-900/10 bg-white text-slate-600 hover:bg-[#F9FAFB]'}`}
             >
               {resourceKindLabel(kind)}
             </button>
@@ -131,7 +131,7 @@ export default function TutoringResourcesPage() {
           <button
             type="button"
             onClick={() => setTierFilter('all')}
-            className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${tierFilter === 'all' ? 'border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]' : 'border-slate-900/10 bg-white text-slate-600 hover:bg-[#f8f5ef]'}`}
+            className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${tierFilter === 'all' ? 'border-[#00C4B4] bg-[#F0FDFA] text-[#00C4B4]' : 'border-slate-900/10 bg-white text-slate-600 hover:bg-[#F9FAFB]'}`}
           >
             All access
           </button>
@@ -140,7 +140,7 @@ export default function TutoringResourcesPage() {
               key={tier}
               type="button"
               onClick={() => setTierFilter(tier)}
-              className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${tierFilter === tier ? 'border-[#3B82F6] bg-[#EFF6FF] text-[#3B82F6]' : 'border-slate-900/10 bg-white text-slate-600 hover:bg-[#f8f5ef]'}`}
+              className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${tierFilter === tier ? 'border-[#00C4B4] bg-[#F0FDFA] text-[#00C4B4]' : 'border-slate-900/10 bg-white text-slate-600 hover:bg-[#F9FAFB]'}`}
             >
               {accessTierLabel(tier)}
             </button>
@@ -158,7 +158,7 @@ export default function TutoringResourcesPage() {
                 onClick={() => setSelectedResourceId(resource.id)}
                 className={[
                   'w-full rounded-[1.25rem] border p-4 text-left transition-all',
-                  selected ? 'border-[#3B82F6] bg-[#EFF6FF] shadow-sm' : 'border-slate-900/10 bg-white hover:-translate-y-0.5 hover:shadow-md',
+                  selected ? 'border-[#00C4B4] bg-[#F0FDFA] shadow-sm' : 'border-slate-900/10 bg-white hover:-translate-y-0.5 hover:shadow-md',
                 ].join(' ')}
               >
                 <div className="flex items-start justify-between gap-4">
@@ -168,7 +168,7 @@ export default function TutoringResourcesPage() {
                       {resourceKindLabel(resource.kind)} · {resource.subject} · {resource.topic}
                     </p>
                   </div>
-                  <span className="rounded-full border border-slate-900/10 bg-[#f8f5ef] px-3 py-1 text-xs font-semibold text-slate-700">
+                  <span className="rounded-full border border-slate-900/10 bg-[#F9FAFB] px-3 py-1 text-xs font-semibold text-slate-700">
                     {accessTierLabel(resource.accessTier)}
                   </span>
                 </div>
@@ -181,7 +181,7 @@ export default function TutoringResourcesPage() {
 
       <aside className="space-y-4">
         <div className="rounded-[1.5rem] border border-slate-900/10 bg-slate-950 p-6 text-white shadow-lg shadow-slate-950/10">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#f2c06d]">Resource detail</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#00C4B4]">Resource detail</p>
           {selectedResource ? (
             <div className="mt-4 space-y-4">
               <div>
@@ -258,11 +258,11 @@ export default function TutoringResourcesPage() {
                 : 'Keep uploads simple: choose the access tier, link the task, and store the file in one place.'}
           </p>
           {tutorView ? (
-            <div className="mt-4 rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] p-4 text-sm leading-7 text-slate-600">
+            <div className="mt-4 rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] p-4 text-sm leading-7 text-slate-600">
               Choose a file, pick who can see it, and link it to the task before saving.
             </div>
           ) : (
-            <div className="mt-4 rounded-[1rem] border border-slate-900/10 bg-[#f8f5ef] p-4 text-sm leading-7 text-slate-600">
+            <div className="mt-4 rounded-[1rem] border border-slate-900/10 bg-[#F9FAFB] p-4 text-sm leading-7 text-slate-600">
               Open a file to review the next session plan.
             </div>
           )}
@@ -271,3 +271,5 @@ export default function TutoringResourcesPage() {
     </div>
   )
 }
+
+

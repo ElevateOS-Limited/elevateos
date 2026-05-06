@@ -81,7 +81,7 @@ export function SessionNoteForm({
   return (
     <form onSubmit={handleSubmit} className="grid gap-4 rounded-[1.5rem] border border-slate-900/10 bg-white/90 p-5 shadow-sm dark:border-white/10 dark:bg-white/5">
       <div>
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#9a5b00]">Session notes</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#00C4B4]">Session notes</p>
         <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
           Capture what happened in the lesson so summaries stay structured later.
         </p>
@@ -178,3 +178,4 @@ export function SessionNoteForm({
     </form>
   )
 }
+
