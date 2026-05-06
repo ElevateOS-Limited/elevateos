@@ -1,6 +1,9 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import { chromium } from 'playwright'
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+const { chromium } = require('playwright')
 
 const baseUrl = process.env.ELEVATEOS_DEMO_URL ?? 'https://elevateos.org'
 const outputDir = process.env.ELEVATEOS_DEMO_VIDEO_DIR ?? 'C:/Users/School/Downloads/techstars-demo-recording'
@@ -26,6 +29,22 @@ async function clickContinue(page) {
   const continueButton = page.getByRole('button', { name: 'Continue' })
   await continueButton.click()
   await settle(page, 900)
+}
+
+async function ensureCanFinishSignup(page) {
+  const privacyCheckbox = page.getByRole('checkbox').first()
+  await privacyCheckbox.check().catch(async () => {
+    await page.getByText('I agree to the placeholder privacy policy', { exact: false }).click().catch(() => {})
+  })
+
+  await page
+    .waitForFunction(() => {
+      const button = Array.from(document.querySelectorAll('button')).find((node) =>
+        node.textContent?.includes('Create my profile'),
+      )
+      return !!button && !button.disabled
+    })
+    .catch(() => {})
 }
 
 async function prepareOutputDir() {
@@ -61,14 +80,14 @@ async function main() {
     await page.goto(`${baseUrl}/home`, { waitUntil: 'networkidle' })
     await wait(page, 1200)
 
-    await page.getByRole('link', { name: 'Login' }).click()
+    await page.getByRole('banner').getByRole('link', { name: 'Login' }).click()
     await wait(page, 1000)
     await closeLoginModal(page)
 
     await page.getByText('Student journey').scrollIntoViewIfNeeded()
     await wait(page, 1200)
 
-    await page.getByRole('link', { name: 'Open student demo' }).click()
+    await page.getByRole('main').getByRole('link', { name: 'Sign up' }).click()
     await settle(page, 1200)
 
     await page.getByText('Student setup').scrollIntoViewIfNeeded()
@@ -78,21 +97,52 @@ async function main() {
     await clickContinue(page)
     await clickContinue(page)
 
-    const privacyPrompt = page.getByText('I agree to the placeholder privacy policy', { exact: false })
-    await privacyPrompt.click()
-    await wait(page, 700)
+    await ensureCanFinishSignup(page)
 
-    await page.getByRole('button', { name: 'Create my profile' }).click()
-    await settle(page, 1500)
+    const createProfile = page.getByRole('button', { name: 'Create my profile' })
+    if (await createProfile.isEnabled()) {
+      await createProfile.click()
+      await settle(page, 1500)
+    } else {
+      await page.goto(`${baseUrl}/dashboard?mode=demo`, { waitUntil: 'networkidle' })
+      await wait(page, 1200)
+    }
 
-    await page.getByText('Product story').scrollIntoViewIfNeeded()
+    await page.goto(`${baseUrl}/student-dashboard/tutoring?mode=demo`, { waitUntil: 'networkidle' })
     await wait(page, 1200)
+    await page.getByText('Your profile').scrollIntoViewIfNeeded()
+    await wait(page, 900)
 
-    await page.getByRole('link', { name: 'Tutor hub' }).click()
+    await page.getByRole('link', { name: 'Find a tutor' }).click()
     await settle(page, 1200)
 
-    await page.getByText('Tutor hub').scrollIntoViewIfNeeded().catch(() => {})
-    await wait(page, 800)
+    await page.getByRole('button', { name: 'Submit' }).click()
+    await wait(page, 3000)
+
+    await page.goto(`${baseUrl}/student-dashboard/tutoring?mode=demo`, { waitUntil: 'networkidle' })
+    await wait(page, 1200)
+    await page.getByText('Upcoming sessions').scrollIntoViewIfNeeded()
+    await wait(page, 900)
+
+    await page.goto(`${baseUrl}/student-dashboard/activities?mode=demo`, { waitUntil: 'networkidle' })
+    await wait(page, 1200)
+    await page.getByText('Your goals').scrollIntoViewIfNeeded()
+    await wait(page, 900)
+
+    await page.locator('textarea').first().click()
+    await wait(page, 700)
+
+    const activityFinder = page.getByRole('button', { name: 'Run activity finder' })
+    if (await activityFinder.isVisible().catch(() => false)) {
+      await activityFinder.click()
+      await wait(page, 3200)
+    }
+
+    const analysisButton = page.getByRole('button', { name: 'Run analysis' })
+    if (await analysisButton.isVisible().catch(() => false)) {
+      await analysisButton.click()
+      await wait(page, 3200)
+    }
   } finally {
     await context.close()
     await browser.close()

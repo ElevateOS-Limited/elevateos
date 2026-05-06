@@ -128,8 +128,8 @@ export default function HomePage() {
             <Link href="/onboarding?mode=demo" className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-7 py-3.5 text-sm font-semibold text-slate-700 backdrop-blur hover:border-[#00C4B4]/30 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
               Open student demo <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link href="/onboarding?mode=blank" className="inline-flex items-center gap-2 rounded-full bg-[#00C4B4] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[0_14px_30px_-12px_rgba(0,196,180,.45)] transition hover:-translate-y-0.5">
-              Book your free trial lesson <ArrowRight className="h-4 w-4" />
+            <Link href="/onboarding?mode=demo" className="inline-flex items-center gap-2 rounded-full bg-[#00C4B4] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[0_14px_30px_-12px_rgba(0,196,180,.45)] transition hover:-translate-y-0.5">
+              Sign up <ArrowRight className="h-4 w-4" />
             </Link>
             <a href="#how-it-works" className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-7 py-3.5 text-sm font-semibold text-slate-700 backdrop-blur hover:border-[#00C4B4]/30 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
               See how it works <ChevronDown className="h-4 w-4" />
