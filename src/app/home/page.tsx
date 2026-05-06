@@ -51,25 +51,6 @@ const parentSummaryItems = [
   'Recommended focus before the next session',
 ]
 
-const demoWalkthroughSteps = [
-  {
-    label: 'Open the role picker',
-    subtitle: 'Click login, choose student or parent, and keep tutor login visible but separate.',
-  },
-  {
-    label: 'Complete the onboarding',
-    subtitle: 'Country, curriculum, subjects, schedule, and goals are captured once.',
-  },
-  {
-    label: 'Land in the dashboard',
-    subtitle: 'The demo student arrives on the canonical dashboard with the same BrandKit styling.',
-  },
-  {
-    label: 'Show tutoring and activities',
-    subtitle: 'Use the quick actions to move from weekly lessons to annual counselling.',
-  },
-]
-
 const faqs = [
   {
     q: 'How much does it cost?',
@@ -157,10 +138,27 @@ export default function HomePage() {
 
           <div className="mx-auto mt-12 max-w-5xl">
             <DemoWalkthroughRail
-              eyebrow="Demo subtitles"
-              title="Use this exact path while recording the walkthrough."
-              summary="The subtitles keep the demo tight: show the role picker, finish onboarding, land in the dashboard, then branch into tutoring and annual counselling."
-              steps={demoWalkthroughSteps}
+              eyebrow="Student journey"
+              title="Students and parents move from login to a live dashboard."
+              summary="ElevateOS captures the profile once, then keeps weekly tutoring and annual counselling connected in one place."
+              steps={[
+                {
+                  label: 'Login path',
+                  subtitle: 'Students and parents choose their role, while tutor access stays separate.',
+                },
+                {
+                  label: 'Profile intake',
+                  subtitle: 'The onboarding captures country, curriculum, subjects, schedule, and goals once.',
+                },
+                {
+                  label: 'Live dashboard',
+                  subtitle: 'The student profile appears immediately in the canonical dashboard.',
+                },
+                {
+                  label: 'Two product tracks',
+                  subtitle: 'Tutoring stays in the weekly workflow while annual counselling expands the long-term plan.',
+                },
+              ]}
               activeStep={0}
               layout="grid"
             />

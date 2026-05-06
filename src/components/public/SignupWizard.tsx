@@ -1022,25 +1022,25 @@ export function SignupWizard({ initialMode }: SignupWizardProps) {
 
           <aside className="space-y-5">
             <DemoWalkthroughRail
-              eyebrow="Demo subtitles"
-              title="Use this on-screen script while recording."
-              summary="The onboarding is intentionally short and sequential so the Techstars walkthrough feels like one continuous product story."
+              eyebrow="Student setup"
+              title="Capture the student profile once."
+              summary="One guided intake collects the details ElevateOS needs to shape tutoring and annual counselling."
               steps={[
                 {
-                  label: 'Selection area 1',
-                  subtitle: 'Tell us who the student is and which curriculum they are on.',
+                  label: 'Profile basics',
+                  subtitle: 'Country, nationality, age, grade, and curriculum establish the starting point.',
                 },
                 {
-                  label: 'Selection area 2',
-                  subtitle: 'Pick the curriculum subjects and confidence levels with the right minimums enforced.',
+                  label: 'Curriculum subjects',
+                  subtitle: 'IB, A-levels, and IGCSE each follow the right subject rules and confidence ratings.',
                 },
                 {
-                  label: 'Selection area 3',
-                  subtitle: 'Mark blocked days, recurring availability, and weekly hours.',
+                  label: 'Availability',
+                  subtitle: 'Blocked days, recurring blocks, and weekly hours shape the calendar.',
                 },
                 {
-                  label: 'Selection area 4',
-                  subtitle: 'Describe goals, then accept the placeholder privacy policy and finish.',
+                  label: 'Goals and consent',
+                  subtitle: 'The student shares priorities, then agrees to the placeholder privacy policy.',
                 },
               ]}
               activeStep={Math.max(0, step - 1)}

@@ -233,25 +233,25 @@ export default function DashboardPage() {
           </div>
 
           <DemoWalkthroughRail
-            eyebrow="Demo subtitles"
+            eyebrow="Product story"
             title="Tutoring MVP today. Annual counselling next."
-            summary="Walk through the product in the same order every time: show the schedule, open tutoring, then branch into annual counselling and activities."
+            summary="Weekly tutoring stays close to the student while activities, target schools, and admissions strategy build the longer-term plan."
             steps={[
               {
-                label: 'Start with today',
-                subtitle: 'Show the weekly availability and calendar so the student context is visible immediately.',
+                label: 'Today at a glance',
+                subtitle: 'The weekly schedule and calendar show what is open, blocked, and next.',
               },
               {
-                label: 'Open tutoring',
-                subtitle: 'Use the tutoring hub to show lessons, homework, recaps, and tutor follow-up.',
+                label: 'Weekly tutoring',
+                subtitle: 'Homework, recaps, and tutor matching stay in one weekly workflow.',
               },
               {
-                label: 'Open annual counselling',
-                subtitle: 'Switch to activities, target schools, admissions strategy, and long-range planning.',
+                label: 'Annual counselling',
+                subtitle: 'Activities, target schools, and admissions planning move the story forward.',
               },
               {
-                label: 'Finish on the next step',
-                subtitle: 'End the demo on a clear next action, not a dead-end screen.',
+                label: 'Next step',
+                subtitle: 'The profile turns into the next action instead of a dead-end summary.',
               },
             ]}
             activeStep={1}
