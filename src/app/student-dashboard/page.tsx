@@ -1,4 +1,4 @@
-import { StudentWorkspaceSurface } from '@/components/demo/StudentWorkspaceSurface'
+import { redirect } from 'next/navigation'
 
 type StudentDashboardPageProps = {
   searchParams?: Promise<{
@@ -8,8 +8,7 @@ type StudentDashboardPageProps = {
 
 export default async function StudentDashboardPage({ searchParams }: StudentDashboardPageProps) {
   const params = await searchParams
-  const mode = params?.mode === 'demo' ? 'demo' : 'blank'
+  const mode = params?.mode === 'blank' ? 'blank' : 'demo'
 
-  return <StudentWorkspaceSurface mode={mode} view="overview" />
+  redirect(`/dashboard?mode=${mode}`)
 }
-

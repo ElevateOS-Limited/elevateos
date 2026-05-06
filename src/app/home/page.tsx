@@ -76,7 +76,7 @@ export default function HomePage() {
       {/* ── Nav ── */}
       <header className="mx-auto flex max-w-7xl items-center justify-between px-4 py-6 sm:px-6">
         <Link href="/home" className="flex items-center gap-3">
-          <Image src="/elevateos-logo.png" alt="ElevateOS" width={64} height={64} className="h-16 w-16 shadow-[0_8px_24px_-6px_rgba(10,37,64,.2)]" priority />
+          <Image src="/logo-lockup-horizontal.svg" alt="ElevateOS" width={220} height={64} className="h-12 w-auto" priority />
         </Link>
 
         <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300 md:flex">

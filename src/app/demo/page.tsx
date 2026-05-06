@@ -1,6 +1,5 @@
-import { StudentWorkspaceSurface } from '@/components/demo/StudentWorkspaceSurface'
+import { redirect } from 'next/navigation'
 
 export default function DemoPage() {
-  return <StudentWorkspaceSurface mode="demo" view="overview" />
+  redirect('/dashboard?mode=demo')
 }
-

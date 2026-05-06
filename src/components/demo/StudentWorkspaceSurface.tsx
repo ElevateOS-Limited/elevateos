@@ -83,7 +83,7 @@ function DemoHeader({
     <header className="flex flex-col gap-4 rounded-[2rem] border border-slate-900/10 bg-white/90 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5 lg:flex-row lg:items-center lg:justify-between">
       <div className="flex items-center gap-3">
         <Link href="/home" className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[#CBFBF1] bg-white shadow-[0_10px_24px_-10px_rgba(10,37,64,.18)]">
-          <Image src="/elevateos-logo.png" alt="ElevateOS" width={42} height={42} className="h-10 w-10 rounded-xl bg-transparent p-0 object-contain" />
+          <Image src="/logo-mark.svg" alt="ElevateOS" width={42} height={42} className="h-10 w-10 rounded-xl bg-transparent p-0 object-contain" />
         </Link>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#00C4B4]">Student workspace</p>
@@ -213,10 +213,27 @@ function OverviewView({
   const grid = getMonthGrid(month)
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const firstName = workspace.mode === 'demo' ? 'Yuki' : 'Student'
+  const weeklyAvailability =
+    workspace.schedule.weeklyAvailability ||
+    (mode === 'demo'
+      ? {
+          Monday: 'open',
+          Tuesday: 'busy',
+          Wednesday: 'open',
+          Thursday: 'open',
+          Friday: 'busy',
+          Saturday: 'open',
+          Sunday: 'busy',
+        }
+      : WEEK_DAYS.reduce(
+          (acc, day) => {
+            acc[day] = 'busy'
+            return acc
+          },
+          {} as Record<string, 'open' | 'busy'>,
+        ))
 
-  const openDays = workspace.schedule.blockedDates.length
-    ? 7 - Math.min(7, new Set(workspace.schedule.blockedDates.map((date) => parseIsoDateLocal(date).getDay())).size)
-    : 7
+  const openDays = Object.values(weeklyAvailability).filter((value) => value === 'open').length
 
   return (
     <section className="grid gap-5 lg:grid-cols-[1.05fr_.95fr]">

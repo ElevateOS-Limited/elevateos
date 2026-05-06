@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
@@ -228,7 +229,7 @@ export function SignupWizard({ initialMode }: SignupWizardProps) {
     try {
       saveWorkspaceState(mode, workspace)
       saveWizardDraft(mode, workspace)
-      router.push(mode === 'demo' ? '/student-dashboard?mode=demo' : '/student-dashboard')
+      router.push(mode === 'demo' ? '/dashboard?mode=demo' : '/dashboard?mode=blank')
     } finally {
       setLoading(false)
     }
@@ -253,8 +254,8 @@ export function SignupWizard({ initialMode }: SignupWizardProps) {
       <div className="mx-auto max-w-7xl">
         <header className="flex flex-col gap-4 rounded-[2rem] border border-slate-900/10 bg-white/90 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0A2540] shadow-[0_10px_24px_-10px_rgba(10,37,64,.35)]">
-              <Sparkles className="h-6 w-6 text-[#CBFBF1]" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[#CBFBF1] bg-white shadow-[0_10px_24px_-10px_rgba(10,37,64,.18)]">
+              <Image src="/logo-mark.svg" alt="ElevateOS" width={40} height={40} className="h-10 w-10" />
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#00C4B4]">Signup flow</p>
@@ -1020,12 +1021,15 @@ export function SignupWizard({ initialMode }: SignupWizardProps) {
 
           <aside className="space-y-5">
             <div className="rounded-[2rem] border border-[#CBFBF1] bg-[#F0FDFA] p-5 shadow-sm dark:border-white/10 dark:bg-white/5">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">Why this stepper works</p>
-              <h3 className="mt-3 text-2xl font-semibold tracking-tight">It keeps the intake structured without feeling long.</h3>
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">Product walkthrough</p>
+              <h3 className="mt-3 text-2xl font-semibold tracking-tight">Tutoring MVP today. Annual counselling next.</h3>
+              <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">
+                Tutoring MVP covers weekly lessons, homework, recaps, and tutor matching. Annual counselling expands into activities, target schools, admissions strategy, and long-range planning.
+              </p>
               <div className="mt-4 space-y-3 text-sm leading-7 text-slate-600 dark:text-slate-300">
                 <p>- The demo uses the same state model for blank and preloaded profiles.</p>
                 <p>- Curriculum-specific subject rules are enforced in the UI, not hidden in the backend.</p>
-                <p>- The saved profile is available immediately on the student dashboard.</p>
+                <p>- The saved profile is available immediately on the dashboard.</p>
               </div>
             </div>
 

@@ -1,9 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import Image from 'next/image'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
-import { Brain, ChevronDown, ChevronRight, Crown, PanelLeft, Search } from 'lucide-react'
+import { ChevronDown, ChevronRight, Crown, PanelLeft, Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { NAV_GROUPS, QUICK_ACTIONS } from '@/lib/navigation'
 
@@ -39,6 +40,9 @@ function getStoredSidebarState() {
 export default function Sidebar({ user, mobileOpen = false, onCloseMobile }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const mode = searchParams.get('mode') === 'blank' ? 'blank' : 'demo'
+  const displayName = mode === 'blank' ? 'Student' : user.name || 'Student'
   const [collapsed, setCollapsed] = useState<boolean>(() => getStoredSidebarState()?.collapsed ?? false)
   const [openGroups, setOpenGroups] = useState<string[]>(() => getStoredSidebarState()?.openGroups ?? ['dashboard', 'learn', 'plan', 'account'])
   const [search, setSearch] = useState('')
@@ -102,16 +106,32 @@ export default function Sidebar({ user, mobileOpen = false, onCloseMobile }: Sid
   }
 
   const sidebarBody = (
-    <aside className={cn('flex h-full flex-col border-r border-white/10 bg-slate-950 text-[#f8f5ef] shadow-sm backdrop-blur-xl transition-all', collapsed ? 'w-28' : 'w-72')}>
+    <aside
+      className={cn(
+        'flex h-full flex-col border-r border-white/10 bg-[linear-gradient(180deg,#0A2540_0%,#0D3A5C_100%)] text-white shadow-sm backdrop-blur-xl transition-all',
+        collapsed ? 'w-28' : 'w-72',
+      )}
+    >
       <div className="flex items-center justify-between gap-2 border-b border-white/10 p-4">
         <Link href="/dashboard" className={cn('flex min-w-0 items-center', collapsed ? 'w-full justify-center' : 'gap-2')}>
-          <div className={cn('flex items-center justify-center rounded-xl bg-white text-slate-950 shadow-lg shadow-black/20', collapsed ? 'h-9 w-9' : 'h-8 w-8')}>
-            <Brain className={cn(collapsed ? 'h-6 w-6' : 'h-5 w-5')} />
+          <div
+            className={cn(
+              'flex items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white shadow-lg shadow-black/10',
+              collapsed ? 'h-10 w-10' : 'h-10 w-10',
+            )}
+          >
+            <Image
+              src="/logo-mark.svg"
+              alt="ElevateOS"
+              width={40}
+              height={40}
+              className="h-8 w-8 object-contain"
+            />
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <p className="truncate text-xl font-bold text-white">ElevateOS</p>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-white/45">Dashboard</p>
+              <Image src="/logo-lockup-horizontal.svg" alt="ElevateOS" width={180} height={52} className="h-9 w-auto" priority />
+              <p className="mt-1 text-[11px] uppercase tracking-[0.2em] text-white/45">Dashboard</p>
             </div>
           )}
         </Link>
@@ -128,7 +148,7 @@ export default function Sidebar({ user, mobileOpen = false, onCloseMobile }: Sid
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search modules..."
-              className="w-full rounded-lg border border-white/10 bg-white/5 py-2 pl-8 pr-2 text-sm text-white placeholder:text-white/40"
+              className="w-full rounded-lg border border-white/10 bg-white/5 py-2 pl-8 pr-2 text-sm text-white placeholder:text-white/40 outline-none focus:border-[#00C4B4]/60"
             />
           </div>
           <div className="mt-2 flex items-center justify-between">
@@ -136,7 +156,7 @@ export default function Sidebar({ user, mobileOpen = false, onCloseMobile }: Sid
               {showQuickActions ? 'Hide quick actions' : 'Show quick actions'}
             </button>
             {user.plan === 'FREE' && (
-              <Link href="/pricing" className="text-xs text-[#f2c06d] underline decoration-white/20">
+              <Link href="/pricing" className="text-xs text-[#CBFBF1] underline decoration-white/20">
                 Upgrade →
               </Link>
             )}
@@ -180,15 +200,15 @@ export default function Sidebar({ user, mobileOpen = false, onCloseMobile }: Sid
                           className={cn(
                             'flex items-center gap-3 rounded-xl text-sm transition-all',
                             collapsed ? 'justify-center px-3 py-2.5' : 'px-3 py-2',
-                            active ? 'bg-white/10 text-white ring-1 ring-white/10' : 'text-white/70 hover:bg-white/5 hover:text-white'
+                            active ? 'bg-white/10 text-white ring-1 ring-white/10' : 'text-white/70 hover:bg-white/5 hover:text-white',
                           )}
                         >
                           <item.icon className="h-4 w-4 flex-shrink-0" />
                           {!collapsed && (
                             <>
                               <span className="flex-1 truncate">{item.label}</span>
-                              {item.badge && <span className="rounded bg-[#f2c06d]/15 px-1.5 py-0.5 text-[10px] text-[#f5d59f]">{item.badge}</span>}
-                              {locked && <Crown className="h-3.5 w-3.5 text-[#f2c06d]" />}
+                              {item.badge && <span className="rounded bg-[#CBFBF1] px-1.5 py-0.5 text-[10px] text-[#0A2540]">{item.badge}</span>}
+                              {locked && <Crown className="h-3.5 w-3.5 text-[#CBFBF1]" />}
                             </>
                           )}
                         </a>
@@ -201,15 +221,15 @@ export default function Sidebar({ user, mobileOpen = false, onCloseMobile }: Sid
                           className={cn(
                             'flex items-center gap-3 rounded-xl text-sm transition-all',
                             collapsed ? 'justify-center px-3 py-2.5' : 'px-3 py-2',
-                            active ? 'bg-white/10 text-white ring-1 ring-white/10' : 'text-white/70 hover:bg-white/5 hover:text-white'
+                            active ? 'bg-white/10 text-white ring-1 ring-white/10' : 'text-white/70 hover:bg-white/5 hover:text-white',
                           )}
                         >
                           <item.icon className="h-4 w-4 flex-shrink-0" />
                           {!collapsed && (
                             <>
                               <span className="flex-1 truncate">{item.label}</span>
-                              {item.badge && <span className="rounded bg-[#f2c06d]/15 px-1.5 py-0.5 text-[10px] text-[#f5d59f]">{item.badge}</span>}
-                              {locked && <Crown className="h-3.5 w-3.5 text-[#f2c06d]" />}
+                              {item.badge && <span className="rounded bg-[#CBFBF1] px-1.5 py-0.5 text-[10px] text-[#0A2540]">{item.badge}</span>}
+                              {locked && <Crown className="h-3.5 w-3.5 text-[#CBFBF1]" />}
                             </>
                           )}
                         </Link>
@@ -225,13 +245,13 @@ export default function Sidebar({ user, mobileOpen = false, onCloseMobile }: Sid
 
       {!collapsed && user.plan === 'FREE' && (
         <div className="hidden p-2.5 md:block">
-          <div className="rounded-lg bg-gradient-to-br from-[#d97706] to-[#9a5b00] p-3 text-white">
+          <div className="rounded-lg border border-[#CBFBF1]/20 bg-[linear-gradient(135deg,#0A2540_0%,#0D3A5C_60%,#0E5060_100%)] p-3 text-white">
             <div className="flex items-center justify-between gap-2">
               <p className="text-sm font-semibold">Upgrade to Pro</p>
-              <Crown className="h-4 w-4" />
+              <Crown className="h-4 w-4 text-[#CBFBF1]" />
             </div>
             <p className="mt-1 line-clamp-1 text-[11px] text-white/80">Unlock premium modules + analytics</p>
-            <Link href="/pricing" className="mt-2 block rounded-md bg-white px-3 py-1.5 text-center text-xs font-semibold text-[#9a5b00]">
+            <Link href="/pricing" className="mt-2 block rounded-md bg-white px-3 py-1.5 text-center text-xs font-semibold text-[#0A2540]">
               Upgrade
             </Link>
           </div>
@@ -240,12 +260,12 @@ export default function Sidebar({ user, mobileOpen = false, onCloseMobile }: Sid
 
       <div className="border-t border-white/10 p-3">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm font-semibold text-slate-950">
-            {user.name?.[0]?.toUpperCase() || 'U'}
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm font-semibold text-[#0A2540]">
+            {(displayName[0] || 'U').toUpperCase()}
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium">{user.name || 'Student'}</p>
+              <p className="truncate text-sm font-medium">{displayName}</p>
               <p className="text-xs capitalize text-white/55">{user.plan.toLowerCase()} plan</p>
             </div>
           )}

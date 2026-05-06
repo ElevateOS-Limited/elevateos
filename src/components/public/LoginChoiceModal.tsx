@@ -22,7 +22,7 @@ export function LoginChoiceModal() {
 
         <div className="border-b border-slate-900/10 bg-[radial-gradient(circle_at_top_left,_rgba(0,196,180,.14),_transparent_42%),linear-gradient(135deg,#0A2540_0%,#0D3A5C_56%,#0E5060_100%)] px-6 py-6 text-white dark:border-white/10">
           <div className="flex items-center gap-3">
-            <Image src="/elevateos-logo.png" alt="ElevateOS" width={54} height={54} className="h-12 w-12 rounded-2xl bg-white/95 p-1 shadow-lg" />
+            <Image src="/logo-lockup-horizontal.svg" alt="ElevateOS" width={180} height={52} className="h-12 w-auto rounded-2xl bg-white/95 p-2 shadow-lg" />
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#CBFBF1]">Login choice</p>
               <h1 className="mt-1 text-2xl font-semibold tracking-tight">Who is logging in?</h1>
@@ -35,7 +35,7 @@ export function LoginChoiceModal() {
 
         <div className="grid gap-3 p-6">
           <Link
-            href="/student-dashboard"
+            href="/dashboard?mode=demo"
             className="group rounded-[1.5rem] border border-slate-900/10 bg-[#F0FDFA] p-4 transition hover:-translate-y-0.5 hover:border-[#00C4B4]/40 dark:border-white/10 dark:bg-white/5"
           >
             <div className="flex items-center justify-between gap-4">
@@ -53,7 +53,7 @@ export function LoginChoiceModal() {
           </Link>
 
           <Link
-            href="/dashboard"
+            href="/dashboard?mode=blank"
             className="group rounded-[1.5rem] border border-slate-900/10 bg-white p-4 transition hover:-translate-y-0.5 hover:border-[#00C4B4]/40 dark:border-white/10 dark:bg-slate-950/60"
           >
             <div className="flex items-center justify-between gap-4">

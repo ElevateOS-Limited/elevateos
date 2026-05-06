@@ -92,6 +92,8 @@ export type ProfileDraft = {
   curriculum: CurriculumChoice
   futurePath: string
   eeSubject: string
+  intendedMajor: string
+  careerInterests: string[]
   goalsNarrative: string
   privacyAccepted: boolean
 }
@@ -105,6 +107,7 @@ export type DemoWorkspaceState = {
     recurringBlocks: ScheduleBlock[]
     weeklyHoursStart: string
     weeklyHoursEnd: string
+    weeklyAvailability: Record<string, 'open' | 'busy'>
   }
   tutoring: {
     preferenceSummary: string
@@ -194,6 +197,26 @@ export const HOURS_RANGE_OPTIONS = ['0-5', '5-10', '10-15', '15-20', '20+']
 
 export const WEEK_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
+export const BLANK_WEEKLY_AVAILABILITY: Record<string, 'open' | 'busy'> = {
+  Monday: 'busy',
+  Tuesday: 'busy',
+  Wednesday: 'busy',
+  Thursday: 'busy',
+  Friday: 'busy',
+  Saturday: 'busy',
+  Sunday: 'busy',
+}
+
+export const DEMO_WEEKLY_AVAILABILITY: Record<string, 'open' | 'busy'> = {
+  Monday: 'open',
+  Tuesday: 'busy',
+  Wednesday: 'open',
+  Thursday: 'open',
+  Friday: 'busy',
+  Saturday: 'open',
+  Sunday: 'busy',
+}
+
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
 }
@@ -217,6 +240,8 @@ const BLANK_PROFILE: DemoWorkspaceState = {
     curriculum: '',
     futurePath: '',
     eeSubject: 'Undecided',
+    intendedMajor: '',
+    careerInterests: [],
     goalsNarrative: '',
     privacyAccepted: false,
   },
@@ -226,6 +251,7 @@ const BLANK_PROFILE: DemoWorkspaceState = {
     recurringBlocks: [],
     weeklyHoursStart: '',
     weeklyHoursEnd: '',
+    weeklyAvailability: { ...BLANK_WEEKLY_AVAILABILITY },
   },
   tutoring: {
     preferenceSummary: '',
@@ -273,6 +299,8 @@ const DEMO_PROFILE: DemoWorkspaceState = {
     curriculum: 'IB',
     futurePath: 'IB',
     eeSubject: 'Economics',
+    intendedMajor: 'Computer Science',
+    careerInterests: ['AI', 'Robotics', 'Entrepreneurship'],
     goalsNarrative:
       'I want to combine strong academics with a visible leadership story, keep my timetable realistic, and build a profile that stands out without looking forced.',
     privacyAccepted: true,
@@ -286,7 +314,7 @@ const DEMO_PROFILE: DemoWorkspaceState = {
     { id: 'ib-6', subject: 'Computer Science', level: 'SL', confidence: 8 },
   ],
   schedule: {
-    blockedDates: ['2026-05-08', '2026-05-15'],
+    blockedDates: [],
     recurringBlocks: [
       { id: 'block-1', day: 'Tuesday', start: '18:00', end: '20:00', cadence: 'Weekly', label: 'Robotics' },
       { id: 'block-2', day: 'Thursday', start: '17:00', end: '19:00', cadence: 'Weekly', label: 'Tutoring' },
@@ -294,6 +322,7 @@ const DEMO_PROFILE: DemoWorkspaceState = {
     ],
     weeklyHoursStart: '10-15',
     weeklyHoursEnd: '15-20',
+    weeklyAvailability: { ...DEMO_WEEKLY_AVAILABILITY },
   },
   tutoring: {
     preferenceSummary:

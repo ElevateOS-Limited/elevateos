@@ -11,8 +11,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://elevateos.org'),
-  title: 'ElevateOS | IB AI Revision and Tutoring Workspace',
-  description: 'IB-first AI revision on elevateos.org and the tutoring execution loop on tutoring.elevateos.org, with tasks, submissions, feedback, and weekly reports.',
+  title: 'ElevateOS | Dashboard, Tutoring, and Counselling',
+  description: 'ElevateOS dashboard, onboarding, tutoring MVP, and annual counselling workspace for students and families.',
   applicationName: 'ElevateOS',
   authors: [{ name: 'Howard' }],
   creator: 'Howard',
@@ -25,7 +25,8 @@ export const metadata: Metadata = {
     noimageindex: true,
   },
   icons: {
-    icon: '/elevateos-logo.png',
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
     apple: '/elevateos-logo.png',
   },
   verification: {

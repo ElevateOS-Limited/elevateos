@@ -64,7 +64,7 @@ export default function LoginPage() {
       <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl items-center gap-8 lg:grid-cols-[.9fr_1.1fr]">
         <section className="max-w-xl">
           <Link href="/home" className="inline-flex items-center gap-3">
-            <Image src="/elevateos-logo.png" alt="ElevateOS" width={64} height={64} className="h-16 w-16 shadow-[0_8px_24px_-6px_rgba(10,37,64,.2)]" priority />
+            <Image src="/logo-lockup-horizontal.svg" alt="ElevateOS" width={220} height={64} className="h-12 w-auto" priority />
           </Link>
 
           <h1 className="font-display mt-8 text-5xl leading-[0.95] tracking-tight sm:text-6xl">

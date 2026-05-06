@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: 210 20% 98%;
+  --background: 210 20% 99%;
   --foreground: 222 47% 11%;
 }
 
 .dark {
   --background: 222 47% 11%;
-  --foreground: 38 35% 95%;
+  --foreground: 210 20% 98%;
 }
 
 * {
@@ -56,13 +56,13 @@ body {
 .glass {
   background-color: rgb(255 255 255 / 0.82);
   backdrop-filter: blur(24px) saturate(1.2);
-  border: 1px solid rgb(226 232 240 / 0.9);
+  border: 1px solid rgb(229 231 235 / 0.9);
   box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
 }
 
 .dark .glass {
   background-color: rgb(15 23 42 / 0.82);
-  border-color: rgb(51 65 85 / 0.8);
+  border-color: rgb(51 65 85 / 0.75);
 }
 
 .font-display {
