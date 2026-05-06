@@ -92,7 +92,15 @@ export default function HomePage() {
           <Link href="/login" className="rounded-full border border-[#00C4B4]/20 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-[#00C4B4]/40 hover:text-slate-950 dark:border-white/10 dark:text-slate-200 dark:hover:text-white">
             Login
           </Link>
-          <Link href="/onboarding" className="inline-flex items-center gap-2 rounded-full bg-[#00C4B4] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_24px_-10px_rgba(0,196,180,.5)]">
+          <button
+            type="button"
+            disabled
+            className="rounded-full border border-slate-900/10 px-4 py-2 text-sm font-semibold text-slate-500 opacity-70 dark:border-white/10 dark:text-slate-400"
+            title="Tutor login coming soon"
+          >
+            Tutor log-in
+          </button>
+          <Link href="/onboarding?mode=blank" className="inline-flex items-center gap-2 rounded-full bg-[#00C4B4] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_24px_-10px_rgba(0,196,180,.5)]">
             Book trial <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -119,7 +127,7 @@ export default function HomePage() {
             <Link href="/demo" className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-7 py-3.5 text-sm font-semibold text-slate-700 backdrop-blur hover:border-[#00C4B4]/30 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
               Open student demo <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link href="/onboarding" className="inline-flex items-center gap-2 rounded-full bg-[#00C4B4] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[0_14px_30px_-12px_rgba(0,196,180,.45)] transition hover:-translate-y-0.5">
+            <Link href="/onboarding?mode=blank" className="inline-flex items-center gap-2 rounded-full bg-[#00C4B4] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[0_14px_30px_-12px_rgba(0,196,180,.45)] transition hover:-translate-y-0.5">
               Book your free trial lesson <ArrowRight className="h-4 w-4" />
             </Link>
             <a href="#how-it-works" className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-7 py-3.5 text-sm font-semibold text-slate-700 backdrop-blur hover:border-[#00C4B4]/30 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
@@ -332,7 +340,7 @@ export default function HomePage() {
             <Link href="/demo" className="hover:text-slate-950 dark:hover:text-white">Demo</Link>
             <Link href="/pricing" className="hover:text-slate-950 dark:hover:text-white">Pricing</Link>
             <Link href="/login" className="hover:text-slate-950 dark:hover:text-white">Login</Link>
-            <Link href="/onboarding" className="hover:text-slate-950 dark:hover:text-white">Get started</Link>
+            <Link href="/onboarding?mode=blank" className="hover:text-slate-950 dark:hover:text-white">Get started</Link>
           </div>
         </div>
       </footer>

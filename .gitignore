@@ -6,3 +6,4 @@
 .runtime
 .env*.local
 node_modules
+start-prod.log

@@ -33,13 +33,22 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+  auth,
+}: {
+  children: React.ReactNode
+  auth: React.ReactNode
+}) {
   const session = await getSessionOrDemo()
 
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} h-full`}>
       <body className="min-h-full flex flex-col">
-        <Providers session={session}>{children}</Providers>
+        <Providers session={session}>
+          {children}
+          {auth}
+        </Providers>
       </body>
     </html>
   )
