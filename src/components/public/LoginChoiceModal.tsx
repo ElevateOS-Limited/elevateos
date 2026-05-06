@@ -29,7 +29,7 @@ export function LoginChoiceModal() {
             </div>
           </div>
           <p className="mt-3 max-w-md text-sm leading-7 text-white/78">
-            Pick the role first so we can send you to the right experience. Tutor login is a separate button on the home page.
+            Students land in the student workspace. Parents land in the parent workspace. Tutor access stays separate for now.
           </p>
         </div>
 
@@ -71,7 +71,7 @@ export function LoginChoiceModal() {
           </Link>
 
           <div className="rounded-[1.5rem] border border-[#CBFBF1] bg-[#F0FDFA] p-4 text-sm text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
-            If you are a tutor, use the home page tutor log-in button once it is ready. For now it remains a non-functional placeholder.
+            Tutor access stays on the home page for now and remains a non-functional placeholder.
           </div>
         </div>
       </div>

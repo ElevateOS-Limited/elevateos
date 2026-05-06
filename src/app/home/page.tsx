@@ -125,7 +125,7 @@ export default function HomePage() {
           </p>
 
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Link href="/demo" className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-7 py-3.5 text-sm font-semibold text-slate-700 backdrop-blur hover:border-[#00C4B4]/30 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+            <Link href="/onboarding?mode=demo" className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-7 py-3.5 text-sm font-semibold text-slate-700 backdrop-blur hover:border-[#00C4B4]/30 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
               Open student demo <ArrowRight className="h-4 w-4" />
             </Link>
             <Link href="/onboarding?mode=blank" className="inline-flex items-center gap-2 rounded-full bg-[#00C4B4] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[0_14px_30px_-12px_rgba(0,196,180,.45)] transition hover:-translate-y-0.5">
@@ -139,7 +139,7 @@ export default function HomePage() {
           <div className="mx-auto mt-12 max-w-5xl">
             <DemoWalkthroughRail
               eyebrow="Student journey"
-              title="Students and parents move from login to a live dashboard."
+              title="Students and parents move from login into a live dashboard."
               summary="ElevateOS captures the profile once, then keeps weekly tutoring and annual counselling connected in one place."
               steps={[
                 {
