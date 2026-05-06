@@ -14,6 +14,7 @@ import {
   Users,
   X,
 } from 'lucide-react'
+import DemoWalkthroughRail from '@/components/public/DemoWalkthroughRail'
 import {
   A_LEVEL_SUBJECT_BANK,
   CURRICULUM_OPTIONS,
@@ -1020,18 +1021,30 @@ export function SignupWizard({ initialMode }: SignupWizardProps) {
           </section>
 
           <aside className="space-y-5">
-            <div className="rounded-[2rem] border border-[#CBFBF1] bg-[#F0FDFA] p-5 shadow-sm dark:border-white/10 dark:bg-white/5">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">Product walkthrough</p>
-              <h3 className="mt-3 text-2xl font-semibold tracking-tight">Tutoring MVP today. Annual counselling next.</h3>
-              <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">
-                Tutoring MVP covers weekly lessons, homework, recaps, and tutor matching. Annual counselling expands into activities, target schools, admissions strategy, and long-range planning.
-              </p>
-              <div className="mt-4 space-y-3 text-sm leading-7 text-slate-600 dark:text-slate-300">
-                <p>- The demo uses the same state model for blank and preloaded profiles.</p>
-                <p>- Curriculum-specific subject rules are enforced in the UI, not hidden in the backend.</p>
-                <p>- The saved profile is available immediately on the dashboard.</p>
-              </div>
-            </div>
+            <DemoWalkthroughRail
+              eyebrow="Demo subtitles"
+              title="Use this on-screen script while recording."
+              summary="The onboarding is intentionally short and sequential so the Techstars walkthrough feels like one continuous product story."
+              steps={[
+                {
+                  label: 'Selection area 1',
+                  subtitle: 'Tell us who the student is and which curriculum they are on.',
+                },
+                {
+                  label: 'Selection area 2',
+                  subtitle: 'Pick the curriculum subjects and confidence levels with the right minimums enforced.',
+                },
+                {
+                  label: 'Selection area 3',
+                  subtitle: 'Mark blocked days, recurring availability, and weekly hours.',
+                },
+                {
+                  label: 'Selection area 4',
+                  subtitle: 'Describe goals, then accept the placeholder privacy policy and finish.',
+                },
+              ]}
+              activeStep={Math.max(0, step - 1)}
+            />
 
             <div className="rounded-[2rem] border border-slate-900/10 bg-slate-950 p-5 text-white shadow-lg shadow-slate-950/10 dark:border-white/10">
               <div className="flex items-center justify-between gap-3">

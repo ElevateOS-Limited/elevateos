@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, BookOpen, CheckCircle2, ChevronDown, MessageSquareText, ShieldCheck, Sparkles } from 'lucide-react'
 import { LeadCaptureForm } from '@/components/public/LeadCaptureForm'
+import DemoWalkthroughRail from '@/components/public/DemoWalkthroughRail'
 
 const howItWorks = [
   {
@@ -48,6 +49,25 @@ const parentSummaryItems = [
   'Homework and tasks assigned',
   'Progress note from the tutor',
   'Recommended focus before the next session',
+]
+
+const demoWalkthroughSteps = [
+  {
+    label: 'Open the role picker',
+    subtitle: 'Click login, choose student or parent, and keep tutor login visible but separate.',
+  },
+  {
+    label: 'Complete the onboarding',
+    subtitle: 'Country, curriculum, subjects, schedule, and goals are captured once.',
+  },
+  {
+    label: 'Land in the dashboard',
+    subtitle: 'The demo student arrives on the canonical dashboard with the same BrandKit styling.',
+  },
+  {
+    label: 'Show tutoring and activities',
+    subtitle: 'Use the quick actions to move from weekly lessons to annual counselling.',
+  },
 ]
 
 const faqs = [
@@ -133,6 +153,17 @@ export default function HomePage() {
             <a href="#how-it-works" className="inline-flex items-center gap-2 rounded-full border border-slate-900/10 bg-white/80 px-7 py-3.5 text-sm font-semibold text-slate-700 backdrop-blur hover:border-[#00C4B4]/30 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
               See how it works <ChevronDown className="h-4 w-4" />
             </a>
+          </div>
+
+          <div className="mx-auto mt-12 max-w-5xl">
+            <DemoWalkthroughRail
+              eyebrow="Demo subtitles"
+              title="Use this exact path while recording the walkthrough."
+              summary="The subtitles keep the demo tight: show the role picker, finish onboarding, land in the dashboard, then branch into tutoring and annual counselling."
+              steps={demoWalkthroughSteps}
+              activeStep={0}
+              layout="grid"
+            />
           </div>
         </section>
 

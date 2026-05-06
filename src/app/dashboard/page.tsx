@@ -23,6 +23,7 @@ import {
   Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import DemoWalkthroughRail from '@/components/public/DemoWalkthroughRail'
 import {
   createWorkspaceState,
   getMonthGrid,
@@ -98,25 +99,6 @@ function MetricCard({ label, value }: { label: string; value: number }) {
     <div className="rounded-[1.25rem] border border-slate-900/10 bg-[#F9FAFB] p-4 text-center shadow-sm dark:border-white/10 dark:bg-white/5">
       <p className="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">{label}</p>
       <p className="mt-2 text-3xl font-semibold text-slate-950 dark:text-white">{value}</p>
-    </div>
-  )
-}
-
-function ScopeCard({
-  title,
-  copy,
-  accent,
-}: {
-  title: string
-  copy: string
-  accent: string
-}) {
-  return (
-    <div className="rounded-2xl border border-slate-900/10 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-slate-950/40">
-      <p className="text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: accent }}>
-        {title}
-      </p>
-      <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{copy}</p>
     </div>
   )
 }
@@ -250,25 +232,30 @@ export default function DashboardPage() {
             ) : null}
           </div>
 
-          <div className="rounded-[1.75rem] border border-[#CBFBF1] bg-[#F0FDFA] p-5 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#00C4B4]">Product walkthrough</p>
-            <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-950">Tutoring MVP today. Annual counselling next.</h2>
-            <p className="mt-3 text-sm leading-7 text-slate-600">
-              Tutoring MVP covers weekly lessons, homework, recaps, and tutor matching. Annual counselling expands into activities, target schools, admissions strategy, and long-range planning.
-            </p>
-            <div className="mt-4 grid gap-3">
-              <ScopeCard
-                title="Tutoring MVP"
-                copy="Weekly lessons, homework, recaps, tutor matching, and a tight feedback loop."
-                accent="#00C4B4"
-              />
-              <ScopeCard
-                title="Annual counselling"
-                copy="Activities, target schools, admissions strategy, and long-range planning."
-                accent="#0A2540"
-              />
-            </div>
-          </div>
+          <DemoWalkthroughRail
+            eyebrow="Demo subtitles"
+            title="Tutoring MVP today. Annual counselling next."
+            summary="Walk through the product in the same order every time: show the schedule, open tutoring, then branch into annual counselling and activities."
+            steps={[
+              {
+                label: 'Start with today',
+                subtitle: 'Show the weekly availability and calendar so the student context is visible immediately.',
+              },
+              {
+                label: 'Open tutoring',
+                subtitle: 'Use the tutoring hub to show lessons, homework, recaps, and tutor follow-up.',
+              },
+              {
+                label: 'Open annual counselling',
+                subtitle: 'Switch to activities, target schools, admissions strategy, and long-range planning.',
+              },
+              {
+                label: 'Finish on the next step',
+                subtitle: 'End the demo on a clear next action, not a dead-end screen.',
+              },
+            ]}
+            activeStep={1}
+          />
         </div>
       </section>
 
