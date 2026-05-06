@@ -82,8 +82,8 @@ function DemoHeader({
   return (
     <header className="flex flex-col gap-4 rounded-[2rem] border border-slate-900/10 bg-white/90 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5 lg:flex-row lg:items-center lg:justify-between">
       <div className="flex items-center gap-3">
-        <Link href="/home" className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0A2540] shadow-[0_10px_24px_-10px_rgba(10,37,64,.35)]">
-          <Image src="/elevateos-logo.png" alt="ElevateOS" width={42} height={42} className="h-10 w-10 rounded-xl bg-white/95 p-1" />
+        <Link href="/home" className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[#CBFBF1] bg-white shadow-[0_10px_24px_-10px_rgba(10,37,64,.18)]">
+          <Image src="/elevateos-logo.png" alt="ElevateOS" width={42} height={42} className="h-10 w-10 rounded-xl bg-transparent p-0 object-contain" />
         </Link>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#00C4B4]">Student workspace</p>

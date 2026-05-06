@@ -53,9 +53,9 @@ if (-not $SkipPush) {
 }
 
 if (-not $SkipDeploy) {
-    $deploymentLine = doctl apps create-deployment $AppId --force-rebuild --format ID,Phase --no-header | Select-Object -First 1
+    $deploymentLine = doctl apps create-deployment $AppId --force-rebuild --wait --format ID,Phase --no-header | Select-Object -First 1
     if ($LASTEXITCODE -ne 0) {
-        throw "doctl apps create-deployment $AppId --force-rebuild failed."
+        throw "doctl apps create-deployment $AppId --force-rebuild --wait failed."
     }
 
     $deploymentId = (($deploymentLine -split '\s+') | Select-Object -First 1).Trim()
@@ -63,22 +63,11 @@ if (-not $SkipDeploy) {
         throw 'DigitalOcean did not return a deployment id.'
     }
 
-    $deadline = (Get-Date).AddMinutes(30)
-    $phase = $null
-
-    while ($true) {
-        Start-Sleep -Seconds 15
+    $phase = (($deploymentLine -split '\s+') | Select-Object -Skip 1 -First 1).Trim()
+    if ([string]::IsNullOrWhiteSpace($phase)) {
         $phase = (doctl apps get-deployment $AppId $deploymentId --format Phase --no-header | Select-Object -First 1).Trim()
         if ($LASTEXITCODE -ne 0) {
-            throw "doctl apps get-deployment $AppId $deploymentId failed."
-        }
-
-        if ($phase -in @('ACTIVE', 'ERROR', 'ARCHIVED', 'SUPERSEDED')) {
-            break
-        }
-
-        if ((Get-Date) -gt $deadline) {
-            throw "Timed out waiting for DigitalOcean deployment $deploymentId."
+            throw "doctl apps get-deployment $AppId $deploymentId failed after create-deployment --wait."
         }
     }
 
