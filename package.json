@@ -22,7 +22,7 @@
     "@aws-sdk/client-s3": "^3.1017.0",
     "@aws-sdk/s3-request-presigner": "^3.1017.0",
     "@eslint-community/eslint-utils": "^4.9.1",
-    "@google/genai": "^1.46.0",
+    "@google/genai": "^1.50.1",
     "@jridgewell/sourcemap-codec": "^1.5.5",
     "@next-auth/prisma-adapter": "^1.0.7",
     "@prisma/adapter-pg": "^7.5.0",
